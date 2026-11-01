@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/ling-flash-free",
+  "instructions": [
+    "constitution.md",
+    "memoria.md"
+  ],
+  "agent": {
+    "plan": {
+      "model": "opencode/nemotron-3-ultra-free"
+    },
+    "build": {
+      "model": "opencode/nemotron-3-lightning-free"
+    },
+    "spec-writer": {
+      "model": "opencode/nemotron-3-ultra-free"
+    },
+    "dev-expo": {
+      "model": "opencode/nemotron-3-lightning-free"
+    },
+    "qa-mobile": {
+      "model": "opencode/ling-flash-free"
+    },
+    "probador-expo": {
+      "model": "opencode/nemotron-3-lightning-free",
+      "tools": {
+        "expo_*": true
+      }
+    },
+    "revisor-constitucion": {
+      "model": "opencode/big-pickle"
+    }
+  },
+  "permission": {
+    "skill": {
+      "*": "allow"
+    },
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "ls*": "allow",
+      "node --version": "allow",
+      "npm --version": "allow"
+    },
+    "expo_*": "deny"
+  },
+  "mcp": {
+    "expo": {
+      "type": "remote",
+      "url": "https://mcp.expo.dev/mcp",
+      "enabled": true
+    }
+  },
+  "tools": {
+    "expo_*": false
+  }
+}
