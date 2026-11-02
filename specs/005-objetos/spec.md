@@ -1,6 +1,6 @@
 # Spec 005 — Objetos (móvil)
 
-- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 3–5 nov · **Depende de:** 003, 004 (móvil) y contrato 005 (backend)
+- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 8–10 nov · **Depende de:** 003, 004 (móvil) y contrato 005 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

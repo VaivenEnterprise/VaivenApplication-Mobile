@@ -1,6 +1,6 @@
 # Constitución de la App Móvil — VAIVÉN
 
-> **Versión 1.2.0** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
+> **Versión 1.2.1** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) y el 2026-11-02 (**PATCH:** aclara que la app sí se compila —APK y AAB con EAS Build— y se publica en Google Play; solo no hay servidor que desplegar) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
 >
 > Esta es la máxima autoridad técnica de la app móvil. Si `AGENTS.md`, `memoria.md`, `spec.md`, `plan.md`, `tasks.md`, un agente o una skill la contradicen, **gana la constitución** y el otro archivo debe corregirse.
 > Comparte con `../vaiven-backend/constitution.md` el contrato de API (Art. IV de ambas) y las reglas de dinero, fechas e idioma (Art. V de ambas). Deben mantenerse idénticas en esos puntos.
@@ -107,10 +107,11 @@ La app móvil es el cliente de la plataforma. **Solo habla con la API del backen
 6. **`memoria.md` es solo-anexar:** cada persona agrega líneas al final de su sección con su etiqueta (`[MO-A]`, `[MO-B]`); ante un conflicto se conservan ambas.
 
 ### Art. XIV — MCP y pruebas locales con Expo Go (enmienda 1.2.0)
-1. La app se prueba **en local con Expo Go** (`npx expo start`) contra el backend de staging (o uno local). **No hay despliegue ni compilación de la app** en las specs de funcionalidad: no se usan EAS Build, `expo-dev-client` ni perfiles de `eas.json`. La única excepción es la spec 013 (publicación en Google Play), pendiente de revisión.
+1. La app se prueba **en local con Expo Go** (`npx expo start`) contra el backend de staging (o uno local). No hay servidor ni hosting que desplegar. **Sí se compila la app** con **EAS Build** para entregarla: un **APK** (perfil `preview`, para instalar directo en teléfonos de prueba y demostración) y un **AAB** (perfil `production`, para Google Play). Esas compilaciones y la publicación son de la spec 013; las specs de funcionalidad (002–012) no compilan: cada una se cierra con su verificación en Expo Go. No se usa `expo-dev-client`.
 2. Por eso solo se usan módulos que funcionen en Expo Go. Las notificaciones push remotas pueden no funcionar en Expo Go en Android: lo que no pueda probarse ahí se anota en `memoria.md` y no bloquea el cierre de la spec.
 3. Los MCP se declaran **únicamente en `opencode.json`**: `expo` (remoto, autenticación OAuth: documentación y datos de EAS) y las capacidades locales de `expo-mcp` (capturas, DevTools; requieren SDK 54 o superior y `EXPO_UNSTABLE_MCP_SERVER=1`). Ningún secreto en el repositorio. Solo el agente `probador-expo` los usa.
 4. **Cada spec termina verificada.** La última tarea de cada spec es «Verificación en Expo Go»: con la spec de backend equivalente ya **desplegada** (backend Art. XIII), `probador-expo` arranca la app en Expo Go contra staging, recorre los criterios de aceptación de la spec, guarda la evidencia (capturas) y lo anota en `memoria.md`. No se empieza la siguiente spec hasta que esa verificación pase.
+7. **Trabajo humano mínimo:** la persona solo se registra (cuenta de Expo), autentica el MCP (`opencode mcp auth expo`), instala Expo Go en su teléfono y aprueba las acciones (incluidas las compilaciones con EAS y la subida a Play Console, que sube el administrador). Arrancar la app, recorrer los criterios de aceptación, tomar capturas y registrar el resultado lo hace `probador-expo` desde OpenCode con el MCP de Expo.
 
 ---
 

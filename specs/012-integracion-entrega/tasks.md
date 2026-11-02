@@ -42,7 +42,7 @@
 - [ ] **T007** Recorrido manual con 2 teléfonos
   - Archivos: `docs/validacion.md` (resultados), `memoria.md` (solo anexar)
   - Dueño: MO-A y MO-B (una persona por teléfono) · Agente: — (manual) · Depende de: T006, 012-T005 (backend, datos `seed`)
-  - Aceptación: CA-01; cada fallo con pasos, causa y corrección o decisión de dejarlo; ninguno bloqueante pendiente el 15 nov
+  - Aceptación: CA-01; cada fallo con pasos, causa y corrección o decisión de dejarlo; ninguno bloqueante pendiente el 22 nov
   - Refs: RF-06
 
 - [ ] **T008** Revisión de seguridad
@@ -66,7 +66,7 @@
 - [ ] **T011** Revisión final y congelamiento
   - Archivos: `memoria.md` (solo anexar), etiqueta `v1.0.0-mobile`
   - Dueño: MO-A · Agente: `revisor-constitucion` · Depende de: T002, T008, T010
-  - Aceptación: veredicto **CONFORME** sobre todo el repositorio; `npm run check` pasa; cobertura global ≥ 70 %; código congelado el 15 de nov
+  - Aceptación: veredicto **CONFORME** sobre todo el repositorio; `npm run check` pasa; cobertura global ≥ 70 %; código congelado el 22 de nov
   - Refs: RNF-01, RF-10
 
 - [ ] **T012** Verificación en Expo Go contra staging

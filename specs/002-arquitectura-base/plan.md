@@ -136,7 +136,7 @@ Los módulos de Expo se instalan con `npx expo install`.
 | Hook | `useMeta` con `QueryClientProvider` y `fetch` simulado | RNTL `renderHook` |
 | Componente | `Button`, `ErrorState`, `LoadingState`, `AppErrorBoundary` | RNTL |
 | Convención | Prueba que falla si hay colores literales o textos visibles literales fuera de `theme/` e `i18n/` | Jest + lectura de archivos |
-| Calidad | `tsc --noEmit`, `eslint`, `prettier --check` | npm scripts / CI |
+| Calidad | `tsc --noEmit`, `eslint`, `prettier --check` | npm scripts (en local) |
 
 ## 7. Verificación de constitución
 
@@ -161,7 +161,7 @@ Los módulos de Expo se instalan con `npx expo install`.
 2. **Fase 1 — Fundamentos:** configuración, *tokens*, textos, utilidades, almacenamiento.
 3. **Fase 2 — Datos y errores:** cliente de API, caché, feature `diagnostics`.
 4. **Fase 3 — UI y rutas:** componentes base, *error boundary*, rutas, proveedores.
-5. **Fase 4 — Cierre:** convención automática, CI, README, memoria y revisión.
+5. **Fase 4 — Cierre:** README, memoria, revisión y verificación en Expo Go.
 
 ## 9. Riesgos
 

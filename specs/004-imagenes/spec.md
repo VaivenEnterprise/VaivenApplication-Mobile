@@ -1,6 +1,6 @@
 # Spec 004 — Imágenes (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P0 · **Ventana:** 31 oct–2 nov · **Depende de:** 001, 002 (móvil) y contrato 004 (backend)
+- **Dueño:** MO-B · **Prioridad:** P0 · **Ventana:** 5–7 nov · **Depende de:** 001, 002 (móvil) y contrato 004 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

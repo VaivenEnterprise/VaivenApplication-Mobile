@@ -1,7 +1,7 @@
 # Tareas 015 — Recomendaciones con ML (móvil)
 
 - **Dueño:** MO-B · **Estado:** sin ejecutar · `[P]` = paralelizable
-- Se ejecuta **después** del congelamiento de la 1.0 (15 nov).
+- Se ejecuta **después** del congelamiento de la 1.0 (22 nov).
 
 - [ ] **T001** [P] Tipos, claves y textos
   - Archivos: `src/features/recommendations/{types.ts, keys.ts}`, `src/i18n/recommendations.ts`, `src/i18n/index.ts` (una línea)

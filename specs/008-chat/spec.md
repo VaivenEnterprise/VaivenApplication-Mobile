@@ -1,6 +1,6 @@
 # Spec 008 — Chat (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 5–8 nov · **Depende de:** 003, 007 (móvil) y contrato 008 (backend)
+- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 10–13 nov · **Depende de:** 003, 007 (móvil) y contrato 008 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

@@ -1,6 +1,6 @@
 # Spec 007 — Solicitudes y reservas (móvil)
 
-- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 5–8 nov · **Depende de:** 003, 005 (móvil) y contrato 007 (backend)
+- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 10–13 nov · **Depende de:** 003, 005 (móvil) y contrato 007 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

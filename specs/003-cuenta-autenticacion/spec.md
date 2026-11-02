@@ -1,6 +1,6 @@
 # Spec 003 — Cuenta, autenticación y estructura de navegación (móvil)
 
-- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 31 oct–2 nov · **Depende de:** 001, 002 (móvil) y contrato 003 (backend)
+- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 5–7 nov · **Depende de:** 001, 002 (móvil) y contrato 003 (backend)
 - **Constitución:** v1.2.0 (Art. XIII) · **Estado:** Borrador
 
 ## 1. Objetivo y por qué
@@ -45,5 +45,5 @@ Que una persona pueda crear su cuenta, entrar, salir y administrar su perfil, y 
 Foto de perfil, inicio con redes sociales, verificación de correo, recuperación de contraseña, biometría, cambio de correo.
 
 ## 6. Preguntas abiertas
-- [NEEDS CLARIFICATION: ¿Se necesita recuperar contraseña antes del 15 nov? Provisional: no.]
+- [NEEDS CLARIFICATION: ¿Se necesita recuperar contraseña antes del 23 nov? Provisional: no.]
 - [NEEDS CLARIFICATION: nombre del campo teléfono (¿se mostrará a la contraparte?). Provisional: privado.]

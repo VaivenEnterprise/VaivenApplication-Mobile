@@ -1,6 +1,6 @@
 # Spec 010 — Calificaciones e incidencias (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 8–11 nov · **Depende de:** 003, 007 (móvil) y contrato 010 (backend)
+- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 13–17 nov · **Depende de:** 003, 007 (móvil) y contrato 010 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

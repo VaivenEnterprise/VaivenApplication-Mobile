@@ -1,7 +1,7 @@
 # Tareas 014 — Sugerencias con IA (móvil)
 
 - **Dueño:** MO-A (T006 de MO-B) · **Estado:** sin ejecutar · `[P]` = paralelizable
-- Se ejecuta **después** del congelamiento de la 1.0 (15 nov).
+- Se ejecuta **después** del congelamiento de la 1.0 (22 nov).
 
 - [ ] **T001** [P] Tipos, claves y textos
   - Archivos: `src/features/ai-suggestions/{types.ts, keys.ts}`, `src/i18n/aiSuggestions.ts`, `src/i18n/index.ts` (una línea)
@@ -42,7 +42,7 @@
 - [ ] **T007** Versión 1.1 y revisión
   - Archivos: `app.config.ts` (`version: 1.1.0`), `memoria.md` (solo anexar)
   - Agente: `revisor-constitucion` · Depende de: T005, T006
-  - Aceptación: AAB 1.1 subido a la prueba cerrada (25 nov) y a producción cuando la 1.0 esté aprobada; **CONFORME**
+  - Aceptación: AAB 1.1 subido a la prueba cerrada (~2 dic) y a producción cuando la 1.0 esté aprobada; **CONFORME**
   - Refs: DoD
 
 - [ ] **T008** Verificación en Expo Go contra staging

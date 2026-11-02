@@ -63,8 +63,8 @@ Invocación: `@dev-expo implementa la tarea T006 de specs/002-arquitectura-base/
 
 ## 5b. MCP y verificación (Art. XIV)
 
-- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Solo `probador-expo` lo usa.**
-- La app **no se compila ni se despliega**: se prueba en Expo Go contra staging. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
+- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Trabajo humano mínimo:** registrarse en Expo, autenticar el MCP, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode. **Solo `probador-expo` lo usa.**
+- No hay servidor que desplegar: cada spec se prueba en Expo Go contra staging. La app **sí se compila** con EAS Build (APK `preview` y AAB `production`) en la spec 013, y los comandos `eas build` se ejecutan con aprobación humana. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
 
 ## 6. Comandos
 

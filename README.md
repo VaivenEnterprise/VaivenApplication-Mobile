@@ -23,9 +23,9 @@ Solo consume la API del backend; el contrato oficial es `../vaiven-backend/api/o
 
 ## Flujo: OpenCode + MCP + Expo Go, spec por spec
 
-1. La app **no se despliega**: se prueba en local con **Expo Go** contra el staging del backend (`EXPO_PUBLIC_API_URL`). La publicación en Google Play (spec 013) queda aparte, pendiente de revisión.
+1. No hay servidor que desplegar para la app. Cada spec se verifica en local con **Expo Go** contra el staging del backend (`EXPO_PUBLIC_API_URL`). La app **sí se compila** con EAS Build —**APK** (`preview`) para instalar y demostrar, **AAB** (`production`) para Google Play— y se publica en Google Play (spec 013).
 2. MCP de Expo: `opencode mcp auth expo`. Solo `@probador-expo` lo usa.
-3. Spec **001**: servicios (MCP de Expo, URL de staging). Desde la **002**: se implementa con `@dev-expo`; la última tarea de cada spec es «Verificación en Expo Go» y exige la spec equivalente del backend ya desplegada. **La spec siguiente no empieza hasta que pase.**
+3. Spec **001**: servicios (MCP de Expo; URL de staging en la VM de Azure, `https://<host>:8443`). Desde la **002**: se implementa con `@dev-expo`; la última tarea de cada spec es «Verificación en Expo Go» y exige la spec equivalente del backend ya desplegada. **La spec siguiente no empieza hasta que pase.**
 4. Límite conocido: las notificaciones push remotas pueden no funcionar en Expo Go (Android).
 5. Repositorio, ramas, revisión y pipeline: **no están definidos**; se integrarán de cero.
 

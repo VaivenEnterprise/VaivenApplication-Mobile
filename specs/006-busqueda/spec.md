@@ -1,6 +1,6 @@
 # Spec 006 — Búsqueda y exploración (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P0 · **Ventana:** 3–5 nov · **Depende de:** 003 (móvil), componente `ItemCard` de 005 y contrato 006 (backend)
+- **Dueño:** MO-B · **Prioridad:** P0 · **Ventana:** 8–10 nov · **Depende de:** 003 (móvil), componente `ItemCard` de 005 y contrato 006 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

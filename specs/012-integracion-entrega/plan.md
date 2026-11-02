@@ -27,10 +27,10 @@ README.md (actualizar) · docs/entorno-local.md (actualizar)
 ## 3. Orden de trabajo (4 días)
 | Día | Foco |
 |---|---|
-| 12 nov | Banner de conexión, pasada de estados vacío/error, E2E de Jest |
-| 13 nov | Accesibilidad, íconos y splash, primera verificación en Expo Go en 2 teléfonos |
-| 14 nov | Recorrido manual completo y correcciones; revisión de seguridad |
-| 15 nov | Documentación, verificación final, congelar código |
+| 19 nov | Banner de conexión, pasada de estados vacío/error, E2E de Jest |
+| 20 nov | Accesibilidad, íconos y splash, primera verificación en Expo Go en 2 teléfonos |
+| 21 nov | Recorrido manual completo y correcciones; revisión de seguridad |
+| 22 nov | Documentación, verificación final, congelar código |
 
 ## 4. Pruebas
 La E2E de Jest; pruebas unitarias del banner y del hook de conectividad; verificación manual documentada.

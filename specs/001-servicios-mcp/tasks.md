@@ -1,6 +1,7 @@
 # Tareas 001 — Servicios y entorno local con MCP de Expo (móvil)
 
 - **Dueño:** MO-B · **Estado:** sin ejecutar · `[P]` = paralelizable
+- **Lo único humano (Art. XIV.7):** registrarse en Expo, `opencode mcp auth expo`, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode con el MCP de Expo.
 - Esta spec no tiene tarea de verificación en Expo Go: todavía no existe la app (la primera es 002-T029).
 
 - [ ] **T001** Autenticar el MCP de Expo (**la hace una persona**)
