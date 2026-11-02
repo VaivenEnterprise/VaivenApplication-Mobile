@@ -30,6 +30,12 @@
     },
     "revisor-constitucion": {
       "model": "opencode/big-pickle"
+    },
+    "gestor-repo": {
+      "model": "opencode/nemotron-3-lightning-free",
+      "tools": {
+        "github_*": true
+      }
     }
   },
   "permission": {
@@ -43,16 +49,26 @@
       "node --version": "allow",
       "npm --version": "allow"
     },
-    "expo_*": "deny"
+    "expo_*": "deny",
+    "github_*": "deny"
   },
   "mcp": {
     "expo": {
       "type": "remote",
       "url": "https://mcp.expo.dev/mcp",
       "enabled": true
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "enabled": true
     }
   },
   "tools": {
-    "expo_*": false
+    "expo_*": false,
+    "github_*": false
   }
 }

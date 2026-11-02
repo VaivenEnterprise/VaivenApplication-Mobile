@@ -23,7 +23,7 @@
 
 - [ ] **T004** [P] Textos de la ficha
   - Archivos: `docs/play/ficha.md`
-  - Agente: `spec-writer` · Depende de: landing L002-T003 (contenido), L001-T009 (URL de privacidad)
+  - Agente: `spec-writer` · Depende de: landing L002-T003 (contenido), L001-T010 (URL de privacidad)
   - Aceptación: nombre, descripción breve ≤ 80 y completa ≤ 4000, notas de versión del primer AAB, categoría, correo, sitio web; todo coherente con la landing y con las specs; sin promesas no cumplidas (pagos, seguros)
   - Refs: RF-04
 

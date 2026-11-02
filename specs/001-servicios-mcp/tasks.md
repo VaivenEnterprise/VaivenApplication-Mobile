@@ -22,11 +22,17 @@
   - Aceptación: pasos de arranque, tabla de URLs por plataforma, `EXPO_UNSTABLE_MCP_SERVER=1` y reconexión, limitaciones de Expo Go; solución a 3 errores comunes
   - Refs: RF-04
 
-- [ ] **T004** Revisión de conformidad
+- [ ] **T004** Repositorio en GitHub y MCP de GitHub (**persona** + `gestor-repo`)
+  - Archivos: `.gitignore`, `memoria.md` (solo anexar)
+  - Agente: — (la persona crea el repositorio, protege `main` y crea el token) + `gestor-repo` · Depende de: T001
+  - Aceptación: repositorio `vaiven-frontend` creado en GitHub con `main` protegida (PR obligatoria, sin push directo ni force-push); `GITHUB_PERSONAL_ACCESS_TOKEN` (permisos mínimos, limitado a este repositorio) definido como variable del sistema y OpenCode reiniciado; `opencode mcp list` muestra `github` conectado; un agente de desarrollo rechaza una herramienta de GitHub y `gestor-repo` la ejecuta; `.gitignore` excluye `.env`, `*.pem` y claves; `gestor-repo` abre una PR de prueba sin secretos y una persona la revisa y la fusiona
+  - Refs: Art. XV
+
+- [ ] **T005** Revisión de conformidad
   - Archivos: ninguno (solo informe)
-  - Agente: `revisor-constitucion` · Depende de: T002, T003
+  - Agente: `revisor-constitucion` · Depende de: T002, T003, T004
   - Aceptación: veredicto **CONFORME**; sin secretos; hito H0 (móvil) marcado
   - Refs: DoD
 
-| Total | 4 tareas |
+| Total | 5 tareas |
 |---|---|

@@ -1,6 +1,8 @@
 # Constitución de la App Móvil — VAIVÉN
 
-> **Versión 1.2.1** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) y el 2026-11-02 (**PATCH:** aclara que la app sí se compila —APK y AAB con EAS Build— y se publica en Google Play; solo no hay servidor que desplegar) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
+> **Versión 1.3.0** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) y el 2026-11-02 (**PATCH:** aclara que la app sí se compila —APK y AAB con EAS Build— y se publica en Google Play; solo no hay servidor que desplegar) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
+>
+> **Enmienda 1.3.0 (2026-11-02, MINOR):** se agrega el Art. XV (repositorio y pull requests en GitHub, con MCP de GitHub); se reemplaza la declaración de «sin repositorio».
 >
 > Esta es la máxima autoridad técnica de la app móvil. Si `AGENTS.md`, `memoria.md`, `spec.md`, `plan.md`, `tasks.md`, un agente o una skill la contradicen, **gana la constitución** y el otro archivo debe corregirse.
 > Comparte con `../vaiven-backend/constitution.md` el contrato de API (Art. IV de ambas) y las reglas de dinero, fechas e idioma (Art. V de ambas). Deben mantenerse idénticas en esos puntos.
@@ -79,7 +81,7 @@ La app móvil es el cliente de la plataforma. **Solo habla con la API del backen
 ### Art. IX — Pruebas y calidad
 1. Toda tarea con lógica incluye pruebas (Jest + `jest-expo` + React Native Testing Library). Mínimo **80 %** de cobertura en `lib/` y `features/*/hooks`.
 2. `npm run typecheck`, `npm run lint` y `npm test` deben pasar sin errores antes de dar una tarea por hecha.
-3. Las pruebas se ejecutan **en local**. El proyecto no define todavía repositorio, ramas ni pipeline automatizado: se integrarán aparte.
+3. Las pruebas se ejecutan **en local**. El repositorio y las PR siguen el Art. XV; no hay pipeline automatizado.
 
 ### Art. X — Simplicidad y dependencias mínimas
 1. Se prefieren los módulos de Expo (`expo-*`) y la API de React Native sobre bibliotecas de terceros. Una dependencia nueva exige justificación en `plan.md` y registro en `memoria.md`.
@@ -177,3 +179,12 @@ vaiven-frontend/              # raíz del repositorio
 - [ ] `npm run typecheck`, `npm run lint` y `npm test` sin fallos.
 - [ ] Sin textos ni valores de diseño literales fuera de `i18n/` y `theme/`.
 - [ ] `memoria.md` actualizado si hubo decisión, dependencia nueva o aprendizaje relevante.
+
+### Art. XV — Repositorio y pull requests en GitHub (enmienda 1.3.0)
+1. El código vive en un repositorio de GitHub (`vaiven-frontend`). La rama `main` está protegida: no se empuja directo ni se fuerzan pushes; todo cambio entra por pull request.
+2. Una rama por spec (`spec/NNN-nombre`) y una PR por spec, que se abre cuando su tarea de cierre pasa. Otra persona la revisa y la fusiona; la spec siguiente puede partir de la rama anterior mientras tanto.
+3. La PR cita la spec y las tareas cerradas, el resultado de la verificación (sin secretos) y el veredicto de `revisor-constitucion`. Commits y títulos en español, en imperativo, con el número de spec.
+4. Nunca se suben secretos (`.env`, claves, tokens, `*.pem`, cadenas de conexión); `.gitignore` los excluye. Si uno se sube por error, se rota de inmediato.
+5. El MCP de GitHub se declara **únicamente en `opencode.json`** y solo lo usa el agente `gestor-repo`: crea ramas, hace commits y abre PR. **Nunca** fusiona, cierra, borra ni cambia la configuración del repositorio. Las acciones de escritura piden aprobación.
+6. **Trabajo humano mínimo:** la persona crea el repositorio, protege `main`, crea un token de acceso con permisos mínimos limitado a este repositorio (`GITHUB_PERSONAL_ACCESS_TOKEN` como variable del sistema), y revisa y fusiona las PR. El resto lo hace `gestor-repo` desde OpenCode.
+7. No hay pipeline automatizado (CI) definido: las verificaciones son locales y el despliegue lo hace `devops-mcp` o `probador-expo` según el proyecto.

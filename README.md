@@ -27,7 +27,7 @@ Solo consume la API del backend; el contrato oficial es `../vaiven-backend/api/o
 2. MCP de Expo: `opencode mcp auth expo`. Solo `@probador-expo` lo usa.
 3. Spec **001**: servicios (MCP de Expo; URL de staging en la VM de Azure, `https://<host>:8443`). Desde la **002**: se implementa con `@dev-expo`; la última tarea de cada spec es «Verificación en Expo Go» y exige la spec equivalente del backend ya desplegada. **La spec siguiente no empieza hasta que pase.**
 4. Límite conocido: las notificaciones push remotas pueden no funcionar en Expo Go (Android).
-5. Repositorio, ramas, revisión y pipeline: **no están definidos**; se integrarán de cero.
+5. Repositorio en GitHub: una rama y una PR por spec con `main` protegida, por el MCP de GitHub y `@gestor-repo` (Art. XV); sin pipeline automatizado.
 
 ## Cómo se usa con OpenCode
 
