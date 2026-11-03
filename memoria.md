@@ -95,7 +95,7 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 | D-101 | Políticas POL-01…17 **confirmadas**; POL-02 pasa a **máximo 7 días** | Specs 006, 007 (backend y móvil) actualizadas |
 | D-102 | Categorías (POL-14): herramientas manuales, herramientas eléctricas, construcción y jardinería, movilidad (patines, patinetas, bicicletas), deportes, hogar, otros | Spec 005 |
 | D-103 | Valor declarado **no** visible a terceros | Spec 005 |
-| D-104 | Hosting gratuito: **Render** (`vaiven-staging` y `vaiven-prod`) | Specs 001 y 013 |
+| D-104 | **[REEMPLAZADA por D-115]** Hosting gratuito: Render (`vaiven-staging` y `vaiven-prod`) | Specs 001 y 013 |
 | D-105 | Identificador de paquete `mx.vaiven.app` (permanente tras publicar) | Spec móvil 002 y 013 |
 | D-106 | Meta original: primera versión pública en Google Play el 20 de nov (ver D-110). Solo Google Play; sin App Store | Specs 013; ROADMAP §1 |
 | D-107 | Reportes de contenido y filtro de texto pasan a **P1 no recortables** (política de contenido de usuarios de Google Play) | Spec 011 |
@@ -106,7 +106,10 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 | D-112 | ML = **recomendaciones** (spec 015): recomendador híbrido propio (coseno objeto-objeto + contenido) evaluado contra popularidad; IA = Gemini (spec 014). Ambas v1.1, 16–24 nov, con interruptores | ROADMAP §3; specs 014 y 015 |
 | D-113 | Se separa el monorepo en repositorios independientes (`vaiven-backend`, `vaiven-frontend` y `vaiven-landing-page`): las rutas `../` pasan a ser locales o a apuntar al repositorio hermano; ROADMAP.md y docs/ se copian en cada repositorio; enmienda PATCH, sin cambios de principios; constitución móvil **v1.1.1** | Constitución; AGENTS.md; specs |
 | D-114 | Se elimina todo lo relativo a repositorio, ramas, PR y pipeline: se integrará de cero. Todo va por OpenCode y MCP: la spec **001 pasa a ser «Servicios por MCP»** (MCP de Expo) y la arquitectura base es la 002. **La app no se despliega**: cada spec termina con «Verificación en Expo Go» contra el staging del backend (agente `probador-expo`, único con permiso para el MCP); la siguiente no empieza hasta que pase. Constitución **v1.2.0** (Art. XIV). Pendiente de revisión: la spec 013 (Google Play/EAS) | ROADMAP; constitution Art. XIV; specs 001 y 002; `.opencode/agents/probador-expo.md` |
-
+| D-115 | El backend pasa a **Azure** (VM con la API, Redis y MongoDB, sin nginx; D-116 y D-118 del backend). La app apunta con `EXPO_PUBLIC_API_URL` a `https://<host>:8443` (staging) y `https://<host>` (producción), siempre HTTPS con certificado válido; ya no hay arranque en frío de ~1 min, pero la VM puede estar caída o reiniciándose, así que se mantienen los estados de carga y reintento. Sin cambios en la app ni en el contrato | ROADMAP; backend constitution Art. XIII y XIV |
+| D-116 | La app **sí se compila y se publica**: EAS Build genera un **APK** (`preview`, instalación directa y demostración) y un **AAB** (`production`, Google Play). Lo que no existe es un servidor que desplegar. Las specs 002–012 se siguen cerrando con verificación en Expo Go; la compilación y la publicación son de la spec 013. Constitución 1.2.1 (PATCH) | constitution XIV.1; spec 013 |
+| D-117 | **Calendario fijado el 2 nov (el desarrollo arranca hoy):** 001–002 del 2 al 5 nov; primer AAB y día 1 de la prueba cerrada el 9 nov; día 14 el 22 nov; congelar la 1.0 el 22 nov y solicitar producción el 23 nov; publicación estimada 30 nov–7 dic (puede quedar después de la entrega); IA y ML (v1.1) del 23 nov al 1 dic; entrega 1–4 dic. Sustituye al plan del 28 oct | ROADMAP §1 y §3; specs 003–015 |
+| D-118 | **Repositorio en GitHub con MCP de GitHub:** una rama y una PR por spec, `main` protegida; solo el agente `gestor-repo` usa el MCP (token `GITHUB_PERSONAL_ACCESS_TOKEN`) y nunca fusiona ni borra; una persona revisa y fusiona. Sin pipeline automatizado. Constitución con el Art. XV. Tarea nueva en la spec 001 | constitution Art. XV; spec 001 |
 
 ## Integracion DevSecOps — 2026-11-02
 

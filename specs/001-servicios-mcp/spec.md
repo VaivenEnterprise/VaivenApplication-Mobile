@@ -10,7 +10,7 @@ Dejar listo el entorno para desarrollar y **probar la app en local con Expo Go**
 | # | Prio. | Historia |
 |---|---|---|
 | H-01 | P0 | Como persona del equipo, quiero abrir la app en Expo Go en mi teléfono con un comando, para probar mi trabajo sin compilar. |
-| H-02 | P0 | Como persona del equipo, quiero que la app apunte al backend de staging o al local, para trabajar sin cambiar código. |
+| H-02 | P0 | Como persona del equipo, quiero que la app apunte al backend de staging (VM de Azure, `https://<host>:8443`) o al local, para trabajar sin cambiar código. |
 | H-03 | P1 | Como persona del equipo, quiero que OpenCode use el MCP de Expo para consultar documentación y tomar capturas de la app en ejecución, para dejar evidencia de cada spec. |
 
 ## 3. Requisitos

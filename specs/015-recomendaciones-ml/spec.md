@@ -1,6 +1,6 @@
 # Spec 015 — Recomendaciones con ML (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 16–24 nov · **Depende de:** 005, 006 (móvil), contrato 015 (backend)
+- **Dueño:** MO-B · **Prioridad:** P1 · **Ventana:** 23 nov–1 dic · **Depende de:** 005, 006 (móvil), contrato 015 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

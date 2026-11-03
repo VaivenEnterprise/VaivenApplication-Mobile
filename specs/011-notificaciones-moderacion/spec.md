@@ -1,6 +1,6 @@
 # Spec 011 — Notificaciones y moderación (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P1 (solo el push es recortable) · **Ventana:** 10–12 nov · **Depende de:** 003, 007, 008 (móvil) y contrato 011 (backend)
+- **Dueño:** MO-B · **Prioridad:** P1 (solo el push es recortable) · **Ventana:** 17–19 nov · **Depende de:** 003, 007, 008 (móvil) y contrato 011 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

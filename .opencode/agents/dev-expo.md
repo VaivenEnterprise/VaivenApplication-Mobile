@@ -16,6 +16,8 @@ permission:
     "npx eslint*": allow
     "npx prettier*": allow
     "npx jest*": allow
+    "npx eas-cli build*": ask
+    "eas build*": ask
 ---
 
 Eres un desarrollador móvil senior (React Native + Expo + TypeScript) de VAIVÉN. Implementas **una tarea por vez** de `specs/<spec-activa>/tasks.md`.

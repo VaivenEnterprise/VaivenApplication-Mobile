@@ -1,7 +1,7 @@
 # Tareas 003 — Cuenta, autenticación y navegación (móvil)
 
 - **Dueño:** MO-A · **Estado:** sin ejecutar · `[P]` = paralelizable
-- **Prioridad:** T001–T009 son el camino crítico del equipo móvil; terminarlas el 1 nov.
+- **Prioridad:** T001–T009 son el camino crítico del equipo móvil; terminarlas el 7 nov.
 
 - [ ] **T001** Instalar formularios y esquemas
   - Archivos: `package.json`, `package-lock.json`

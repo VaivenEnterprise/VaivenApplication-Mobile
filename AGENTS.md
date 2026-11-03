@@ -45,6 +45,7 @@ Subagentes propios (`.opencode/agents/`):
 |---|---|---|
 | `spec-writer` | Redacta `spec.md`, `plan.md`, `tasks.md` y actualiza `memoria.md` | No (solo `specs/` y `memoria.md`) |
 | `dev-expo` | Implementa tareas en TypeScript/Expo siguiendo la constitución | Sí |
+| `gestor-repo` | Crea ramas, commits y PR en GitHub por MCP; único agente con permiso para el MCP de GitHub; nunca fusiona ni borra | No |
 | `probador-expo` | Verifica cada spec en Expo Go contra staging con el MCP de Expo; único agente con permiso para el MCP | No (solo `memoria.md` y evidencia) |
 | `qa-mobile` | Escribe y ejecuta pruebas Jest/RNTL, mide cobertura | Solo `*.test.ts(x)` |
 | `revisor-constitucion` | Verifica conformidad con la constitución | No |
@@ -63,8 +64,8 @@ Invocación: `@dev-expo implementa la tarea T006 de specs/002-arquitectura-base/
 
 ## 5b. MCP y verificación (Art. XIV)
 
-- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Solo `probador-expo` lo usa.**
-- La app **no se compila ni se despliega**: se prueba en Expo Go contra staging. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
+- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Trabajo humano mínimo:** registrarse en Expo, autenticar el MCP, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode. **Solo `probador-expo` lo usa.**
+- No hay servidor que desplegar: cada spec se prueba en Expo Go contra staging. La app **sí se compila** con EAS Build (APK `preview` y AAB `production`) en la spec 013, y los comandos `eas build` se ejecutan con aprobación humana. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
 
 ## 6. Comandos
 
@@ -103,3 +104,6 @@ La app necesita el backend en marcha. En emulador Android, `localhost` del equip
 ## 9. Alcance
 
 Specs `001` a `015` en `specs/`, en el orden y con los dueños de `ROADMAP.md`. Las tareas aún **no se ejecutan** hasta la fecha de arranque del calendario y la aprobación de cada spec.
+
+## Repositorio y PR (Art. XV)
+- Una rama por spec (`spec/NNN-nombre`) y una PR por spec; `main` protegida. Solo `@gestor-repo` usa el MCP de GitHub (token `GITHUB_PERSONAL_ACCESS_TOKEN`); nunca fusiona ni borra: una persona revisa y fusiona. Nunca se suben secretos.

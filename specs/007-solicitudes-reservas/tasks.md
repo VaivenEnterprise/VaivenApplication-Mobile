@@ -1,7 +1,7 @@
 # Tareas 007 — Solicitudes y reservas (móvil)
 
 - **Dueño:** MO-A · **Estado:** sin ejecutar · `[P]` = paralelizable
-- Hito: al terminar T010 ya existe el detalle con *slots* que 008, 009 y 010 necesitan. Terminarlo el **6 nov**.
+- Hito: al terminar T010 ya existe el detalle con *slots* que 008, 009 y 010 necesitan. Terminarlo el **11 nov**.
 
 - [ ] **T001** [P] Tipos, claves, textos y utilidades de fechas
   - Archivos: `src/features/bookings/{types.ts, keys.ts, dates.ts, dates.test.ts}`, `src/i18n/bookings.ts`, `src/i18n/index.ts` (una línea)

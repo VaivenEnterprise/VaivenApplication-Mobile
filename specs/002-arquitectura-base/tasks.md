@@ -210,7 +210,7 @@
 
 - [ ] **T029** Verificación en Expo Go contra staging (**la hace una persona** con `probador-expo`)
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/002/` (capturas)
-  - Agente: `probador-expo` · Depende de: T028, backend 002-T027
+  - Agente: `probador-expo` · Depende de: T028, backend 002-T031
   - Aceptación: con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go en un teléfono Android real; el diagnóstico muestra `/readyz` en verde; el MCP `expo` toma una captura; `docs/entorno-local.md` se sigue sin ayuda (001-CA-03). **La spec 003 no empieza hasta que esta tarea pase.**
   - Refs: RF-S4 · Art. XIV.4
 

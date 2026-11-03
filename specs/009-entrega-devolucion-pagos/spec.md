@@ -1,6 +1,6 @@
 # Spec 009 — Entrega, devolución y pagos (móvil)
 
-- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 8–11 nov · **Depende de:** 004, 007 (móvil) y contrato 009 (backend)
+- **Dueño:** MO-A · **Prioridad:** P0 · **Ventana:** 13–17 nov · **Depende de:** 004, 007 (móvil) y contrato 009 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

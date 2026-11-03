@@ -1,6 +1,6 @@
 # Spec 012 — Integración, pulido y entrega (móvil)
 
-- **Dueño:** todo el equipo (MO-A lidera integración y pruebas con 2 teléfonos; MO-B lidera documentación) · **Prioridad:** P0 · **Ventana:** 12–15 nov · **Depende de:** 001–011 (móvil) y 012 (backend)
+- **Dueño:** todo el equipo (MO-A lidera integración y pruebas con 2 teléfonos; MO-B lidera documentación) · **Prioridad:** P0 · **Ventana:** 19–22 nov · **Depende de:** 001–011 (móvil) y 012 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué
@@ -35,4 +35,4 @@ Publicación en tiendas, iOS firmado, modo oscuro completo, soporte de tabletas,
 
 ## 5. Preguntas abiertas
 - [NEEDS CLARIFICATION: paleta y logotipo definitivos (identificador visual); provisional: tokens neutros de 002.]
-- [NEEDS CLARIFICATION: ¿personas externas probarán la app en Expo Go antes del 20 nov? Define el alcance de `validacion.md`.]
+- [NEEDS CLARIFICATION: ¿personas externas probarán la app en Expo Go antes del 22 nov? Define el alcance de `validacion.md`.]

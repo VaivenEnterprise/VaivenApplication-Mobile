@@ -1,6 +1,6 @@
 # Spec 014 — Sugerencias con IA al publicar (móvil)
 
-- **Dueño:** MO-A (con MO-B en cumplimiento) · **Prioridad:** P1 · **Ventana:** 16–24 nov · **Depende de:** 004, 005 (móvil), contrato 014 (backend)
+- **Dueño:** MO-A (con MO-B en cumplimiento) · **Prioridad:** P1 · **Ventana:** 23 nov–1 dic · **Depende de:** 004, 005 (móvil), contrato 014 (backend)
 - **Constitución:** v1.2.0 · **Estado:** Borrador
 
 ## 1. Objetivo y por qué

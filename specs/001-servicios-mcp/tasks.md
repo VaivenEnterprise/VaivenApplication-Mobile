@@ -1,6 +1,7 @@
 # Tareas 001 — Servicios y entorno local con MCP de Expo (móvil)
 
 - **Dueño:** MO-B · **Estado:** sin ejecutar · `[P]` = paralelizable
+- **Lo único humano (Art. XIV.7):** registrarse en Expo, `opencode mcp auth expo`, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode con el MCP de Expo.
 - Esta spec no tiene tarea de verificación en Expo Go: todavía no existe la app (la primera es 002-T029).
 
 - [ ] **T001** Autenticar el MCP de Expo (**la hace una persona**)
@@ -21,11 +22,17 @@
   - Aceptación: pasos de arranque, tabla de URLs por plataforma, `EXPO_UNSTABLE_MCP_SERVER=1` y reconexión, limitaciones de Expo Go; solución a 3 errores comunes
   - Refs: RF-04
 
-- [ ] **T004** Revisión de conformidad
+- [ ] **T004** Repositorio en GitHub y MCP de GitHub (**persona** + `gestor-repo`)
+  - Archivos: `.gitignore`, `memoria.md` (solo anexar)
+  - Agente: — (la persona crea el repositorio, protege `main` y crea el token) + `gestor-repo` · Depende de: T001
+  - Aceptación: repositorio `vaiven-frontend` creado en GitHub con `main` protegida (PR obligatoria, sin push directo ni force-push); `GITHUB_PERSONAL_ACCESS_TOKEN` (permisos mínimos, limitado a este repositorio) definido como variable del sistema y OpenCode reiniciado; `opencode mcp list` muestra `github` conectado; un agente de desarrollo rechaza una herramienta de GitHub y `gestor-repo` la ejecuta; `.gitignore` excluye `.env`, `*.pem` y claves; `gestor-repo` abre una PR de prueba sin secretos y una persona la revisa y la fusiona
+  - Refs: Art. XV
+
+- [ ] **T005** Revisión de conformidad
   - Archivos: ninguno (solo informe)
-  - Agente: `revisor-constitucion` · Depende de: T002, T003
+  - Agente: `revisor-constitucion` · Depende de: T002, T003, T004
   - Aceptación: veredicto **CONFORME**; sin secretos; hito H0 (móvil) marcado
   - Refs: DoD
 
-| Total | 4 tareas |
+| Total | 5 tareas |
 |---|---|
