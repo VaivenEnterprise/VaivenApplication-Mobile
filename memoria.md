@@ -106,3 +106,11 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 | D-112 | ML = **recomendaciones** (spec 015): recomendador híbrido propio (coseno objeto-objeto + contenido) evaluado contra popularidad; IA = Gemini (spec 014). Ambas v1.1, 16–24 nov, con interruptores | ROADMAP §3; specs 014 y 015 |
 | D-113 | Se separa el monorepo en repositorios independientes (`vaiven-backend`, `vaiven-frontend` y `vaiven-landing-page`): las rutas `../` pasan a ser locales o a apuntar al repositorio hermano; ROADMAP.md y docs/ se copian en cada repositorio; enmienda PATCH, sin cambios de principios; constitución móvil **v1.1.1** | Constitución; AGENTS.md; specs |
 | D-114 | Se elimina todo lo relativo a repositorio, ramas, PR y pipeline: se integrará de cero. Todo va por OpenCode y MCP: la spec **001 pasa a ser «Servicios por MCP»** (MCP de Expo) y la arquitectura base es la 002. **La app no se despliega**: cada spec termina con «Verificación en Expo Go» contra el staging del backend (agente `probador-expo`, único con permiso para el MCP); la siguiente no empieza hasta que pase. Constitución **v1.2.0** (Art. XIV). Pendiente de revisión: la spec 013 (Google Play/EAS) | ROADMAP; constitution Art. XIV; specs 001 y 002; `.opencode/agents/probador-expo.md` |
+
+
+## Integracion DevSecOps — 2026-11-02
+
+- [CI] Por solicitud expresa del responsable se prepara la integracion de ramas, PRs y seguridad que habia quedado fuera el 2026-11-01. Spec independiente: specs/017-devsecops/. No se modifica constitution.md ni se ejecutan specs funcionales.
+- [CI] Herramientas exclusivas de CI: GitHub Actions fijadas por SHA, Gitleaks v8.30.1 (checksum verificado), CodeQL v4. Sin dependencias nuevas de aplicacion.
+- [CI] Revisores indicados: JesusTrz (escritura) y JosephYanez27 (lectura al preparar el cambio). El segundo necesita escritura para aprobaciones obligatorias y CODEOWNERS. Ruleset y ajustes administrativos quedan pendientes hasta que se apliquen y verifiquen.
+- [CI] Estado inicial: documentacion sin aplicacion; CI informa las pruebas no aplicables y ejecuta politica/secretos. Despliegue Render por MCP y pruebas en Expo Go se conservan.
