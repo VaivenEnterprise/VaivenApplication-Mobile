@@ -117,3 +117,46 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 - [CI] Herramientas exclusivas de CI: GitHub Actions fijadas por SHA, Gitleaks v8.30.1 (checksum verificado), CodeQL v4. Sin dependencias nuevas de aplicacion.
 - [CI] Revisores indicados: JesusTrz (escritura) y JosephYanez27 (lectura al preparar el cambio). El segundo necesita escritura para aprobaciones obligatorias y CODEOWNERS. Ruleset y ajustes administrativos quedan pendientes hasta que se apliquen y verifiquen.
 - [CI] Estado inicial: documentacion sin aplicacion; CI informa las pruebas no aplicables y ejecuta politica/secretos. Despliegue Render por MCP y pruebas en Expo Go se conservan.
+
+## Prototipo 016 — 2026-11-07
+
+- [016] T001–T002 completadas: scaffold Expo + Router, tokens, i18n `es-MX` y componentes UI base.
+- [016] `LoadingState` y `ErrorState` se agregan a T002 porque el Art. X.2 los exige en `src/components/ui/`.
+- [016] ESLint 10 rompe `eslint-plugin-react` de `eslint-config-expo` 58; se fijó `eslint@9.39.5`.
+- [016] `jest-expo` 58 exige `@react-native/jest-preset` (instalado 0.88.1). Jest ignora `.github/` porque esas pruebas usan `node:test`.
+- [016] `@testing-library/react-native` 14 hace `render` y `fireEvent` asíncronos: usar `await`.
+- [016] `tsconfig` incluye `"types": ["jest"]` para que `tsc` reconozca las pruebas.
+- [016] T003–T011 completadas: mocks, auth, pestañas, Inicio, Explorar, Asistente, Cuenta/solicitudes y detalle de herramienta.
+- [016] `expo-asset` es peer de `expo-font`/`@expo/vector-icons`; se instaló con `expo install` para que Jest y la app resuelvan los iconos.
+- [016] Pruebas de render de las cuatro pestañas y del detalle: 20 pruebas en verde, sin conexión real.
+- [016] RN 0.88 tipa el ref de `ScrollView` con `ComponentRef<typeof ScrollView>`, no con el tipo del componente.
+- [016] El prototipo vive en `src/app/prototipo/`; las rutas de acceso son `/prototipo/login` y `/prototipo/register`, y el detalle `/prototipo/herramienta/[id]`.
+- [016] Expo Router toma todo archivo dentro de `src/app` como ruta: las pruebas de pantallas se movieron a `src/__tests__/prototipo.test.tsx` para no romper el bundle.
+- [016] Verificación final: `npx expo start` arranca Metro y `npx expo export --platform android` genera el bundle sin errores.
+- [016] Guía manual de smoke test en `specs/016-maqueta-mock/smoke-test.md`.
+- [016] Pruebas de pantallas aíslan `@expo/vector-icons` con mock y esperan `await screen.unmount()`; `expo-asset` queda en `~58.0.20` y T011 en verde.
+
+## Prototipo 016 — Cierre T012 (2026-11-07)
+
+- [016] T012 completada: Inicio invitado/autenticado, 3 tabs (Inicio, Explorar, Mi Perfil), FAB naranja y Asistente apilado.
+- [016] El Asistente se movió a `src/app/prototipo/asistente.tsx`; T005/T008 quedan como historial. La ruta `/prototipo/asistente` se abre desde el FAB.
+- [016] Login y registro se rehacen con `TextField`/`Checkbox`/`TextLink`: Compartir, ver/ocultar contraseña, términos y CTAs terracota/verde.
+- [016] Nuevos componentes: `KitItem`, `WorkCard`, `ProjectToolRow`, `NeighborMap` y `AssistantFab`; `ToolCard` usa `ToolIcon` y `ProjectCard` muestra conteo, herramientas y selección.
+- [016] Nuevos datos y dominio: `CompletedWork`, `src/mocks/works.ts` y `findProjectForToolId`; el detalle resuelve id de proyecto o de herramienta.
+- [016] El mapa es simulado: pines numerados para herramientas con `toolId`; los proyectos sin herramienta vinculada muestran el estado vacío.
+- [016] `Pedir` cambia a `Solicitada` en memoria; aceptar/rechazar solicitudes sigue usando `useRequests`.
+- [016] `sizes.avatar` reemplaza el literal 56 en Mi Perfil; se añadieron tokens terracota/naranja y tamaños de avatar/FAB/íconos/mapa/pin.
+- [016] Verificación T012: `npm run typecheck`, `npm run lint` y **24 pruebas** en verde; `npx expo start --port 8089` arranca Metro y el export Android genera el bundle sin errores.
+
+## Prototipo 016 — Validación de auth T013 (2026-11-07)
+
+- [016] T013 completada: Login y Registro usan `react-hook-form` + `zodResolver`; no se agregaron dependencias.
+- [016] Esquemas en `src/utils/schemas.ts` por solicitud explícita del responsable. Al implementar la spec 003 se consolidarán en `features/auth/schemas.ts` para respetar la frontera de feature.
+- [016] Zod 4: `z.email()` reemplaza `z.string().email()`; los mensajes custom usan `ctx.addIssue({ code: 'custom', message })` y `refine(fn, mensaje)`.
+- [016] El correo se normaliza con `.trim().toLowerCase()`, el nombre colapsa espacios y el teléfono se recorta; la contraseña no se altera.
+- [016] `mode: 'onBlur'` + `reValidateMode: 'onChange'`: no hay errores antes de interactuar y se revalidan al corregir.
+- [016] Los términos ya no deshabilitan el CTA: al enviar se muestra el error si no están aceptados.
+- [016] `mockAuthRequest` simula 500 ms; `Button loading` bloquea dobles envíos con `ActivityIndicator`.
+- [016] `TextField` y `Checkbox` exponen error con `accessibilityHint` y `accessibilityLiveRegion="polite"`.
+- [016] Pruebas nuevas: `src/__tests__/auth-schemas.test.ts` y casos válidos/inválidos de Login/Registro en `prototipo.test.tsx`; **35 pruebas** en verde.
+- [016] `jest.config.js` incluye `src/utils/**` en cobertura y `testTimeout: 10000` para el primer render bajo cobertura.
