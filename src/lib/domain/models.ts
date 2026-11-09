@@ -8,6 +8,16 @@ export type RequestDay = 'today' | 'yesterday';
 
 export type ChatRole = 'assistant' | 'user';
 
+export const toolStatuses: readonly ToolStatus[] = ['available', 'lent'];
+
+export const toolCategories: readonly ToolCategory[] = ['tools', 'garden', 'kitchen'];
+
+export const requestStatuses: readonly RequestStatus[] = ['pending', 'accepted', 'rejected'];
+
+export const requestDays: readonly RequestDay[] = ['today', 'yesterday'];
+
+export const chatRoles: readonly ChatRole[] = ['assistant', 'user'];
+
 export interface User {
   id: string;
   name: string;

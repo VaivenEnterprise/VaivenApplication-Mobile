@@ -9,7 +9,10 @@ import HomeScreen from '@/app/prototipo/(tabs)/index';
 import AssistantScreen from '@/app/prototipo/asistente';
 import ProjectDetailScreen from '@/app/prototipo/herramienta/[id]';
 import { AuthProvider } from '@/features/auth/AuthProvider';
+import { NeighborMap } from '@/features/tools/components/NeighborMap';
+import { ProjectToolRow } from '@/features/tools/components/ProjectToolRow';
 import { esMX as t } from '@/i18n/es-MX';
+import type { Tool } from '@/lib/domain/models';
 import { mariana } from '@/mocks/users';
 
 const mockRouter = {
@@ -74,6 +77,15 @@ describe('pantallas del prototipo', () => {
     expect(screen.getByText('Nivel de burbuja')).toBeTruthy();
     expect(screen.getByText('Juego de brocas')).toBeTruthy();
     expect(screen.getByText(t.tools.status.lent)).toBeTruthy();
+
+    await fireEvent.press(screen.getByRole('button', { name: t.explore.filters.tools }));
+    expect(screen.getByText('Taladro percutor')).toBeTruthy();
+
+    await fireEvent.press(screen.getByRole('button', { name: t.explore.filters.garden }));
+    expect(screen.getByText(t.explore.empty)).toBeTruthy();
+
+    await fireEvent.press(screen.getByRole('button', { name: t.explore.filters.kitchen }));
+    expect(screen.getByText(t.explore.empty)).toBeTruthy();
   });
 
   it('Asistente responde a un mensaje', async () => {
@@ -209,5 +221,80 @@ describe('pantallas del prototipo', () => {
     await renderScreen(<ProjectDetailScreen />);
 
     expect(screen.getByText(t.tools.notFound)).toBeTruthy();
+  });
+});
+
+describe('componentes de herramientas', () => {
+  const lentTool: Tool = {
+    category: 'tools',
+    distanceBlocks: 4,
+    id: 'tool-bits',
+    name: 'Juego de brocas',
+    ownerName: 'Luis',
+    status: 'lent',
+  };
+  const availableTool: Tool = {
+    category: 'tools',
+    distanceBlocks: 1,
+    id: 'tool-level',
+    name: 'Nivel de burbuja',
+    ownerName: 'Ana',
+    status: 'available',
+  };
+
+  it('NeighborMap muestra el estado vacío sin vecinos', async () => {
+    await render(<NeighborMap neighbors={[]} />);
+
+    expect(screen.getByText(t.tools.noNeighbors)).toBeTruthy();
+    expect(screen.getByLabelText(t.tools.mapLabel)).toBeTruthy();
+  });
+
+  it('NeighborMap dibuja los pines y reutiliza posiciones', async () => {
+    await render(
+      <NeighborMap
+        neighbors={[
+          { distanceBlocks: 1, id: 'n1', name: 'Ana', number: 1 },
+          { distanceBlocks: 2, id: 'n2', name: 'Beto', number: 2 },
+          { distanceBlocks: 3, id: 'n3', name: 'Caro', number: 3 },
+          { distanceBlocks: 4, id: 'n4', name: 'Dani', number: 4 },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('Ana')).toBeTruthy();
+    expect(screen.getByText('Dani')).toBeTruthy();
+    expect(screen.getByText(t.tools.distance(4))).toBeTruthy();
+  });
+
+  it('ProjectToolRow pide una herramienta sin coincidencia', async () => {
+    const onRequest = jest.fn();
+
+    await render(<ProjectToolRow name="Martillo" requested={false} onRequest={onRequest} />);
+
+    expect(screen.getByText('Martillo')).toBeTruthy();
+    expect(screen.queryByText(t.tools.requested)).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: t.tools.request }));
+    expect(onRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('ProjectToolRow muestra datos y estado prestada', async () => {
+    await render(
+      <ProjectToolRow name="Brocas" tool={lentTool} requested={false} onRequest={jest.fn()} />,
+    );
+
+    expect(screen.getByText('Juego de brocas')).toBeTruthy();
+    expect(screen.getByText(t.tools.owner('Luis'))).toBeTruthy();
+    expect(screen.getByText(t.tools.distance(4))).toBeTruthy();
+    expect(screen.getByText(t.tools.status.lent)).toBeTruthy();
+  });
+
+  it('ProjectToolRow muestra el estado solicitada', async () => {
+    await render(
+      <ProjectToolRow name="Nivel" tool={availableTool} requested onRequest={jest.fn()} />,
+    );
+
+    expect(screen.getByText(t.tools.requested)).toBeTruthy();
+    expect(screen.getByText(t.tools.owner('Ana'))).toBeTruthy();
+    expect(screen.queryByRole('button', { name: t.tools.request })).toBeNull();
   });
 });
