@@ -29,19 +29,19 @@
 - [ ] **T005** [P] Componentes del chat
   - Archivos: `src/features/chat/components/{MessageBubble,DaySeparator,Composer,ChatHeader,ConversationRow}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T001, 002-T015
-  - Aceptación: burbujas propias/ajenas con hora; separadores por día; `Composer` con contador 1,000, bloqueo al enviar y estado «no enviado/reintentar»; accesible
+  - Aceptación: burbujas propias/ajenas con hora; separadores por día; `Composer` con contador 1,000, bloqueo al enviar y estado «no enviado/reintentar»; accesible · Burbujas, separadores, composer y `QuickReplies` según spec §7.2
   - Refs: RF-02, RF-07
 
 - [ ] **T006** Lista de conversaciones e insignia
   - Archivos: `src/features/chat/screens/ConversationsScreen.tsx`, `src/app/(tabs)/mensajes/index.tsx`, `src/features/chat/useUnreadBadge.ts`, pruebas
   - Agente: `dev-expo` · Depende de: T003, T004, T005, 003-T008
-  - Aceptación: lista con no leídos; vacío («Tus conversaciones aparecen cuando aceptan una solicitud»); insignia en la pestaña mediante opción del layout de 003 (**una línea** acordada con MO-A)
+  - Aceptación: lista con no leídos; vacío («Tus conversaciones aparecen cuando aceptan una solicitud»); insignia en el `MessagesButton` del encabezado de Inicio mediante su *prop* `badgeCount` (de 003-T014; **una línea** acordada con MO-A) · Diseño: spec §7.1; la insignia va en el `MessagesButton`
   - Refs: RF-01
 
 - [ ] **T007** Pantalla de chat
   - Archivos: `src/features/chat/screens/ChatScreen.tsx`, `src/app/chat/[id].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, T003, T004, T005
-  - Aceptación: CA-01, CA-04, CA-05, CA-06; lista invertida con carga de anteriores; marca leído al abrir; aviso si `canWrite` es falso
+  - Aceptación: CA-01, CA-04, CA-05, CA-06; lista invertida con carga de anteriores; marca leído al abrir; aviso si `canWrite` es falso · Diseño: spec §7.2
   - Refs: RF-02, RF-05…RF-08
 
 - [ ] **T008** Botón «Abrir chat» en el detalle de la reserva
@@ -65,7 +65,7 @@
 - [ ] **T011** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/008/` (capturas)
   - Agente: `probador-expo` · Depende de: T010 (y todas las anteriores `[x]`) y backend 008-T010 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 11 tareas |

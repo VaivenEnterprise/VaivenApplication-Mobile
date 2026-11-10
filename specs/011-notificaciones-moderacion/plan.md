@@ -43,3 +43,6 @@ La registración de push y la respuesta a toques se montan en un componente `Not
 | VI | Sin secretos; datos mínimos |
 | IX | Sin consultas en segundo plano |
 | XIII | Una línea por punto de conexión, acordada con la dueña del archivo |
+
+## 6. Diseño
+Las pantallas siguen la spec §7. El aviso en primer plano usa `Banner` de `ui`; `ModerationNotice` y `ReportSheet` se montan por *slots* (005, 008, 003) sin editar sus archivos.

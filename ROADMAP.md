@@ -6,6 +6,8 @@
 
 > **Nota (2026-11-02, Azure):** lo **obligatorio** es usar **Azure** (o AWS; se eligió Azure) y **Redis**. El backend (staging y producción) corre en **una VM gratuita de Azure** con Docker Compose: la API en Go (una réplica) con **MongoDB** (replica set de un nodo) y **Redis** (límite de tasa y caché). **HTTPS es forzoso** y lo sirve la propia API con un certificado de Let's Encrypt emitido por `certbot`; **no hay nginx ni balanceador** (decisión del 2 de nov: la VM tiene ~1 GiB de RAM y la app publicada exige HTTPS, no balanceo). Atlas y Render dejan de usarse para el backend; **siguen igual** Cloudinary y la landing en Render. **Principio de trabajo (indicado por el profesor):** la persona solo se registra y hace configuración mínima; **todo lo demás lo ejecuta OpenCode con los MCP** (Azure, Cloudinary, Render, Expo), y `az`/SSH solo para lo que un MCP no cubra. El despliegue no depende del repositorio: la imagen se construye en la máquina de quien despliega y viaja a la VM por SSH. **Costos:** una sola excepción aceptada, la IP pública estándar (≈ 3–4 USD/mes). Constitución del backend v1.4.0 (Art. XIII reescrito y Art. XIV nuevo).
 
+> **Nota (2026-11-09):** la prioridad inmediata es **login + Inicio funcional con API** (ver `docs/ruta-critica-login-inicio.md`). La spec 001 es **opcional** (la app corre solo en local y no se usa el MCP de Expo). La publicación en Google Play (spec 013) queda en pausa mientras no haya producción.
+
 > Plan maestro: backend y móvil specs `001` a `013`, y el proyecto `landing/` (L001–L002). Si este archivo contradice una constitución, gana la constitución.
 > Última actualización: 2026-11-02 · Constituciones backend v1.4.0, móvil v1.2.1, landing v1.1.0 · Decisiones de producto confirmadas (§8)
 
@@ -71,7 +73,7 @@ Prioridad: **P0** = sin esto no hay app · **P1** = esperado · **P2** = recorta
 | Spec | Nombre | Qué entrega | Dueñas | Prio. | Depende de | Ventana |
 |---|---|---|---|---|---|---|
 | 001 | **Infraestructura en Azure y servicios** | VM de Azure (talla gratuita elegida por región disponible) con MongoDB, Redis y certificado HTTPS; Cloudinary; todo por MCP de Azure + `az` desde OpenCode (móvil: Expo Go + MCP de Expo) | BE-B / MO-B | P0 | — | 2–3 nov |
-| 002 | Arquitectura base | Esqueleto de backend y app; primer despliegue a staging (backend) y primera verificación en Expo Go (móvil) | repartida | P0 | 001 | 3–5 nov |
+| 002 | Arquitectura base | Esqueleto de backend y app; primer despliegue a staging (backend) y primera verificación en Expo Go (móvil) | repartida | P0 | — (001 opcional) | 3–5 nov |
 | 003 | Cuenta y autenticación | Registro, login, sesión, perfil, baja; concha de navegación | BE-A / MO-A | P0 | 002 | 5–7 nov |
 | 004 | Imágenes | Firmas de subida, selector y subida de fotos | BE-B / MO-B | P0 | 001, 003 (auth) | 5–7 nov |
 | 005 | Objetos | Publicar, editar, pausar, precio sugerido | BE-A / MO-A | P0 | 003, 004 | 8–10 nov |
@@ -128,7 +130,7 @@ Las dependencias "parciales" se resuelven con **puertos vacíos** (§4) y contra
 | `auth` (middleware, `RequireRole`) | Identidad en el contexto | 003 | — |
 | `cmd/api/modules.go` | Registro de módulos (1 línea por spec) | 003 | — |
 | `api/paths/<modulo>.yaml` | Contrato por módulo | primera tarea de cada spec | — |
-| Concha de navegación móvil (`_layout`, pestañas) | 5 pestañas con marcadores | 003 | — |
+| Concha de navegación móvil (`_layout`, pestañas) | 5 pestañas (Inicio, Explorar, Mis objetos, Actividad, Perfil) con marcadores, más la ruta Mensajes oculta | 003 | — |
 | Componentes `MoneyInput`, `RemoteImage`, `PhotoPicker`, `StatusBadge` | UI compartida | 004 (`RemoteImage`, `PhotoPicker`), 005 (`MoneyInput`), 007 (`StatusBadge`) | — |
 
 ## 5. Reparto de la spec 002 (arquitectura base)

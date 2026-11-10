@@ -18,7 +18,7 @@
 - [ ] **T003** Fila y tarjeta
   - Archivos: `src/features/recommendations/components/{RecommendedRow,RecommendedCard}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, 004-T007, 002-T015
-  - Aceptación: carrusel horizontal con *skeleton*, motivo en una línea, accesible; no se muestra vacía
+  - Aceptación: carrusel horizontal con *skeleton*, motivo en una línea, accesible; no se muestra vacía · Diseño: spec §7.1
   - Refs: RF-01, RF-05, RNF-01 · P-04
 
 - [ ] **T004** Integración por *slots* en Explorar y en el detalle
@@ -30,7 +30,7 @@
 - [ ] **T005** Borrar historial en Perfil
   - Archivos: `src/features/recommendations/components/ClearHistoryRow.tsx`, prueba
   - Agente: `dev-expo` · Depende de: T002, 003-T008
-  - Aceptación: fila por *slot* `renderExtraRows`; confirmación; CA-03
+  - Aceptación: fila por *slot* `renderExtraRows`; confirmación; CA-03 · Diseño: spec §7.2
   - Refs: RF-04
 
 - [ ] **T006** Prueba del flujo
@@ -48,7 +48,7 @@
 - [ ] **T008** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/015/` (capturas)
   - Agente: `probador-expo` · Depende de: T007 (y todas las anteriores `[x]`) y backend 015-T011 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 8 tareas |

@@ -18,7 +18,7 @@
 - [ ] **T003** Componente `SuggestionBanner`
   - Archivos: `src/features/ai-suggestions/components/{SuggestionBanner.tsx, SuggestionBanner.test.tsx}`, `src/features/ai-suggestions/index.ts`
   - Agente: `dev-expo` · Depende de: T002, 002-T015
-  - Aceptación: botón «Sugerir con IA» con aviso; tarjeta con **Usar / Editar / Descartar**; accesible; CA-01, CA-02
+  - Aceptación: botón «Sugerir con IA» con aviso; tarjeta con **Usar / Editar / Descartar**; accesible; CA-01, CA-02 · Diseño: spec §7.2
   - Refs: RF-01, RF-03, RNF-01 · P-03
 
 - [ ] **T004** Integración en el formulario por *slot*
@@ -48,7 +48,7 @@
 - [ ] **T008** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/014/` (capturas)
   - Agente: `probador-expo` · Depende de: T007 (y todas las anteriores `[x]`) y backend 014-T009 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 8 tareas |

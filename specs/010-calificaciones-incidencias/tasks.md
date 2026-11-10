@@ -12,7 +12,7 @@
 - [ ] **T002** [P] Componentes de estrellas y resumen
   - Archivos: `src/features/ratings/components/{StarRating,RatingSummary,RatingCard}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: 002-T015
-  - Aceptación: `StarRating` editable y de solo lectura, accesible (valor leído); `RatingSummary` con 1 decimal o «Sin calificaciones» (P-05)
+  - Aceptación: `StarRating` editable y de solo lectura, accesible (valor leído); `RatingSummary` con 1 decimal o «Sin calificaciones» (P-05) · `RatingStars` ya existe en `ui` (002-T030): aquí solo `RatingSummary` y `RatingCard` (spec §7.2)
   - Refs: RF-03 · P-01
 
 - [ ] **T003** API y hooks de calificaciones
@@ -24,13 +24,13 @@
 - [ ] **T004** Formulario y tarjeta «Calificar» en la reserva
   - Archivos: `src/features/ratings/components/RatingForm.tsx`, `src/features/ratings/components/RateBookingCard.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, T003
-  - Aceptación: CA-01, CA-02; estados: puede calificar / ya calificó / ventana vencida / no aplica
+  - Aceptación: CA-01, CA-02; estados: puede calificar / ya calificó / ventana vencida / no aplica · Tarjeta y hoja de calificación con chips rápidos según spec §7.1 (CA-07, CA-08)
   - Refs: RF-01, RF-02, RF-08
 
 - [ ] **T005** Reputación en perfiles y tarjetas
   - Archivos: `src/features/ratings/components/{ReputationSection,RatingsList}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, T003, 003-T010
-  - Aceptación: CA-03; lista paginada; vacío «Aún sin calificaciones»
+  - Aceptación: CA-03; lista paginada; vacío «Aún sin calificaciones» · Diseño: spec §7.2
   - Refs: RF-03, RF-04
 
 - [ ] **T006** Registro de *slots* de calificaciones
@@ -54,13 +54,13 @@
 - [ ] **T009** Formulario para reportar una incidencia
   - Archivos: `src/features/incidents/components/{IncidentForm,ReasonPicker}.tsx`, `src/features/incidents/screens/ReportIncidentScreen.tsx`, `src/app/incidencia/nueva/[bookingId].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T008, 004-T008
-  - Aceptación: motivo, descripción, hasta 5 fotos `evidence`; texto de qué ocurrirá (RF-06); éxito lleva al detalle
+  - Aceptación: motivo, descripción, hasta 5 fotos `evidence`; texto de qué ocurrirá (RF-06); éxito lleva al detalle · `ReasonPicker` en mosaicos y pantalla según spec §7.3
   - Refs: RF-05, RF-06
 
 - [ ] **T010** Mis incidencias y detalle
   - Archivos: `src/features/incidents/components/{IncidentCard,IncidentSection}.tsx`, `src/features/incidents/screens/{MyIncidentsScreen,IncidentDetailScreen}.tsx`, `src/app/incidencias.tsx`, `src/app/incidencia/[id].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T008
-  - Aceptación: CA-04, CA-05; evidencia con URL firmada; notas visibles y respuesta final
+  - Aceptación: CA-04, CA-05; evidencia con URL firmada; notas visibles y respuesta final · Diseño: spec §7.4
   - Refs: RF-07
 
 - [ ] **T011** Registro de *slots* de incidencias
@@ -84,7 +84,7 @@
 - [ ] **T014** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/010/` (capturas)
   - Agente: `probador-expo` · Depende de: T013 (y todas las anteriores `[x]`) y backend 010-T012 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 14 tareas |

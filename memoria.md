@@ -117,3 +117,35 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 - [CI] Herramientas exclusivas de CI: GitHub Actions fijadas por SHA, Gitleaks v8.30.1 (checksum verificado), CodeQL v4. Sin dependencias nuevas de aplicacion.
 - [CI] Revisores indicados: JesusTrz (escritura) y JosephYanez27 (lectura al preparar el cambio). El segundo necesita escritura para aprobaciones obligatorias y CODEOWNERS. Ruleset y ajustes administrativos quedan pendientes hasta que se apliquen y verifiquen.
 - [CI] Estado inicial: documentacion sin aplicacion; CI informa las pruebas no aplicables y ejecuta politica/secretos. Despliegue Render por MCP y pruebas en Expo Go se conservan.
+
+## Rediseño visual — 2026-11-09
+
+- [DISEÑO] Se adopta el diseño de Stitch (inicio de sesión, registro, inicio) como lenguaje visual de la app. Referencia en `docs/diseno/referencia/`. Cambia solo presentación: no se altera ningún contrato ni regla de negocio.
+- [DISEÑO] **D-119** Tokens v1 (terracota `#C24E24`, verde `#1B7A57`, crema `#FAF6F0`, Plus Jakarta Sans) en spec 002 plan §4.2; reemplazan a los provisionales y resuelven la pregunta abierta de paleta y tipografía. Se unifican los dos tonos de marca que mostraban las capturas (coral en inicio de sesión, café en registro).
+- [DISEÑO] **D-120** Navegación: la barra muestra Inicio, Explorar, Mis objetos, Actividad y Perfil. **Mensajes** queda como ruta de pestaña oculta (`href: null`) con acceso desde el encabezado de Inicio; sus archivos de la spec 008 no cambian de ruta. Requiere enmienda PATCH al Art. XIII.3 de la constitución: propuesta en `docs/propuesta-enmienda-xiii3.md` (la constitución no se tocó).
+- [DISEÑO] **D-121** Inicio es estático con marcadores (`SlotPlaceholder`); el botón de asistente (✦) queda reservado para la spec 014.
+- [DISEÑO] **D-122** No se agrega cambio ni recuperación de contraseña. No se muestran «Compartir», «¿Olvidaste tu contraseña?», «Explorar la app» ni el campo Teléfono del registro (spec 003 §5).
+- [DISEÑO] Dependencias visuales registradas (spec 002 plan §5): `expo-font`, `@expo-google-fonts/plus-jakarta-sans`, `expo-linear-gradient`, `react-native-svg`, `@expo/vector-icons`. Instalar con `npx expo install`; se instalan en 002-T006.
+- [DISEÑO] Archivos tocados: specs 002 (spec, plan, tasks), 003 (spec, plan, tasks) y 008 (spec, tasks); ROADMAP §4 (una fila). Tarea nueva: 003-T014 (Inicio estático).
+
+## Diseño de las demás vistas — 2026-11-09
+
+- [DISEÑO] Se agrega una sección «Diseño de pantallas» (§7) en las specs 003 a 015 con el mismo lenguaje de Stitch (spec 002 §9). Regla general: poco texto, una acción principal por pantalla, hojas inferiores para decisiones cortas.
+- [DISEÑO] **D-123** Búsqueda por problema («necesito colgar un cuadro»): el catálogo de proyectos (herramientas y pasos) va **empaquetado en la app**, provisional (spec 006 §6): sin contrato nuevo. `matchProjects` es local y puro. Alternativa pendiente: llevarlo al backend.
+- [DISEÑO] **D-124** Flujo de proyecto (spec 007 §7.1): herramientas → persona más cercana (API de 006) → mapa → solicitar → paso a paso. El avance vive solo en memoria de la sesión (pregunta abierta en 007 §6).
+- [DISEÑO] **D-125** Mapa **esquemático** (sin teselas, sin claves, sin dependencia nueva): solo zonas aproximadas. Un mapa real queda fuera de alcance.
+- [DISEÑO] **D-126** Del diseño de Stitch **no se muestra** lo que contradice el documento de idea: depósito reembolsable y «total a pagar hoy», entrega a domicilio con envío, «identidad verificada», «Rentar ahora/Confirmar renta» (se usa «Solicitar»), «Enviar mensaje» antes de solicitar y calles con nombre (007 §7.6). Si el equipo decide incluir alguno, requiere cambio de política y de contrato, no solo de diseño.
+- [DISEÑO] **D-127** Calificación estilo apps de viajes (010 §7.1): chips rápidos que se agregan al comentario; sin cambios de contrato. Motivos de incidencia provisionales (010 §6).
+- [DISEÑO] **D-128** Chat: respuestas rápidas que solo rellenan el campo (008 RF-11). Entrega: la pantalla del QR consulta la reserva cada 5 s en primer plano (009 RF-12).
+- [DISEÑO] **D-129** Marca (013 §7): el ícono actual se conserva como provisional; se fija dirección para mejorarlo sin tocar la ficha.
+- [DISEÑO] Componentes de interacción nuevos en `ui` (002-T030): `BottomSheet`, `SearchBar`, `Avatar`, `ListRow`, `ProgressBar`, `SegmentedControl`, `RatingStars`, `Skeleton`, `Banner`. Tareas nuevas: 002-T030, 006-T011, 007-T014 y 007-T015. Sin dependencias nuevas de paquetes.
+- [DISEÑO] Referencias de pantalla del flujo de proyecto en `docs/diseno/referencia/` (04 a 08).
+- [DISEÑO] **D-130** (9 nov, por delegación de la persona responsable: libertad siempre que no afecte el objetivo ni el desarrollo) Se adoptan como **definitivas** las recomendaciones de D-123 a D-126: catálogo de proyectos empaquetado, mapa esquemático, avance en memoria y exclusión de lo que contradice el documento de idea. Razón: no dependen del backend, no agregan dependencias y se pueden cambiar sin rehacer pantallas.
+- [DISEÑO] Siguen **pendientes** solo dos puntos que dependen de otros: los 6 motivos de incidencia (se alinean con el contrato 010 del backend cuando se publique) y la aprobación de la enmienda PATCH al Art. XIII.3 (`docs/propuesta-enmienda-xiii3.md`; la constitución no se modifica sin aprobación humana).
+
+## Prioridad: login e Inicio funcionales — 2026-11-09
+
+- [DISEÑO] **D-131** La spec 001 pasa a **opcional**: la app corre solo en local y no se usa el MCP de Expo (el equipo trabaja con Claude). Nadie depende de ella; se quita `001-T002` de las dependencias de 002-T024. Omitidas 001-T001 y 001-T004.
+- [DISEÑO] **D-132** Las tareas «Verificación en Expo Go» de las specs 002 a 015 se hacen **a mano o con Claude contra el backend local**; `probador-expo` y el MCP quedan opcionales. El Art. XIV de la constitución dice otra cosa: propuesta de enmienda en `docs/propuesta-enmienda-xiv-local.md` (la constitución no se tocó).
+- [DISEÑO] **D-133** **Inicio es funcional** desde la primera entrega: `GET /me` y `GET /items?limit=6` con su propio `api.ts` en `features/home`, proyectos del catálogo local y marcadores para lo que aún no tiene API (003 §7.3, T014). La ruta mínima está en `docs/ruta-critica-login-inicio.md`.
+- [DISEÑO] **D-134** `006-T011` (catálogo y `PopularProjects`) ya no depende de `006-T001` para poder adelantarse. `002-T030` puede entregarse en dos partes (primero `Skeleton`, `Avatar`, `Banner`).

@@ -26,6 +26,7 @@ Que las personas se enteren de lo que pasa (centro de avisos y notificaciones pu
 | RF-07 | **Rechazos de moderación**: ante `400 content_not_allowed`, se muestra «No se puede publicar: contenido de la categoría X» con el motivo en español y una opción «Reportar esta decisión» (`targetType: moderation_decision`) para seguimiento manual. Es un componente reutilizable `ModerationNotice`. |
 | RF-08 | Los avisos de «contenido retirado» y «sanción aplicada» se muestran con su texto y, si procede, enlace a la incidencia. |
 | RF-09 | Preferencias: solo un interruptor «Notificaciones push» que registra o elimina el token. |
+| RF-10 | Las pantallas siguen el diseño de §7. |
 | RNF-01 | Sin datos personales en el cuerpo del push que la app no mostraría dentro de ella. |
 | RNF-02 | Cobertura ≥ 80 % en el traductor de `data` → ruta y en el flujo de permisos. |
 
@@ -44,3 +45,25 @@ Preferencias por tipo de aviso, notificaciones locales programadas, correos, son
 
 ## 6. Preguntas abiertas
 - [NEEDS CLARIFICATION: ¿pantalla previa de permiso al primer inicio o al primer evento relevante? Provisional: tras el primer inicio de sesión.]
+
+## 7. Diseño de pantallas
+
+Lenguaje y reglas generales: spec 002 §9. Textos desde `src/i18n/notifications.ts` y `reports.ts`.
+
+### 7.1 Avisos (`notificaciones`)
+- **Encabezado:** «Volver», «Avisos» y un botón de ícono «Marcar todas» (doble check, con etiqueta accesible). Debajo, una fila `ListRow` «Avisos en el teléfono» con interruptor (RF-09); con el permiso negado muestra «Desactivados» y un `link` «Abrir ajustes».
+- **Lista agrupada por día** («Hoy», «Ayer», fecha) con `NotificationRow`: `IconBadge` por tipo (solicitud: mano · mensaje: burbuja · entrega: caja · incidencia: bandera · objeto: etiqueta · sistema: campana), título de una línea, una línea de detalle y la hora. No leída: título en negrita, punto `primary` y fondo `primarySoft` tenue.
+- **Contenido retirado y sanción** (RF-08): ícono en `dangerSoft`; al abrir, una tarjeta con el texto y el `link` «Ver incidencia».
+- **Estados:** `Skeleton` de filas · vacío con campana «Todo al día» · error con reintento.
+
+### 7.2 Permiso de push (pantalla previa, una sola vez)
+`BottomSheet` alto sobre `GradientBackground`: `IconBadge` grande de campana, título «Entérate al instante» y tres filas con ícono y **una palabra** («Solicitudes», «Mensajes», «Entregas»). Botón «Activar avisos» (`primary`) y `link` «Ahora no». Si se niega, la app sigue igual.
+
+### 7.3 Aviso dentro de la app (primer plano)
+`Banner` flotante superior de 56 pt con `IconBadge`, título y una línea; se oculta a los 4 s o al deslizarlo; no aparece durante el escaneo de QR.
+
+### 7.4 Reportar (`ReportSheet`, `BottomSheet`)
+Título «Reportar». Cuatro motivos como filas de selección única («Contenido prohibido», «Inapropiado», «Spam», «Otro») y campo «Detalles (opcional)» de hasta 500. Botón «Enviar». Éxito: check y «Gracias, lo revisaremos». Duplicado: `Banner` `info` «Ya lo reportaste».
+
+### 7.5 Aviso de moderación (`ModerationNotice`)
+Tarjeta en `dangerSoft` con ícono de escudo, título «No se puede publicar», `Chip` con la categoría, el motivo en una línea y `link` «Reportar esta decisión».

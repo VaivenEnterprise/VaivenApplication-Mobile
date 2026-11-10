@@ -39,3 +39,6 @@ src/i18n/chat.ts (+ reexport)
 | IX | Sin consultas en segundo plano |
 | X | Estados vacío/carga/error; tokens |
 | XIII | *Slot* sin tocar archivos de 007 |
+
+## 6. Diseño
+Las pantallas siguen la spec §7. `QuickReplies` vive en `features/chat/components/` y solo escribe en el campo; sus textos están en `i18n/chat.ts`.

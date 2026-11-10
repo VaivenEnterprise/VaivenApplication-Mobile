@@ -22,6 +22,7 @@ Mostrar, en el formulario de publicar, una sugerencia de **título y categoría*
 | RF-04 | Estados de carga (con cancelación), error y límite diario con mensajes en español; el formulario sigue plenamente utilizable. |
 | RF-05 | Se integra mediante el *slot* `renderFormExtras` del formulario (spec 005 T007); no se edita `ItemFormScreen`. |
 | RF-06 | **Cumplimiento:** el aviso de privacidad de la landing y «Seguridad de datos» de Play Console se actualizan para declarar que la foto se envía a un proveedor de IA a petición de la persona (tarea de MO-B). |
+| RF-07 | Las pantallas siguen el diseño de §7. |
 | RNF-01 | Accesible (etiquetas, foco); sin dependencias nuevas. |
 
 ## 4. Criterios de aceptación
@@ -38,3 +39,15 @@ Descripciones largas generadas, IA fuera del formulario de publicar, sugerencias
 
 ## 6. Preguntas abiertas
 - [NEEDS CLARIFICATION: textos finales del aviso de «se enviará a un servicio de IA» (provisional: breve y en español claro).]
+
+## 7. Diseño de pantallas
+
+Mismo lenguaje que las tarjetas del Inicio: `Card` blanca de esquinas `xl`, íconos en círculo tintado, poco texto. Textos desde `src/i18n/aiSuggestions.ts`.
+
+### 7.1 Botón y aviso
+Bajo la fila de fotos del formulario (*slot* `renderFormExtras`): botón `outline` con ícono ✦ «Sugerir con IA» (visible solo con IA activa y al menos una foto) y, debajo, una línea `caption`: «La foto se envía a un servicio de IA» (RF-01).
+
+### 7.2 `SuggestionBanner`
+- **Cargando:** `Card` `muted` con dos `Skeleton`, «Analizando…» y `link` «Cancelar».
+- **Resultado:** `Card` `muted` con borde fino `secondary`. Cabecera: `IconBadge` ✦ en `secondarySoft`, «Sugerencia» y «X» para descartar. Cuerpo: título sugerido (`bodyStrong`) y `Chip` con la categoría. Acciones: «Usar» (`primary`, pequeño) y «Editar» (`outline`; rellena y deja el foco en el título).
+- **Error:** `Banner` `warning` «No pudimos sugerir. Puedes escribirlo tú.» con «Reintentar». **Límite diario:** `Banner` `info` «Llegaste al límite de hoy».

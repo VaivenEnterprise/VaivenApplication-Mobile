@@ -43,3 +43,6 @@ La E2E de Jest; pruebas unitarias del banner y del hook de conectividad; verific
 | VII | E2E de Jest y cobertura global |
 | X | Estados y accesibilidad revisados |
 | XIII | Cambios en archivos ajenos solo por defecto detectado y con su dueño |
+
+## 6. Diseño
+El banner vive en `features/connectivity/OfflineBanner.tsx` y se compone de `Banner` (002-T030); se monta en `_layout.tsx` con **una línea** (ya prevista).

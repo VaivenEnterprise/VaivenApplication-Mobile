@@ -22,6 +22,7 @@ Mostrar «Recomendado para ti» en Explorar, registrar las vistas que alimentan 
 | RF-04 | En Perfil, fila «Borrar mi historial de recomendaciones» con confirmación (*slot* `renderExtraRows` de 003). |
 | RF-05 | Estados de carga con *skeleton*, vacío (la fila no se muestra) y error silencioso: Explorar nunca se bloquea por las recomendaciones. |
 | RF-06 | Cumplimiento: el aviso de privacidad y «Seguridad de datos» de Play declaran que se guarda el historial de objetos vistos para recomendar, 90 días, con opción de borrado. |
+| RF-07 | Las pantallas siguen el diseño de §7. |
 | RNF-01 | Accesible; sin dependencias nuevas; consulta con caché breve (5 min). |
 
 ## 4. Criterios de aceptación
@@ -35,3 +36,16 @@ Mostrar «Recomendado para ti» en Explorar, registrar las vistas que alimentan 
 
 ## 5. Fuera de alcance
 Pantalla propia de recomendaciones, notificaciones, ajustes de preferencias avanzados.
+
+## 6. Preguntas abiertas
+Ninguna.
+
+## 7. Diseño de pantallas
+
+Mismo lenguaje que las tarjetas del Inicio. Textos desde `src/i18n/recommendations.ts`.
+
+### 7.1 `RecommendedRow`
+Título «Recomendado para ti» (`heading`) y fila horizontal de `RecommendedCard` de 160 pt: foto 4:3, título de una línea, precio («$90 /día» o «Gratis») y, debajo, el motivo en `caption` con ícono de ojo: «Porque viste: {título}» (una línea con elipsis). Carga: tres `Skeleton` de tarjeta. Sin resultados o función apagada: no se muestra.
+
+### 7.2 Borrar historial (Perfil)
+`ListRow` con ícono de papelera «Borrar historial de recomendaciones» → `BottomSheet`: ícono de papelera, «¿Borrar tu historial?», «Dejaremos de recomendarte por lo que viste.», `danger` «Borrar» y `link` «Cancelar». Éxito: `Banner` `success` «Historial borrado».

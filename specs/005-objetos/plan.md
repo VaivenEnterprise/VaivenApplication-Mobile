@@ -14,6 +14,8 @@ src/lib/policy.ts (constantes de POL-xx que la app necesita: límites de fotos, 
 ```
 `ItemCard` y `PhotoGallery` los reutiliza 006 (`ItemCard` se exporta desde `src/features/items/index.ts`).
 
+`ItemCard` tiene dos variantes: `grid` (Explorar y Proyectos) y `row` (Mis objetos).
+
 ## 2. Contrato consumido
 `POST/GET/PATCH/DELETE /items`, `POST /items/{id}/pause|resume`, `GET /me/items`, `GET /items/price-suggestion`, `GET /categories`. Tipos `Item`, `ItemInput`, `ItemStatus` (`active|paused|blocked|removed`).
 
@@ -26,6 +28,7 @@ src/lib/policy.ts (constantes de POL-xx que la app necesita: límites de fotos, 
 | P-04 | Las fotos se suben **al elegirlas** (004) y el formulario guarda solo `publicId`; si se cancela, no se limpian en Cloudinary (fuera de alcance) | — |
 | P-05 | `ItemDetailScreen` expone *slots* (`renderActions`, `renderOwnerExtras`) rellenados por 007 y 010 | XIII |
 | P-06 | Ubicación: `expo-location` con precisión baja; se envía tal cual, el servidor redondea | VI |
+| P-07 | Las pantallas siguen la spec §7. «Identidad verificada», valor declarado a terceros y ubicación exacta **no** se muestran | VI, VII |
 
 ## 4. Pruebas
 Esquemas y conversión de dinero, `MoneyInput`, formulario (RNTL: validaciones, préstamo vs renta, sugerencia, error de moderación), lista (vacía, paginación, error), detalle (dueño vs tercero).

@@ -27,3 +27,6 @@ Hook y componentes con API simulada; evento único; borrado con confirmación; a
 | II | Sin dependencias nuevas |
 | VI | Declarado en privacidad; borrado disponible |
 | XIII | Carpeta propia, i18n propio, *slots* |
+
+## 6. Diseño
+Las pantallas siguen la spec §7; `RecommendedCard` reutiliza el pie y el precio de `ItemCard` de 005.
