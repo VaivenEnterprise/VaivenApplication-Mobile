@@ -35,3 +35,13 @@ Redimensionado (dimensiones esperadas, con doble), `useImageUpload` (firma → s
 | VI | Sin secretos; evidencia sin caché persistente |
 | X | Componentes reutilizables con tokens |
 | XIII | i18n y claves por feature |
+
+
+## Notas de implementación (2026-11-10)
+
+- `ImageRef` es solo `{ publicId }` (tareas T001 y plan §2); el RF-03 de la spec menciona también `width/height/format/bytes`, pero el backend los verifica por su cuenta y la app no los necesita.
+- La firma trae un campo `overwrite` (`'false'`) que va firmado y debe reenviarse como `overwrite` en la subida (contrato `uploads.yaml`); el plan no lo mencionaba.
+- La subida usa `XMLHttpRequest` con `FormData` (sin SDK) en lugar de `fetch`, porque `fetch` no informa el avance (RF-03, T004). Ver memoria D-143.
+- `PhotoPicker` recibe el resultado de `useImageUpload` (`uploader`) en lugar de crearlo por dentro, para que el formulario lea `refs` e `isUploading`.
+- Máximo por defecto: 5 fotos (contrato: máximo 5 por recurso); la pregunta abierta de la spec (6) queda cerrada así.
+- Los textos se reexportan en `src/i18n/es-MX.ts` (no en `index.ts`), igual que en la spec 003 (D-137).

@@ -20,6 +20,7 @@ describe('textos es-MX', () => {
       'diagnostics',
       'errors',
       'home',
+      'images',
       'inicio',
       'notFound',
       'profile',

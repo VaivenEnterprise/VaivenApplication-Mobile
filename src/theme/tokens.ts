@@ -165,6 +165,11 @@ export const sizes = {
   homeTile: 160,
   /** Botón circular (volver, mensajes). */
   roundButton: 44,
+  /** Casilla cuadrada del selector de fotos (spec 004 §7.1) y botón «quitar» sobre ella. */
+  photoSlot: 88,
+  photoRemove: 28,
+  /** Anillo de avance sobre la miniatura: diámetro y grosor. */
+  progressRing: { size: 40, stroke: 4 },
 } as const;
 
 export const motion = {
