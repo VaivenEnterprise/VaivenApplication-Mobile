@@ -2,3 +2,11 @@
 export const metaKeys = {
   all: ['meta'] as const,
 };
+
+export const healthKeys = {
+  all: ['health'] as const,
+};
+
+export const readinessKeys = {
+  all: ['readiness'] as const,
+};

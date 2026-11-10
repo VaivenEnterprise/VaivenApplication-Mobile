@@ -12,6 +12,15 @@ const ICONS = {
   warning: 'warning-outline',
   cloudOffline: 'cloud-offline-outline',
   info: 'information-circle-outline',
+  close: 'close',
+  search: 'search',
+  clearCircle: 'close-circle',
+  chevronForward: 'chevron-forward',
+  star: 'star',
+  starOutline: 'star-outline',
+  success: 'checkmark-circle-outline',
+  danger: 'alert-circle-outline',
+  options: 'options-outline',
 } as const satisfies Record<string, IoniconName>;
 
 export type IconName = keyof typeof ICONS;

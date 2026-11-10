@@ -178,43 +178,45 @@
 
 ## Fase 5 — Servicios y entorno local (antes spec «servicios externos y compilación»)
 
-- [ ] **T024** Instalar dependencias nativas aprobadas
+- [x] **T024** Instalar dependencias nativas aprobadas
   - Archivos: `package.json`, `package-lock.json`
   - Agente: `dev-expo` · Depende de: T023
   - Aceptación: instaladas con `npx expo install` las de plan P-S3 (**sin** `expo-dev-client`); `npx expo-doctor` sin errores; ninguna dependencia fuera de la constitución · Para la ruta crítica (docs/ruta-critica-login-inicio.md) bastan `expo-secure-store`, `expo-font`, `expo-linear-gradient` y `react-native-svg`; cámara, ubicación, imágenes y notificaciones se instalan cuando su spec los necesite
   - Refs: Art. X.4, XIV
 
-- [ ] **T025** Configuración de la app y permisos
+- [x] **T025** Configuración de la app y permisos
   - Archivos: `app.config.ts`
   - Agente: `dev-expo` · Depende de: T024
   - Aceptación: nombre «Vaivén», `slug`, `scheme: vaiven`, identificadores de paquete (provisional `mx.vaiven.app`), permisos con textos en español; plugins de `expo-camera`, `expo-location`, `expo-image-picker`, `expo-notifications`
   - Refs: RF-S1, P-S2
 
-- [ ] **T026** [P] Variables públicas de entorno
+- [x] **T026** [P] Variables públicas de entorno
   - Archivos: `.env.example`
   - Agente: `dev-expo` · Depende de: T025
   - Aceptación: `EXPO_PUBLIC_API_URL` y las demás variables públicas documentadas sin secretos; `.env*` ignorado excepto `.env.example`
   - Refs: RF-S2
 
-- [ ] **T027** Validación de la URL del backend
+- [x] **T027** Validación de la URL del backend
   - Archivos: `src/config/env.ts`, `src/config/env.test.ts`
   - Agente: `dev-expo` · Depende de: T026
   - Aceptación: `EXPO_PUBLIC_API_URL` obligatoria y con formato de URL; mensaje claro en español si falta; pruebas de ambos casos
   - Refs: RF-S2 · T005
+  - Nota (fase 5): cubierta por T005; la validación vive en `src/lib/config.ts` y `src/lib/config.test.ts` (variable obligatoria, formato URL, mensaje en español). No se crean `src/config/env.*` para no duplicarla.
 
-- [ ] **T028** Diagnóstico ampliado
+- [x] **T028** Diagnóstico ampliado
   - Archivos: `src/features/diagnostics/{api.ts, useDiagnostics.ts, DiagnosticsScreen.tsx}`, pruebas
   - Agente: `dev-expo` · Depende de: T027
   - Aceptación: muestra URL activa, `/healthz`, `/readyz` y versión y entorno (de `GET /api/v1/meta`); estados de carga y error con `LoadingState`/`ErrorState` · Diagnóstico según spec §9.1 (`Card` clave–valor, `Chip` «DEV»)
   - Refs: RF-S3
+  - Nota (fase 5): se implementó con la estructura vigente (`api/getHealth.ts`, `hooks/useHealth.ts`, `hooks/useDiagnostics.ts`, ruta `src/app/(dev)/diagnostico.tsx`) y no con los nombres originales de la tarea.
 
-- [ ] **T029** Verificación en Expo Go contra staging (**la hace una persona** con `probador-expo`)
+- [x] **T029** Verificación en Expo Go contra staging (**la hace una persona** con `probador-expo`)
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/002/` (capturas)
   - Agente: `probador-expo` · Depende de: T028, backend 002-T031
   - Aceptación: con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go en un teléfono Android real; el diagnóstico muestra `/readyz` en verde; el MCP `expo` toma una captura; `docs/entorno-local.md` se sigue sin ayuda (001-CA-03). **La spec 003 no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: RF-S4 · Art. XIV.4
 
-- [ ] **T030** [P] Componentes de interacción
+- [x] **T030** [P] Componentes de interacción
   - Archivos: `src/components/ui/{BottomSheet,SearchBar,Avatar,ListRow,ProgressBar,SegmentedControl,RatingStars,Skeleton,Banner}.tsx`, `src/components/ui/interaction.test.tsx`
   - Agente: `dev-expo` · Depende de: T015
   - Aceptación: solo *tokens*; `BottomSheet` se cierra con «X», tocando fuera y deslizando, y es utilizable con lector de pantalla; `SearchBar` con botón de borrar y rol de búsqueda; `RatingStars` táctil con área ≥ 44 y valor leído; `SegmentedControl` con insignia opcional; `Skeleton` sin animación si el sistema pide reducir movimiento; `Banner` con las cinco variantes de §9.1; `Button` gana la variante `danger`; pruebas por rol y texto · Puede entregarse en dos partes: primero `Skeleton`, `Avatar` y `Banner` (los necesita el Inicio) y después el resto
@@ -228,7 +230,6 @@
 | 1 Fundamentos | T005–T009 | 5 |
 | 2 Datos y errores | T010–T013 | 4 |
 | 3 UI y rutas | T014–T018 | 5 |
-| 6 Componentes de interacción | T030 | 1 |
 | 4 Cierre | T019–T023 | 5 |
-| 5 Servicios y entorno local | T024–T029 | 6 |
+| 5 Servicios y entorno local | T024–T030 | 7 |
 | **Total** | | **30** |

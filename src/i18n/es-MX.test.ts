@@ -20,6 +20,7 @@ describe('textos es-MX', () => {
       'errors',
       'home',
       'notFound',
+      'ui',
     ]);
   });
 
