@@ -153,6 +153,21 @@ npx prettier --check .
 npm test -- --coverage
 ```
 
+### Estructura del código
+
+```
+src/
+├── app/          Rutas de Expo Router: pantallas delgadas (index, +not-found, (dev)/diagnostico)
+├── components/   AppErrorBoundary y ui/ (Screen, AppText, Button, Card, estados de carga y error…)
+├── features/     Un módulo por funcionalidad: api/, hooks/, types.ts y keys.ts (hoy: diagnostics)
+├── i18n/         es-MX.ts: todos los textos visibles
+├── lib/          config, api (cliente y errores), query, storage y format (dinero y fechas)
+├── providers/    AppProviders (React Query)
+└── theme/        tokens.ts: colores, espaciados, tipografía y sombras
+```
+
+Reglas que revisa `src/conventions.test.ts`: ningún texto visible ni color literal fuera de `i18n/` y `theme/`. Las `features` no se importan entre sí; las pantallas de `app/` solo arman componentes y hooks.
+
 ## Estado
 
 Spec 002 (arquitectura base): fases 0 a 3 completas (configuración, tokens, textos, cliente de API, componentes base, rutas y pantalla de diagnóstico). Falta la fase 4 (cierre). Detalle por tarea en `specs/002-arquitectura-base/tasks.md` y decisiones en `memoria.md`.

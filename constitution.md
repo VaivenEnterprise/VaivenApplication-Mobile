@@ -1,6 +1,8 @@
 # Constitución de la App Móvil — VAIVÉN
 
-> **Versión 1.3.0** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) y el 2026-11-02 (**PATCH:** aclara que la app sí se compila —APK y AAB con EAS Build— y se publica en Google Play; solo no hay servidor que desplegar) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
+> **Versión 1.3.1** · Ratificada el 2026-10-26 · Enmendada el 2026-10-28 (Cloudinary para imágenes; dependencias previstas; Art. XIII trabajo en paralelo) y el 2026-11-01 (repositorios separados; **MINOR:** se elimina todo lo de repositorio y pipeline, se agrega el Art. XIV de MCP y pruebas locales con Expo Go) y el 2026-11-02 (**PATCH:** aclara que la app sí se compila —APK y AAB con EAS Build— y se publica en Google Play; solo no hay servidor que desplegar) · Proyecto: `vaiven-frontend/` (React Native + Expo + TypeScript)
+>
+> **Enmienda 1.3.1 (2026-11-10, PATCH, aprobada por la persona dueña de la spec 002 del móvil):** el Art. IV agrega `invalid_response` a los códigos propios del cliente (respuesta que no cumple el esquema esperado; RF-07 y CA-06 de la spec 002) y el Art. III.3 permite además las clases de error `ApiError` y `ConfigError`. Registro D-135 en `memoria.md`; la misma aclaración del Art. IV se aplica en la constitución del backend (2.0.1).
 >
 > **Enmienda 1.3.0 (2026-11-02, MINOR):** se agrega el Art. XV (repositorio y pull requests en GitHub, con MCP de GitHub); se reemplaza la declaración de «sin repositorio».
 >
@@ -36,7 +38,7 @@ La app móvil es el cliente de la plataforma. **Solo habla con la API del backen
 ### Art. III — TypeScript estricto
 1. `strict: true` en `tsconfig.json`. Prohibido `any` implícito y, salvo justificación escrita, `any` explícito y `@ts-ignore`.
 2. Los datos que llegan de la red se tratan como desconocidos y se validan/convierten antes de usarse (`zod`).
-3. Componentes de función con *hooks*; sin clases salvo el *error boundary*.
+3. Componentes de función con *hooks*; sin clases salvo el *error boundary* y las clases de error (`ApiError`, `ConfigError`).
 
 ### Art. IV — Contrato de API estable y compartido con el backend
 1. API REST JSON bajo `/api/v1`. Campos en `camelCase`; fechas ISO-8601 UTC; identificadores como cadenas.
@@ -47,7 +49,7 @@ La app móvil es el cliente de la plataforma. **Solo habla con la API del backen
                 "requestId": "01J..." } }
    ```
    Códigos del servidor: `validation_failed`, `unauthorized`, `forbidden`, `not_found`, `conflict`, `rate_limited`, `internal_error`, `service_unavailable`.
-   Códigos propios del cliente: `network_error` (sin conexión) y `timeout`.
+   Códigos propios del cliente: `network_error` (sin conexión), `timeout` e `invalid_response` (la respuesta no cumple el esquema esperado).
 3. Listas paginadas por cursor: `{ "items": [...], "nextCursor": "..." | null }`.
 4. La app envía `X-Request-Id` (≤ 64 caracteres alfanuméricos y guiones) para correlacionar con los logs del servidor.
 5. El contrato oficial es `../vaiven-backend/api/openapi.yaml`. Un cambio incompatible exige nueva versión de ruta, nunca una adaptación silenciosa en la app.

@@ -170,6 +170,7 @@ Contrato consumido: `GET /api/v1/meta` del backend (spec 002 del backend, RF-06)
 | `expo-linking` | Requerida por `expo-router` (ya aprobada en P-S3) |
 | Dev: `jest`, `jest-expo`, `@testing-library/react-native`, `@types/jest` | Pruebas |
 | Dev: `@react-native/jest-preset`, `test-renderer` | Requeridas por `jest-expo` 58 y `@testing-library/react-native` 14 (peer) |
+| Dev: `@types/node` | Tipos de Node (`fs`, `path`) para `src/conventions.test.ts` (T019); solo desarrollo |
 `package.json` fija `react-dom` a 19.3.0 con `overrides` (peer opcional de `expo-router`; no se agrega como dependencia ni se usa web).
 Los módulos de Expo se instalan con `npx expo install`.
 
