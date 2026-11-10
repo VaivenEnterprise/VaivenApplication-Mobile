@@ -1,23 +1,8 @@
 import { es } from '@/i18n/es-MX';
-
-// Debe coincidir con `ApiErrorCode` (constitución Art. IV y skill react-query-api-client).
-// T010 reforzará esta correspondencia con tipos.
-const API_ERROR_CODES = [
-  'validation_failed',
-  'unauthorized',
-  'forbidden',
-  'not_found',
-  'conflict',
-  'rate_limited',
-  'internal_error',
-  'service_unavailable',
-  'network_error',
-  'timeout',
-  'invalid_response',
-] as const;
+import { API_ERROR_CODES } from '@/lib/api/errors';
 
 describe('textos es-MX', () => {
-  it.each(API_ERROR_CODES)('tiene un mensaje para el código %s', (code) => {
+  it.each([...API_ERROR_CODES])('tiene un mensaje para el código %s', (code) => {
     expect(es.errors[code].trim().length).toBeGreaterThan(0);
   });
 

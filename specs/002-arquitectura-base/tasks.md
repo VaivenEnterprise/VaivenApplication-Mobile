@@ -74,28 +74,28 @@
 
 ## Fase 2 — Datos y errores
 
-- [ ] **T010** Errores de API y generador de `requestId`
+- [x] **T010** Errores de API y generador de `requestId`
   - Archivos: `src/lib/api/errors.ts`, `src/lib/api/request-id.ts`, `src/lib/api/errors.test.ts`
   - Agente: `dev-expo`
   - Depende de: T007
   - Aceptación: `ApiError` y `ApiErrorCode` según skill `react-query-api-client`; `fromServerError` toma el envoltorio del backend y, si el cuerpo no lo cumple, deriva el `code` del estado HTTP; `newRequestId()` devuelve 32 caracteres hex; pruebas de tabla por código
   - Refs: plan §4.4 · RF-06, RF-07 · Art. IV
 
-- [ ] **T011** Cliente de API
+- [x] **T011** Cliente de API
   - Archivos: `src/lib/api/client.ts`, `src/lib/api/client.test.ts`
   - Agente: `dev-expo`
   - Depende de: T005, T010
   - Aceptación: `request(path, schema, init)` usa `config.apiBaseUrl`, envía `X-Request-Id`, aplica tiempo máximo de 10 s, valida con `zod`; casos probados: éxito, 400 con detalles, 404, 500, esquema inválido (`invalid_response`), fallo de red (`network_error`), vencimiento (`timeout`); cobertura ≥ 80 %
   - Refs: RF-06 · CA-05, CA-06, CA-07 · Art. II, IV
 
-- [ ] **T012** Caché de consultas y proveedores
+- [x] **T012** Caché de consultas y proveedores
   - Archivos: `src/lib/query/queryClient.ts`, `src/lib/query/queryClient.test.ts`, `src/providers/AppProviders.tsx`
   - Agente: `dev-expo`
   - Depende de: T010
   - Aceptación: `staleTime` 30 s; `retry` devuelve true una sola vez para `network_error`, `timeout` y 5xx, y false para 4xx (probado); `AppProviders` envuelve con `QueryClientProvider`
   - Refs: RF-08 · plan P-06 · Art. X
 
-- [ ] **T013** Feature `diagnostics`
+- [x] **T013** Feature `diagnostics`
   - Archivos: `src/features/diagnostics/types.ts`, `src/features/diagnostics/api/getMeta.ts`, `src/features/diagnostics/hooks/useMeta.ts`, `src/features/diagnostics/hooks/useMeta.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T011, T012

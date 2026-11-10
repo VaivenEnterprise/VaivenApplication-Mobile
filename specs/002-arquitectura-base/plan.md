@@ -24,6 +24,7 @@ vaiven-frontend/
 │  ├─ features/diagnostics/
 │  │  ├─ api/getMeta.ts
 │  │  ├─ hooks/useMeta.ts (+ .test.tsx)
+│  │  ├─ keys.ts                  # claves de consulta (Art. XIII.4)
 │  │  └─ types.ts
 │  ├─ lib/
 │  │  ├─ config.ts (+ .test.ts)
@@ -98,7 +99,8 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 - `errors.ts`: `ApiErrorCode`, clase `ApiError`, `fromServerError(status, body, requestId)`.
 - `request-id.ts`: `newRequestId()` (32 hex).
 - `client.ts`: `request<T>(path, schema, init?)` según la skill `react-query-api-client`.
-- Esquema del envoltorio de error del servidor definido con `zod`; si el cuerpo de un error no lo cumple, se deriva el `code` del estado HTTP (400→`validation_failed`, 401, 403, 404, 409, 429, 5xx→`internal_error`/`service_unavailable`).
+- Esquema del envoltorio de error del servidor definido con `zod`; si el cuerpo de un error no lo cumple, se deriva el `code` del estado HTTP (400→`validation_failed`, 401, 403, 404, 409, 429, 5xx→`internal_error`/`service_unavailable`). También se deriva si el `code` del envoltorio no es uno de los 8 del contrato. Además de los listados, 422→`validation_failed` y cualquier otro estado no previsto→`internal_error`. El `requestId` del envoltorio tiene prioridad sobre el enviado.
+- `request(path, schema, init)` llama a `${apiBaseUrl}/api/v1${path}` con `Accept`, `Content-Type` (solo si hay cuerpo) y `X-Request-Id` (nadie puede sobrescribirlo); `init` no admite `signal` porque el cliente fija el tiempo máximo de 10 s. Una `ConfigError` se propaga tal cual (no es un error de red).
 
 ### 4.5 Componentes base (`components/ui/`)
 | Componente | Responsabilidad |
@@ -139,6 +141,7 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 ### 4.7 Feature `diagnostics`
 - `types.ts`: `metaSchema = z.object({ name, version, environment, serverTime })`.
 - `api/getMeta.ts`: `request('/meta', metaSchema)`.
+- `keys.ts`: `metaKeys.all = ['meta']` (constitución §6.2).
 - `hooks/useMeta.ts`: `useQuery({ queryKey: ['meta'], queryFn: getMeta })`.
 Contrato consumido: `GET /api/v1/meta` del backend (spec 002 del backend, RF-06).
 
