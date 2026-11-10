@@ -11,6 +11,11 @@ export const es = {
     name: 'Vaivén',
     initial: 'V',
   },
+  ui: {
+    close: 'Cerrar',
+    clearSearch: 'Borrar búsqueda',
+    outOfFive: 'de 5',
+  },
   home: {
     title: 'Vaivén',
     subtitle: 'Presta y renta objetos cerca de ti.',
@@ -22,6 +27,13 @@ export const es = {
     version: 'Versión',
     environment: 'Entorno',
     serverTime: 'Hora del servidor',
+    url: 'URL activa',
+    health: '/healthz',
+    readiness: '/readyz',
+    redis: 'Redis',
+    responding: 'Responde',
+    ready: 'Listo',
+    notReady: 'No disponible',
     devOnly: 'Esta pantalla solo existe en desarrollo.',
   },
   errors: {

@@ -7,20 +7,25 @@ import { Divider } from '@/components/ui/Divider';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { Screen } from '@/components/ui/Screen';
-import { useMeta } from '@/features/diagnostics/hooks/useMeta';
+import { useDiagnostics } from '@/features/diagnostics/hooks/useDiagnostics';
 import { es } from '@/i18n/es-MX';
+import { getConfig } from '@/lib/config';
 import { formatDateTime } from '@/lib/format/date';
 import { colors, radius, sizes, spacing } from '@/theme';
 
-function Row({ label, value, ok = false }: { label: string; value: string; ok?: boolean }) {
+type Status = 'ok' | 'error';
+
+function Row({ label, value, status }: { label: string; value: string; status?: Status }) {
   return (
     <View style={styles.row}>
       <AppText variant="label" color="muted">
         {label}
       </AppText>
       <View style={styles.value}>
-        {ok ? <View style={styles.dot} /> : null}
-        <AppText variant="bodyStrong" style={styles.valueText}>
+        {status === undefined ? null : (
+          <View style={[styles.dot, status === 'ok' ? styles.ok : styles.error]} />
+        )}
+        <AppText variant="bodyStrong" style={styles.valueText} selectable>
           {value}
         </AppText>
       </View>
@@ -29,7 +34,8 @@ function Row({ label, value, ok = false }: { label: string; value: string; ok?: 
 }
 
 export default function DiagnosticsScreen() {
-  const { data, error, isPending, refetch } = useMeta();
+  const { meta, health, readiness, error, isPending, refetch } = useDiagnostics();
+  const { apiBaseUrl } = getConfig();
 
   return (
     <Screen>
@@ -42,15 +48,31 @@ export default function DiagnosticsScreen() {
 
       {isPending ? <LoadingState variant="card" /> : null}
       {error ? <ErrorState error={error} onRetry={() => void refetch()} /> : null}
-      {data ? (
+      {meta && health && readiness ? (
         <Card style={styles.card}>
-          <Row label={es.diagnostics.name} value={data.name} ok />
+          <Row label={es.diagnostics.url} value={apiBaseUrl} />
           <Divider />
-          <Row label={es.diagnostics.version} value={data.version} />
+          <Row label={es.diagnostics.name} value={meta.name} status="ok" />
           <Divider />
-          <Row label={es.diagnostics.environment} value={data.environment} />
+          <Row label={es.diagnostics.version} value={meta.version} />
           <Divider />
-          <Row label={es.diagnostics.serverTime} value={formatDateTime(data.serverTime)} />
+          <Row label={es.diagnostics.environment} value={meta.environment} />
+          <Divider />
+          <Row label={es.diagnostics.serverTime} value={formatDateTime(meta.serverTime)} />
+          <Divider />
+          <Row label={es.diagnostics.health} value={es.diagnostics.responding} status="ok" />
+          <Divider />
+          <Row
+            label={es.diagnostics.readiness}
+            value={readiness.ready ? es.diagnostics.ready : es.diagnostics.notReady}
+            status={readiness.ready ? 'ok' : 'error'}
+          />
+          {readiness.redis === null ? null : (
+            <>
+              <Divider />
+              <Row label={es.diagnostics.redis} value={readiness.redis} />
+            </>
+          )}
         </Card>
       ) : null}
 
@@ -82,11 +104,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   valueText: { textAlign: 'right', flexShrink: 1 },
-  dot: {
-    width: spacing.sm,
-    height: spacing.sm,
-    borderRadius: radius.pill,
-    backgroundColor: colors.success,
-  },
+  dot: { width: spacing.sm, height: spacing.sm, borderRadius: radius.pill },
+  ok: { backgroundColor: colors.success },
+  error: { backgroundColor: colors.danger },
   note: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
 });

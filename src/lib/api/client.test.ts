@@ -92,6 +92,17 @@ describe('request: éxito', () => {
     expect(headers['X-Request-Id']).toMatch(/^[0-9a-f]{32}$/);
   });
 
+  it('permite otro prefijo (vacío) para /healthz y /readyz, sin pasarlo a fetch', async () => {
+    const fetchMock = mockFetch().mockResolvedValue(response(200, okBody));
+
+    await request('/healthz', schema, { prefix: '', method: 'GET' });
+
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe('http://api.test/healthz');
+    expect(init).not.toHaveProperty('prefix');
+    expect(init).toMatchObject({ method: 'GET' });
+  });
+
   it('acepta rutas sin barra inicial', async () => {
     const fetchMock = mockFetch().mockResolvedValue(response(200, okBody));
     await request('meta', schema);

@@ -117,8 +117,8 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 | `Card` | Superficie `surface` con radio `xl` y sombra `card`; variante `muted` (`surfaceMuted`, sin sombra) |
 | `Chip` | Píldora con ícono y texto (zona, «Comunidad segura»); variantes `neutral`, `success` y `warning` |
 | `Divider` | Línea `border` con texto central opcional |
-| `BottomSheet` | Hoja inferior sobre `scrim`: asa, esquinas superiores `xl`, botón cerrar «X», se cierra tocando fuera o deslizando; contenido desplazable y pie fijo opcional. Base de filtros, solicitud, resumen, aceptar, cancelar, reportar y eliminar cuenta (sin dependencia nueva: `Modal` + `Animated`) |
-| `SearchBar` | Campo en píldora con lupa, botón «borrar» y `accessibilityRole="search"`; acepta un botón final (filtros) |
+| `BottomSheet` | Hoja inferior sobre `scrim`: asa, esquinas superiores `xl`, botón cerrar «X», se cierra tocando fuera, con el botón atrás o deslizando el asa o el encabezado (más de `motion.sheetDismissDistance`); contenido desplazable y pie fijo opcional. Base de filtros, solicitud, resumen, aceptar, cancelar, reportar y eliminar cuenta (sin dependencia nueva: `Modal` + `Animated`) |
+| `SearchBar` | Campo en píldora con lupa, botón «borrar» y `accessibilityRole="search"` en el campo de texto; acepta un botón final (filtros) |
 | `Avatar` | Círculo con la inicial; color de fondo estable por nombre tomado de una paleta cerrada de *tokens*; tamaños 32, 40 y 72 |
 | `ListRow` | Fila: ícono o `Avatar` a la izquierda, título, subtítulo opcional y elemento final (chevron, insignia o interruptor); área ≥ 56 |
 | `ProgressBar` | Barra de avance `border`/`secondary`, con valor accesible |
@@ -143,7 +143,9 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 ### 4.7 Feature `diagnostics`
 - `types.ts`: `metaSchema = z.object({ name, version, environment, serverTime })`.
 - `api/getMeta.ts`: `request('/meta', metaSchema)`.
-- `keys.ts`: `metaKeys.all = ['meta']` (constitución §6.2).
+- `keys.ts`: `metaKeys.all = ['meta']`, `healthKeys.all = ['health']` y `readinessKeys.all = ['readiness']` (constitución §6.2).
+- `api/getHealth.ts`: `getHealth()` (`/healthz`) y `getReadiness()` (`/readyz`; un 503 `service_unavailable` se normaliza a «no listo», no es error). Ambas rutas viven fuera de `/api/v1`, por eso `request` admite la opción `prefix` (vacío).
+- `hooks/useHealth.ts` (`useHealth`, `useReadiness`) y `hooks/useDiagnostics.ts`, que reúne meta, health y readiness para la pantalla (RF-S3).
 - `hooks/useMeta.ts`: `useQuery({ queryKey: ['meta'], queryFn: getMeta })`.
 Contrato consumido: `GET /api/v1/meta` del backend (spec 002 del backend, RF-06).
 
@@ -170,6 +172,7 @@ Contrato consumido: `GET /api/v1/meta` del backend (spec 002 del backend, RF-06)
 | `expo-linking` | Requerida por `expo-router` (ya aprobada en P-S3) |
 | Dev: `jest`, `jest-expo`, `@testing-library/react-native`, `@types/jest` | Pruebas |
 | Dev: `@react-native/jest-preset`, `test-renderer` | Requeridas por `jest-expo` 58 y `@testing-library/react-native` 14 (peer) |
+| `expo-camera`, `expo-location`, `expo-image-picker`, `expo-image-manipulator`, `expo-image`, `expo-notifications`, `expo-device`, `@react-native-community/datetimepicker`, `react-native-qrcode-svg` | Módulos aprobados de P-S3 (T024); las versiones salen de `bundledNativeModules.json` del SDK 58, salvo `react-native-qrcode-svg` (^6.3). Sin `expo-dev-client` |
 | Dev: `@types/node` | Tipos de Node (`fs`, `path`) para `src/conventions.test.ts` (T019); solo desarrollo |
 `package.json` fija `react-dom` a 19.3.0 con `overrides` (peer opcional de `expo-router`; no se agrega como dependencia ni se usa web).
 Los módulos de Expo se instalan con `npx expo install`.

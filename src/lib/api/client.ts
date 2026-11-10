@@ -13,10 +13,12 @@ export const API_PREFIX = '/api/v1';
 /** Opciones de `fetch` sin `signal` (el cliente controla el tiempo máximo). */
 export type RequestOptions = Omit<RequestInit, 'signal' | 'headers'> & {
   headers?: Record<string, string>;
+  /** Prefijo de la ruta; por defecto `/api/v1`. Vacío para `/healthz` y `/readyz`, que viven fuera de él. */
+  prefix?: string;
 };
 
 /**
- * Llama a `${EXPO_PUBLIC_API_URL}/api/v1${path}` y devuelve el cuerpo validado.
+ * Llama a `${EXPO_PUBLIC_API_URL}/api/v1${path}` (o con otro `prefix`) y devuelve el cuerpo validado.
  * Errores: `ApiError` con `code` del servidor, `invalid_response` (el cuerpo no
  * cumple `schema`), `network_error` (sin conexión) o `timeout` (más de 10 s).
  * Una configuración inválida lanza `ConfigError`: la app no debería llegar aquí.
@@ -24,8 +26,9 @@ export type RequestOptions = Omit<RequestInit, 'signal' | 'headers'> & {
 export async function request<T>(
   path: string,
   schema: z.ZodType<T>,
-  init: RequestOptions = {},
+  options: RequestOptions = {},
 ): Promise<T> {
+  const { prefix = API_PREFIX, ...init } = options;
   const { apiBaseUrl } = getConfig();
   const requestId = newRequestId();
   const controller = new AbortController();
@@ -36,7 +39,7 @@ export async function request<T>(
   }, REQUEST_TIMEOUT_MS);
 
   const hasBody = init.body !== undefined && init.body !== null;
-  const url = `${apiBaseUrl}${API_PREFIX}${path.startsWith('/') ? path : `/${path}`}`;
+  const url = `${apiBaseUrl}${prefix}${path.startsWith('/') ? path : `/${path}`}`;
 
   try {
     const response = await fetch(url, {

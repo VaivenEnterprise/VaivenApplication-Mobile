@@ -115,7 +115,7 @@ Abre `.env` y deja **una sola** línea `EXPO_PUBLIC_API_URL` activa, según dón
 | Emulador Android | `http://10.0.2.2:8080` |
 | Simulador iOS | `http://localhost:8080` |
 
-> **El error más común.** El valor de `.env.example` (`192.168.1.50`) es solo un ejemplo. Con un teléfono físico debes poner **la IPv4 real de tu equipo**: ejecuta `ipconfig` y usa «Dirección IPv4» del adaptador Wi-Fi. Nunca uses `localhost` ni `10.0.2.2` en un teléfono físico.
+> **El error más común.** Con un teléfono físico debes poner **la IPv4 real de tu equipo** en lugar de `<IP_DE_TU_EQUIPO>`: ejecuta `ipconfig` y usa «Dirección IPv4» del adaptador Wi-Fi. Nunca uses `localhost` ni `10.0.2.2` en un teléfono físico. Tu `.env` es solo tuyo: git lo ignora y no debe subirse ni compartirse.
 
 Antes de abrir la app, comprueba desde el **navegador del teléfono** que llega al backend: `http://<tu-IP>:8080/api/v1/meta` debe mostrar un JSON. Si no carga, abre el puerto en el firewall de Windows (PowerShell como administrador):
 
@@ -132,7 +132,7 @@ npx expo start -c
 Escanea el QR con Expo Go (o pulsa `a` para el emulador Android, `i` para el simulador iOS). **Cada vez que cambies `.env`, reinicia con `-c`**: Expo solo lo lee al arrancar.
 
 - **Inicio:** la pantalla de bienvenida con la marca y el subtítulo.
-- **Diagnóstico** (solo con `EXPO_PUBLIC_APP_ENV=development`): no hay botón, se abre por enlace. Con Expo Go en el teléfono, escribe en su navegador `exp://<tu-IP>:8081/--/diagnostico`; en emulador o simulador, `vaiven://diagnostico`. Debe mostrar nombre, versión, entorno y hora del servidor.
+- **Diagnóstico** (solo con `EXPO_PUBLIC_APP_ENV=development`): no hay botón, se abre por enlace. Con Expo Go en el teléfono, escribe en su navegador `exp://<tu-IP>:8081/--/diagnostico`; en emulador o simulador, `vaiven://diagnostico`. Debe mostrar la URL activa, nombre, versión, entorno y hora del servidor, y el estado de `/healthz` y `/readyz` (Redis puede salir «degradado» en local).
 
 ### Si algo falla
 

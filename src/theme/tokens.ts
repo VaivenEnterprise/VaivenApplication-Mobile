@@ -149,9 +149,14 @@ export const sizes = {
   thumbLg: 72,
   pin: 36,
   sheetHandle: { width: 40, height: 4 },
+  /** Aviso global bajo la barra de estado (spec §9.1). */
+  banner: 36,
+  sheetMaxHeight: '85%',
 } as const;
 
 export const motion = {
   pressScale: 0.98,
-  duration: { fast: 120 },
+  duration: { fast: 120, skeleton: 900 },
+  /** Distancia de arrastre (pt) a partir de la cual una hoja inferior se cierra. */
+  sheetDismissDistance: 80,
 } as const;
