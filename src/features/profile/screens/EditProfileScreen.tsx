@@ -37,6 +37,7 @@ export function EditProfileScreen() {
     phone: user?.phone ?? '',
   };
   const { control, handleSubmit, formState, reset } = useForm<EditProfileInput>({
+    mode: 'onTouched',
     resolver: zodResolver(editProfileSchema),
     defaultValues: initial,
   });

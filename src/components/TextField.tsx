@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.smd,
     borderRadius: radius.lg,
     borderWidth: sizes.field.border,
-    borderColor: colors.border,
+    borderColor: colors.fieldBorder,
     backgroundColor: colors.surface,
   },
   boxFocus: { borderWidth: sizes.field.borderFocus, borderColor: colors.primary },

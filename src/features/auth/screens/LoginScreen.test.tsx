@@ -140,3 +140,17 @@ describe('LoginScreen: envío', () => {
     await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
   });
 });
+
+describe('LoginScreen: validación al salir del campo', () => {
+  it('muestra el error del correo al perder el foco, sin enviar, y lo limpia al corregir', async () => {
+    await render(<LoginScreen />);
+    const email = screen.getByLabelText(t.email);
+    await fireEvent.changeText(email, 'ana@');
+    expect(screen.queryByText(es.auth.validation.emailInvalid)).toBeNull();
+    await fireEvent(email, 'blur');
+    expect(await screen.findByText(es.auth.validation.emailInvalid)).toBeTruthy();
+    expect(mockSignIn).not.toHaveBeenCalled();
+    await fireEvent.changeText(email, 'ana@example.com');
+    await waitFor(() => expect(screen.queryByText(es.auth.validation.emailInvalid)).toBeNull());
+  });
+});

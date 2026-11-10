@@ -110,3 +110,15 @@ Specs `001` a `015` en `specs/`, en el orden y con los dueños de `ROADMAP.md`. 
 
 
 - Tambien se admiten ramas por fase `tipo/SPEC-NN-Fase-N` (ejemplo: `feat/SPEC-02-Fase-3`, con SCRUM opcional), creadas desde la spec y con PR hacia esa misma SPEC o hacia develop. Implementar sus tareas una por una. No enviar fases directamente a main. Ver `docs/devsecops.md`.
+
+
+## UI/UX skills
+
+Estética, accesibilidad, prohibiciones, voz e íconos de este proyecto viven en `.ux-profile.md`.
+Antes de tocar UI o microcopy, léelo y luego la skill del dominio (page-patterns, viewports, forms, surfaces, loaders, empty-states, copy, motion).
+Antes de crear una pantalla nueva, nombra su patrón con `page-patterns`; no escribas el marcado antes.
+Las pantallas deben verse bien en un teléfono chico (360×640) y en uno grande, sin desbordes.
+Antes de terminar trabajo de UI, ejecuta `ux-audit`.
+La esencia del diseño de referencia (`docs/diseno/referencia/`) se conserva: solo ajustes puntuales, no rediseños.
+Los *tokens* de `src/theme` y la constitución (Art. VII) mandan sobre el perfil si chocan.
+Vuelve a ejecutar `setup-ui-ux-skills` solo para cambiar estos valores.
