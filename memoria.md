@@ -74,6 +74,10 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 | `zod` | Validación de configuración y respuestas | 002 |
 | `typescript`, `eslint`, `eslint-config-expo`, `prettier` | Calidad | 002 |
 | `jest`, `jest-expo`, `@testing-library/react-native`, `@types/jest` | Pruebas | 002 |
+| `expo-font`, `@expo-google-fonts/plus-jakarta-sans` | Tipografía del diseño (instaladas en 002-T006) | 002 |
+| `expo-linear-gradient` | Degradados (002-T006) | 002 |
+| `react-native-svg` | Ilustraciones SVG; fijada en 15.16.0, versión del SDK 58 (002-T006) | 002 |
+| `@expo/vector-icons` | Íconos tras `AppIcon` (002-T006) | 002 |
 
 ## 6. Pendientes y preguntas abiertas
 
@@ -165,3 +169,15 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 - [002] **Verificado en Windows (2026-11-10):** `npm install`, `npm run typecheck`, `npm run lint`, `npm test` (2/2), `prettier --check .` y `npx expo-doctor` (**20/20**, sin problemas) pasan en el equipo de la persona. Esto cierra la reserva anterior sobre `expo-doctor` en T001. Avisos aceptados: `@parcel/watcher` (script de instalación sin aprobar; solo aprobarlo si Metro lo pide) y 29 vulnerabilidades moderadas/bajas sin altas ni críticas (no usar `npm audit fix --force`).
 - [002] **Verificado en Expo Go (2026-11-10):** la persona confirmó que `npx expo start` funciona con la app de Expo. Fase 0 (T001–T004) cerrada.
 - [CI] 2026-11-10: al existir `package.json`, CodeQL empezó a analizar el repo y bloqueó `js/incomplete-multi-character-sanitization` (severidad 7.8) en `.github/scripts/policy.mjs` (quitaba comentarios HTML del PR con un `replace` de regex). Se reemplazó por `stripHtmlComments` (una pasada con `indexOf`) y se añadió una prueba en `policy.test.mjs` (15/15 pasan). El control no se debilita: sigue exigiendo contenido real en Resumen, Validación y Seguridad. Pendiente confirmar que CodeQL queda en verde tras el push.
+
+## Spec 002 — Fase 1 (Fundamentos) — 2026-11-10
+
+- [002] Completadas **T005–T009** en la rama `chore/SPEC-02-Fase-1`. Validado en copia limpia con `npm ci`: typecheck, lint, `prettier --check` y 82 pruebas en verde; cobertura 100 % en `config.ts`, `format/*` y `secureStorage.ts` (el script `coverage.mjs` de CI también pasa).
+- [002] **T005 — configuración:** `loadConfig` valida con `zod` 4 (`EXPO_PUBLIC_API_URL` obligatoria, http/https con puerto ≤ 65535; `EXPO_PUBLIC_APP_ENV` `development` por defecto y vacío = no definido; en `production` solo `https`). Se exportan `tryLoadConfig`, `configResult` y `getConfig()` (en lugar de un único `config`): `_layout.tsx` (T017) decide con `configResult` y el resto usa `getConfig()`. **Aprendizaje:** Expo solo inlinea `process.env.EXPO_PUBLIC_X` con acceso por nombre completo; pasar `process.env` entero no funciona.
+- [002] **T006 — tokens:** `src/theme/tokens.ts` con los valores de plan §4.2 como `as const`. Los degradados se guardan como `{ colors, start, end }` listos para `LinearGradient` (comprobado por tipos). `shadowRadius` usa el «desenfoque» del plan sin convertir. Una prueba calcula el contraste WCAG de los pares del plan (todos ≥ 4.5:1; `primary` sobre `background` 4.42 y sobre `primarySoft` 3.90 confirman la regla de «solo texto grande»). Dependencias nuevas, todas de plan §5: `expo-font`, `@expo-google-fonts/plus-jakarta-sans`, `expo-linear-gradient`, `react-native-svg` (exacta 15.16.0) y `@expo/vector-icons`. `expo install` no llega a `api.expo.dev` desde el entorno de la sesión: versiones tomadas de `expo/bundledNativeModules.json`.
+- [002] **T007 — textos:** `src/i18n/es-MX.ts` con `common`, `home`, `diagnostics`, `errors` (11 códigos + `unexpected` + `config`) y `notFound`. La correspondencia con `ApiErrorCode` la refuerza T010 con tipos; hasta entonces la comprueba una prueba con la lista de códigos de la constitución (Art. IV).
+- [002] **T008 — formato:** `formatMXN` exige entero seguro (si no, `''`); `formatDate`/`formatDateTime` aceptan una zona horaria opcional (solo para pruebas deterministas) y devuelven `''` ante entradas o zonas inválidas. Las pruebas normalizan espacios (Intl usa espacios no separables).
+- [002] **T009 — almacenamiento:** `secureStorage.get/set/remove` sobre `expo-secure-store` (~58.0.2, instalada en esta tarea); nunca lanza y no registra claves ni valores.
+- [002] **Aprendizaje TS 6 / CI:** `expo-env.d.ts` no se versiona, así que en un clon limpio `process` no tenía tipos y `typecheck` fallaba. Se agregó `"expo/types"` a `types` en `tsconfig.json`.
+- [002] **Aprendizaje Windows:** el árbol de trabajo de Windows usa CRLF (git `autocrlf`); `prettier` con `endOfLine: "lf"` fallaba. `.prettierrc` pasa a `"endOfLine": "auto"` (el CI en Linux sigue viendo LF). El `package-lock.json` que reescribe npm en Windows difiere solo en marcas `devOptional`.
+- [002] Se agregaron pruebas fuera de la lista literal de archivos de las tareas (`src/theme/tokens.test.ts`, `src/i18n/es-MX.test.ts`) para cumplir Art. IX y la regla de contraste; viven en `theme/` e `i18n/`, exentas de la prueba de convención T019.
