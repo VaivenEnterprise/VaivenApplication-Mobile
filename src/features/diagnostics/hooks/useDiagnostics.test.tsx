@@ -38,10 +38,19 @@ afterEach(() => {
 
 describe('useDiagnostics', () => {
   it('reúne meta, healthz y readyz', async () => {
-    jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => bodyFor(String(input)));
+    // Las respuestas se controlan a mano para comprobar «cargando» sin carreras con un fetch instantáneo.
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+      await gate;
+      return bodyFor(String(input));
+    });
     const { result } = await renderHook(() => useDiagnostics(), { wrapper: createWrapper() });
 
     expect(result.current.isPending).toBe(true);
+    release();
     await waitFor(() => expect(result.current.isPending).toBe(false));
 
     expect(result.current.meta).toEqual(META);
