@@ -162,7 +162,10 @@ Contrato consumido: `GET /api/v1/meta` del backend (spec 002 del backend, RF-06)
 | `react-native-svg` | Ilustraciones y subrayado ondulado |
 | `@expo/vector-icons` | Íconos (`AppIcon`) |
 | Dev: `typescript`, `eslint`, `eslint-config-expo`, `prettier` | Calidad |
+| `expo-linking` | Requerida por `expo-router` (ya aprobada en P-S3) |
 | Dev: `jest`, `jest-expo`, `@testing-library/react-native`, `@types/jest` | Pruebas |
+| Dev: `@react-native/jest-preset`, `test-renderer` | Requeridas por `jest-expo` 58 y `@testing-library/react-native` 14 (peer) |
+`package.json` fija `react-dom` a 19.3.0 con `overrides` (peer opcional de `expo-router`; no se agrega como dependencia ni se usa web).
 Los módulos de Expo se instalan con `npx expo install`.
 
 ## 6. Estrategia de pruebas

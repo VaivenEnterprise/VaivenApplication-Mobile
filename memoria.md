@@ -14,7 +14,7 @@ _Última actualización: 2026-10-28_
 | Specs 002–013 | Redactadas (spec, plan, tasks), pendientes de aprobación; ver `ROADMAP.md` |
 | Tareas | **Sin ejecutar**; arranque planeado 2026-10-29 |
 | Código | Ninguno todavía |
-| Versión de Expo SDK | _Por fijar en T001 (SDK estable vigente)_ |
+| Versión de Expo SDK | **58** (`expo` ~58.0.23, `react-native` 0.88.1, `react` 19.3.0; fijado en 002-T001, 2026-11-10) |
 
 ## 2. Decisiones (registro tipo ADR)
 
@@ -149,3 +149,18 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 - [DISEÑO] **D-132** Las tareas «Verificación en Expo Go» de las specs 002 a 015 se hacen **a mano o con Claude contra el backend local**; `probador-expo` y el MCP quedan opcionales. El Art. XIV de la constitución dice otra cosa: propuesta de enmienda en `docs/propuesta-enmienda-xiv-local.md` (la constitución no se tocó).
 - [DISEÑO] **D-133** **Inicio es funcional** desde la primera entrega: `GET /me` y `GET /items?limit=6` con su propio `api.ts` en `features/home`, proyectos del catálogo local y marcadores para lo que aún no tiene API (003 §7.3, T014). La ruta mínima está en `docs/ruta-critica-login-inicio.md`.
 - [DISEÑO] **D-134** `006-T011` (catálogo y `PopularProjects`) ya no depende de `006-T001` para poder adelantarse. `002-T030` puede entregarse en dos partes (primero `Skeleton`, `Avatar`, `Banner`).
+
+## Spec 002 — Fase 0 (Preparación) — 2026-11-10
+
+- [002] Rama de trabajo `spec/SPEC-02` (creada desde `develop`). Completadas **T001–T004**; `Fase 0` lista para revisión y PR por una persona.
+- [002] **SDK fijado:** Expo 58 (`expo` ~58.0.23, `react-native` 0.88.1, `react` 19.3.0), plantilla `blank-typescript` reorganizada a `src/` (sin `App.tsx` ni `index.ts`; `main` = `expo-router/entry`). `assets/` conserva los íconos de la plantilla como **provisionales** (D-129).
+- [002] Dependencias instaladas: `expo-router`, `react-native-safe-area-context`, `react-native-screens`, `expo-constants`, `expo-status-bar`, `expo-linking` (peer de `expo-router`, ya aprobada); dev: `typescript` ~6.0.3, `@types/react`, `eslint` ~9.39 (v9 por compatibilidad con `eslint-config-expo`), `eslint-config-expo`, `prettier`, `jest` 30, `jest-expo`, `@testing-library/react-native` 14, `@types/jest`, `@react-native/jest-preset` y `test-renderer` (peers exigidos por `jest-expo` 58 / RNTL 14). `react-dom` se fija en 19.3.0 con `overrides` solo para resolver el peer de `expo-router`; no se usa web.
+- [002] `package.json` fija `react` y `react-native` en versión exacta (las que pide el SDK 58).
+- [002] **Aprendizaje TS 6:** `baseUrl` está obsoleto (error TS5101); el alias `@/*` va solo en `paths` con ruta relativa `./src/*`. TS 6 ya no incluye `@types/*` solos: `tsconfig.json` declara `"types": ["jest"]`.
+- [002] **Aprendizaje ESLint:** la config plana de `eslint-config-expo` solo registra `@typescript-eslint` para `*.ts(x)`; las reglas de `any` y `@ts-ignore` se declaran con `files: ['**/*.ts','**/*.tsx']`. `npm run lint` usa `--max-warnings 0` (RNF-02). Comprobado que un archivo con `any` y `@ts-ignore` falla.
+- [002] **Jest:** preset `jest-expo`, alias `^@/(.*)$` → `src/$1`, `collectCoverageFrom` en `src/lib/**` y `src/features/*/hooks/**` (lo exige `.github/scripts/coverage.mjs`), umbral global 80 %. En RNTL 14 `render` es asíncrono (`await render(...)`).
+- [002] **Pendiente de verificar en tu equipo:** `npx expo-doctor` pasó 18/20 comprobaciones en el entorno de la sesión; las 2 restantes (esquema de `app.config` y directorio de React Native) necesitan red hacia Expo y no pudieron ejecutarse. `expo install` tampoco llegó a `api.expo.dev`: las versiones se fijaron con `expo/bundledNativeModules.json` del SDK 58. Ejecutar `npx expo-doctor` y `npx expo install --check` localmente. Además, `npx expo start` solo se comprobó que arranca Metro; el empaquetado de la app requiere las rutas de T017.
+- [002] `package-lock.json` generado en Linux; `npm install`/`npm ci` en Windows debería respetarlo. `node_modules` no se versiona.
+- [002] Jest se limita a `roots: ['<rootDir>/src']` (el test de `.github/scripts` usa `node:test`); `.prettierignore` excluye `*.md`, `specs`, `docs`, `.github`, `.opencode` y `opencode.json` para no reformatear documentos ni configuración ajena. Validado en copia limpia con `npm ci`: typecheck, lint, `prettier --check` y `npm test` en verde; `npm audit --audit-level=high` sin hallazgos altos/críticos.
+- [002] **Verificado en Windows (2026-11-10):** `npm install`, `npm run typecheck`, `npm run lint`, `npm test` (2/2), `prettier --check .` y `npx expo-doctor` (**20/20**, sin problemas) pasan en el equipo de la persona. Esto cierra la reserva anterior sobre `expo-doctor` en T001. Avisos aceptados: `@parcel/watcher` (script de instalación sin aprobar; solo aprobarlo si Metro lo pide) y 29 vulnerabilidades moderadas/bajas sin altas ni críticas (no usar `npm audit fix --force`).
+- [002] **Verificado en Expo Go (2026-11-10):** la persona confirmó que `npx expo start` funciona con la app de Expo. Fase 0 (T001–T004) cerrada.
