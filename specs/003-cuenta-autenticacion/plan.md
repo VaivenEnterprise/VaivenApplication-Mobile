@@ -55,3 +55,12 @@ Esquemas (válidos/ inválidos), `session` (restaurar, firmar, salir, refresco c
 | VI | Tokens correctamente almacenados; sin PII en logs |
 | X | Rutas con Expo Router; componentes base reutilizados |
 | XIII | Navegación creada una vez; i18n y claves por feature |
+
+
+## Notas de implementación (2026-11-10)
+
+- Mensajes está oculta por la barra propia, no con `href: null` (memoria D-136).
+- Textos por feature reexportados en `es-MX.ts` (D-137); `FormNotice` y `Screen.refreshControl` añadidos (D-138).
+- Enlaces legales: `EXPO_PUBLIC_LEGAL_URL` opcional (D-139). Fecha de suspensión solo si el servidor la manda (D-140).
+- Restauración de sesión única y política de borrado del token de refresco (D-141).
+- `006-T011` se adelantó por la dependencia de T014 (D-134).

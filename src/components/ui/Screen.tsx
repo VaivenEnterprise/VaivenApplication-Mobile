@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  type RefreshControlProps,
   StyleSheet,
   View,
   type StyleProp,
@@ -20,6 +21,8 @@ type ScreenProps = {
   /** Con `false` el contenido ocupa la pantalla sin desplazarse (pantallas centradas). */
   scroll?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
+  /** Jalar para recargar (solo con `scroll`). */
+  refreshControl?: ReactElement<RefreshControlProps>;
 };
 
 /** Contenedor de toda pantalla: área segura, fondo, margen `gutter` y manejo del teclado. */
@@ -29,6 +32,7 @@ export function Screen({
   background = 'plain',
   scroll = true,
   contentStyle,
+  refreshControl,
 }: ScreenProps) {
   const content = (
     <>
@@ -43,13 +47,13 @@ export function Screen({
   return (
     <GradientBackground variant={background}>
       <SafeAreaView style={styles.fill}>
-        <KeyboardAvoidingView
-          style={styles.fill}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
+        <KeyboardAvoidingView style={styles.fill} behavior="padding">
           {scroll ? (
             <ScrollView
+              testID="screen-scroll"
               keyboardShouldPersistTaps="handled"
+              keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+              refreshControl={refreshControl}
               contentContainerStyle={[styles.content, contentStyle]}
             >
               {content}

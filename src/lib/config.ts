@@ -9,11 +9,14 @@ export type Config = {
   /** URL base del backend, sin «/» final (p. ej. http://10.0.2.2:8080). */
   readonly apiBaseUrl: string;
   readonly appEnv: AppEnv;
+  /** URL base del sitio público (términos y privacidad), sin «/» final. Opcional. */
+  readonly legalBaseUrl?: string;
 };
 
 export type RawEnv = {
   EXPO_PUBLIC_API_URL?: string | undefined;
   EXPO_PUBLIC_APP_ENV?: string | undefined;
+  EXPO_PUBLIC_LEGAL_URL?: string | undefined;
 };
 
 export class ConfigError extends Error {
@@ -52,6 +55,17 @@ const envSchema = z
       .string({ error: `Falta EXPO_PUBLIC_API_URL. ${API_URL_HELP}` })
       .trim()
       .refine(isHttpUrl, { error: `EXPO_PUBLIC_API_URL no es una URL válida. ${API_URL_HELP}` }),
+    EXPO_PUBLIC_LEGAL_URL: z.preprocess(
+      emptyToUndefined,
+      z
+        .string()
+        .trim()
+        .refine(isHttpUrl, {
+          error:
+            'EXPO_PUBLIC_LEGAL_URL no es una URL válida. Usa una URL https:// del sitio público.',
+        })
+        .optional(),
+    ),
     EXPO_PUBLIC_APP_ENV: z.preprocess(
       emptyToUndefined,
       z
@@ -83,11 +97,13 @@ export function tryLoadConfig(env: RawEnv): ConfigResult {
     const issues = parsed.error.issues.map((issue) => issue.message);
     return { ok: false, error: new ConfigError(issues) };
   }
+  const legalUrl = parsed.data.EXPO_PUBLIC_LEGAL_URL;
   return {
     ok: true,
     config: {
       apiBaseUrl: parsed.data.EXPO_PUBLIC_API_URL.replace(/\/+$/, ''),
       appEnv: parsed.data.EXPO_PUBLIC_APP_ENV,
+      ...(legalUrl === undefined ? {} : { legalBaseUrl: legalUrl.replace(/\/+$/, '') }),
     },
   };
 }
@@ -104,6 +120,7 @@ export function loadConfig(env: RawEnv): Config {
 const runtimeEnv: RawEnv = {
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
   EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV,
+  EXPO_PUBLIC_LEGAL_URL: process.env.EXPO_PUBLIC_LEGAL_URL,
 };
 
 /** Resultado de validar el entorno al iniciar; `_layout.tsx` muestra el error si es inválido. */

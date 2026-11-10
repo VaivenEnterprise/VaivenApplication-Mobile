@@ -1,6 +1,12 @@
 // Todos los textos visibles de la app (Art. V.3). Ningún componente lleva texto
 // literal. Las claves de `errors` cubren cada `ApiErrorCode` (lib/api/errors.ts).
 
+import { authEs } from '@/i18n/auth';
+import { inicioEs } from '@/i18n/inicio';
+import { profileEs } from '@/i18n/profile';
+import { projectsEs } from '@/i18n/projects';
+import { tabsEs } from '@/i18n/tabs';
+
 export const es = {
   common: {
     retry: 'Reintentar',
@@ -16,6 +22,11 @@ export const es = {
     clearSearch: 'Borrar búsqueda',
     outOfFive: 'de 5',
   },
+  auth: authEs,
+  profile: profileEs,
+  tabs: tabsEs,
+  inicio: inicioEs,
+  projects: projectsEs,
   home: {
     title: 'Vaivén',
     subtitle: 'Presta y renta objetos cerca de ti.',

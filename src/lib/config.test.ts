@@ -68,6 +68,26 @@ describe('loadConfig', () => {
   });
 });
 
+describe('EXPO_PUBLIC_LEGAL_URL (opcional)', () => {
+  const base = { EXPO_PUBLIC_API_URL: 'http://10.0.2.2:8080' };
+
+  it('sin definir (o vacía) no agrega legalBaseUrl', () => {
+    expect(loadConfig(base).legalBaseUrl).toBeUndefined();
+    expect(loadConfig({ ...base, EXPO_PUBLIC_LEGAL_URL: '  ' }).legalBaseUrl).toBeUndefined();
+  });
+
+  it('se recorta y se le quita la barra final', () => {
+    const config = loadConfig({ ...base, EXPO_PUBLIC_LEGAL_URL: ' https://sitio.example/// ' });
+    expect(config.legalBaseUrl).toBe('https://sitio.example');
+  });
+
+  it('rechaza una URL que no es http(s)', () => {
+    expect(() => loadConfig({ ...base, EXPO_PUBLIC_LEGAL_URL: 'sitio.example' })).toThrow(
+      'EXPO_PUBLIC_LEGAL_URL',
+    );
+  });
+});
+
 describe('tryLoadConfig', () => {
   it('devuelve ok con la configuración válida', () => {
     const result = tryLoadConfig({ EXPO_PUBLIC_API_URL: 'http://10.0.2.2:8080' });

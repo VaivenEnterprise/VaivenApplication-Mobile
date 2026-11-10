@@ -37,3 +37,8 @@ export function formatDateTime(iso: string, timeZone?: string): string {
     timeZone,
   });
 }
+
+/** Ej.: «noviembre de 2026» (para «En Vaivén desde …»). Entrada inválida → cadena vacía. */
+export function formatMonthYear(iso: string, timeZone?: string): string {
+  return format(iso, { month: 'long', year: 'numeric', timeZone });
+}

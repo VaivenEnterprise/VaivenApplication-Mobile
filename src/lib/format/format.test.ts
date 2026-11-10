@@ -1,4 +1,4 @@
-import { formatDate, formatDateTime } from '@/lib/format/date';
+import { formatDate, formatDateTime, formatMonthYear } from '@/lib/format/date';
 import { formatMXN } from '@/lib/format/money';
 
 // Intl puede insertar espacios no separables según la plataforma.
@@ -69,5 +69,18 @@ describe('formatDate y formatDateTime', () => {
   it('no lanza con una zona horaria inválida', () => {
     expect(formatDate(ISO, 'Zona/Inexistente')).toBe('');
     expect(formatDateTime(ISO, 'Zona/Inexistente')).toBe('');
+  });
+});
+
+describe('formatMonthYear', () => {
+  it('muestra mes y año en español', () => {
+    expect(normalize(formatMonthYear('2026-11-10T01:30:00Z', 'America/Mexico_City'))).toBe(
+      'noviembre de 2026',
+    );
+  });
+
+  it('con una fecha inválida devuelve cadena vacía', () => {
+    expect(formatMonthYear('no-es-fecha')).toBe('');
+    expect(formatMonthYear('')).toBe('');
   });
 });
