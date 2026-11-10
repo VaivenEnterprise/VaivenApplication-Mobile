@@ -141,35 +141,35 @@
 
 ## Fase 4 — Cierre
 
-- [ ] **T019** Prueba de convención de diseño y textos
+- [x] **T019** Prueba de convención de diseño y textos
   - Archivos: `src/conventions.test.ts`
   - Agente: `qa-mobile`
   - Depende de: T018
   - Aceptación: la prueba falla si en `src/` (excepto `theme/` e `i18n/`) aparece un color literal `#hex` o un texto visible literal dentro de JSX; pasa en el estado actual
   - Refs: plan P-11 · RNF-04 · Art. V, VII
 
-- [ ] **T020** [P] Verificación local de calidad
+- [x] **T020** [P] Verificación local de calidad
   - Archivos: `package.json` (scripts `typecheck`, `lint`, `format`, `test`), `package-lock.json`
   - Agente: `dev-expo`
   - Depende de: T003, T004
   - Aceptación: en local pasan `npm run typecheck`, `npm run lint`, `npm run format -- --check` y `npm test` (sin `--passWithNoTests`, cobertura ≥ 80 % en `src/lib/` y `src/features/*/hooks/`)
   - Refs: H-10 · Art. IX
 
-- [ ] **T021** [P] README de la app
+- [x] **T021** [P] README de la app
   - Archivos: `README.md`
   - Agente: `spec-writer`
   - Depende de: T018
   - Aceptación: explica requisitos (Node, emulador o Expo Go), instalación, variables de entorno con tabla de URLs por plataforma (Android `10.0.2.2`, simulador iOS `localhost`, dispositivo físico IP local), comandos y estructura; un compañero puede seguirlo sin ayuda (CA-01)
   - Refs: RF-14 · H-01
 
-- [ ] **T022** Actualizar memoria y verificar criterios de aceptación
+- [x] **T022** Actualizar memoria y verificar criterios de aceptación
   - Archivos: `memoria.md`
   - Agente: `spec-writer`
   - Depende de: T019, T020, T021
   - Aceptación: estado de la spec 002 actualizado; versión real del SDK y dependencias registradas; CA-01…CA-11 comprobados y anotados
   - Refs: Art. XII
 
-- [ ] **T023** Revisión de conformidad con la constitución
+- [x] **T023** Revisión de conformidad con la constitución
   - Archivos: ninguno (solo informe)
   - Agente: `revisor-constitucion`
   - Depende de: T022
