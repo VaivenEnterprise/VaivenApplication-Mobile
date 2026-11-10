@@ -23,6 +23,8 @@ const ICONS = {
   options: 'options-outline',
   eye: 'eye-outline',
   eyeOff: 'eye-off-outline',
+  camera: 'camera-outline',
+  refresh: 'refresh',
   mail: 'mail-outline',
   lock: 'lock-closed-outline',
   person: 'person-outline',

@@ -2,6 +2,7 @@
 // literal. Las claves de `errors` cubren cada `ApiErrorCode` (lib/api/errors.ts).
 
 import { authEs } from '@/i18n/auth';
+import { imagesEs } from '@/i18n/images';
 import { inicioEs } from '@/i18n/inicio';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
@@ -26,6 +27,7 @@ export const es = {
   profile: profileEs,
   tabs: tabsEs,
   inicio: inicioEs,
+  images: imagesEs,
   projects: projectsEs,
   home: {
     title: 'Vaivén',
