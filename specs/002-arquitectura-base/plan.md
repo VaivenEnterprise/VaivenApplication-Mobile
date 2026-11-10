@@ -66,7 +66,7 @@ vaiven-frontend/
 | `EXPO_PUBLIC_API_URL` | **Sí** | — | URL base del backend, sin `/` final (p. ej. `http://10.0.2.2:8080`) |
 | `EXPO_PUBLIC_APP_ENV` | No | `development` | `development` · `production` |
 
-`config.ts` exporta `loadConfig()` (puro, probado) y `config` (resultado en tiempo de ejecución). Si la validación falla, `_layout.tsx` muestra `ConfigErrorScreen` con el mensaje de `i18n`.
+`config.ts` exporta `loadConfig(env)` (puro, probado; lanza `ConfigError`), `tryLoadConfig(env)` (devuelve `{ ok, config | error }` sin lanzar), `configResult` (resultado de validar el entorno al iniciar) y `getConfig()` (configuración válida o `ConfigError`). Las variables se leen por su nombre completo (`process.env.EXPO_PUBLIC_API_URL`), porque Expo no sustituye `process.env` entero. Se normalizan los espacios y las barras finales; en `production` la URL debe ser `https`. Si la validación falla, `_layout.tsx` muestra `ConfigErrorScreen` con el mensaje de `i18n`.
 Valores **públicos**: nunca secretos (Art. VIII).
 
 ### 4.2 Tokens de diseño (v1 — diseño de Stitch, 9 nov 2026)

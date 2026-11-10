@@ -37,35 +37,35 @@
 
 ## Fase 1 — Fundamentos
 
-- [ ] **T005** Configuración validada
+- [x] **T005** Configuración validada
   - Archivos: `src/lib/config.ts`, `src/lib/config.test.ts`, `.env.example`
   - Agente: `dev-expo`
   - Depende de: T003, T004
   - Aceptación: `loadConfig(env)` valida con `zod`; URL inválida o faltante → error con mensaje claro; `appEnv` por defecto `development`; `.env.example` sin secretos; pruebas de tabla
   - Refs: plan §4.1 · RF-02 · Art. II, VIII
 
-- [ ] **T006** [P] Tokens de diseño
+- [x] **T006** [P] Tokens de diseño
   - Archivos: `src/theme/tokens.ts`, `src/theme/index.ts`, `package.json`, `package-lock.json`
   - Agente: `dev-expo`
   - Depende de: T003
   - Aceptación: exporta `colors`, `gradients`, `spacing`, `radius`, `fontFamily`, `typography`, `shadows`, `sizes`, `motion` con los valores de plan §4.2 como `as const`; instala con `npx expo install` solo `expo-font`, `@expo-google-fonts/plus-jakarta-sans`, `expo-linear-gradient`, `react-native-svg` y `@expo/vector-icons` (plan §5); `typecheck` pasa
   - Refs: plan §4.2, §5 · RF-04 · Art. II.4, VII
 
-- [ ] **T007** [P] Textos es-MX
+- [x] **T007** [P] Textos es-MX
   - Archivos: `src/i18n/es-MX.ts`
   - Agente: `dev-expo`
   - Depende de: T003
   - Aceptación: exporta `es` con las secciones de plan §4.3; incluye un mensaje por cada `ApiErrorCode` (incl. `network_error`, `timeout`, `invalid_response`), `unexpected` y `config`
   - Refs: RF-05, RF-07 · Art. V
 
-- [ ] **T008** [P] Formato de dinero y fechas
+- [x] **T008** [P] Formato de dinero y fechas
   - Archivos: `src/lib/format/money.ts`, `src/lib/format/date.ts`, `src/lib/format/format.test.ts`
   - Agente: `dev-expo`
   - Depende de: T004
   - Aceptación: `formatMXN(12345)` → `$123.45`; `formatMXN(0)` → `$0.00`; `formatDate`/`formatDateTime` reciben ISO UTC y formatean en `es-MX`; entrada inválida no lanza excepción (devuelve cadena vacía); cobertura ≥ 80 %
   - Refs: RF-11 · Art. V
 
-- [ ] **T009** [P] Almacenamiento seguro
+- [x] **T009** [P] Almacenamiento seguro
   - Archivos: `src/lib/storage/secureStorage.ts`, `src/lib/storage/secureStorage.test.ts`
   - Agente: `dev-expo`
   - Depende de: T004
