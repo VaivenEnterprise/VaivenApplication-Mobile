@@ -13,13 +13,18 @@ describe('textos es-MX', () => {
 
   it('tiene las secciones del plan §4.3', () => {
     expect(Object.keys(es).sort()).toEqual([
+      'auth',
       'brand',
       'common',
       'configError',
       'diagnostics',
       'errors',
       'home',
+      'inicio',
       'notFound',
+      'profile',
+      'projects',
+      'tabs',
       'ui',
     ]);
   });
@@ -34,7 +39,9 @@ describe('textos es-MX', () => {
     expect(texts.length).toBeGreaterThan(0);
     for (const text of texts) {
       expect(text.trim()).not.toBe('');
-      expect(text).not.toMatch(/TODO|XXX|lorem/i);
+      // «TODO» en mayúsculas (marcador); «Ver todo» es un texto legítimo de la interfaz.
+      expect(text).not.toMatch(/\bTODO\b|XXX/);
+      expect(text).not.toMatch(/lorem/i);
     }
   });
 });

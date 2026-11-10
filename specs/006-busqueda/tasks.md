@@ -64,7 +64,7 @@
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
-- [ ] **T011** [P] Catálogo de proyectos, coincidencia y tarjetas
+- [x] **T011** [P] Catálogo de proyectos, coincidencia y tarjetas (adelantada por 003-T014, D-134; 34 pruebas en `projects.test.tsx`; el paso a paso de cada proyecto es de la spec 007)
   - Archivos: `src/features/projects/{catalog.ts,match.ts,index.ts}`, `src/features/projects/components/{ProjectCard,PopularProjects}.tsx`, `src/i18n/projects.ts`, `src/i18n/index.ts` (una línea), pruebas
   - Agente: `dev-expo` · Depende de: 002-T030
   - Aceptación: 4 proyectos iniciales con textos en `i18n/projects.ts`; `matchProjects('necesito colgar un cuadro')` devuelve «Colgar un cuadro» y `matchProjects('xyz')` devuelve vacío (prueba de tabla, con acentos y mayúsculas); `ProjectCard` en las tres variantes de spec §7.3 solo con *tokens*; `PopularProjects` exportada para Inicio (003) y Explorar

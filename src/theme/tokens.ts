@@ -142,9 +142,11 @@ export const sizes = {
   touch: { minSize: 44 },
   /** Campos y botones: alto 56, borde 1.5; adorno inicial de los campos: 36. */
   control: { height: 56, border: 1.5, iconBadge: 36 },
+  /** Campos de formulario: borde en reposo, borde con foco y halo (spec 003 §7.5). */
+  field: { border: 1, borderFocus: 2, halo: 3, checkbox: 24 },
   avatar: 36,
   brandTile: 40,
-  tabBar: { height: 68 },
+  tabBar: { height: 68, pillPaddingX: 14, pillPaddingY: 6 },
   thumb: 56,
   thumbLg: 72,
   pin: 36,
@@ -152,11 +154,20 @@ export const sizes = {
   /** Aviso global bajo la barra de estado (spec §9.1). */
   banner: 36,
   sheetMaxHeight: '85%',
+  /** Altura útil mínima (pt) para mostrar la ilustración del pie de inicio de sesión. */
+  illustrationMinHeight: 700,
+  illustrationHeight: 120,
+  /** Tarjetas de proyecto: alto de `hero` y `compact`, alto mínimo de `wide` (spec 006 §7.3). */
+  projectCard: { hero: 160, compact: 112, wide: 72 },
+  /** Tarjeta de objeto del Inicio y su foto 4:3 (spec 003 §7.3). */
+  homeTile: 160,
+  /** Botón circular (volver, mensajes). */
+  roundButton: 44,
 } as const;
 
 export const motion = {
   pressScale: 0.98,
-  duration: { fast: 120, skeleton: 900 },
+  duration: { fast: 120, skeleton: 900, saved: 900 },
   /** Distancia de arrastre (pt) a partir de la cual una hoja inferior se cierra. */
   sheetDismissDistance: 80,
 } as const;

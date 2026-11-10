@@ -15,6 +15,9 @@ import { AppText } from '@/components/ui/AppText';
 import { Card } from '@/components/ui/Card';
 import { IconBadge } from '@/components/ui/IconBadge';
 import { Screen } from '@/components/ui/Screen';
+import { RestoringScreen } from '@/features/auth/screens/RestoringScreen';
+import { SuspendedScreen } from '@/features/auth/screens/SuspendedScreen';
+import { useSession } from '@/features/auth/useSession';
 import { es } from '@/i18n/es-MX';
 import { configResult, type ConfigError } from '@/lib/config';
 import { AppProviders } from '@/providers/AppProviders';
@@ -42,6 +45,45 @@ function ConfigErrorScreen({ error }: { error: ConfigError }) {
   );
 }
 
+/** Rutas con sesión que viven fuera de las pestañas; cada spec llena la suya (plan 003 §1). */
+const SIGNED_IN_SCREENS = [
+  '(tabs)',
+  'objeto/[id]',
+  'reserva/[id]',
+  'chat/[id]',
+  'usuario/[id]',
+  'incidencia/[id]',
+  'proyecto/[id]',
+] as const;
+
+/**
+ * Auth gate (RF-04): sin sesión solo existen las rutas `(auth)`; con sesión, las pestañas y las
+ * rutas de detalle. Mientras se restaura la sesión se muestra una pantalla de carga, sin parpadeo.
+ */
+function RootNavigator() {
+  const { status, suspension, dismissSuspension } = useSession();
+  if (suspension !== null) {
+    return <SuspendedScreen until={suspension.until} onDismiss={dismissSuspension} />;
+  }
+  if (status === 'loading') return <RestoringScreen />;
+
+  const signedIn = status === 'signedIn';
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(dev)" />
+      <Stack.Protected guard={signedIn}>
+        {SIGNED_IN_SCREENS.map((name) => (
+          <Stack.Screen key={name} name={name} />
+        ))}
+      </Stack.Protected>
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     [fontFamily.regular]: PlusJakartaSans_400Regular,
@@ -63,7 +105,7 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       {configResult.ok ? (
         <AppProviders>
-          <Stack screenOptions={{ headerShown: false }} />
+          <RootNavigator />
         </AppProviders>
       ) : (
         <ConfigErrorScreen error={configResult.error} />

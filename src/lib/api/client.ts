@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import { getAccessToken, isAuthPath, refreshOnce } from '@/lib/api/authInterceptor';
 import { ApiError, fromServerError, messageForCode } from '@/lib/api/errors';
 import { newRequestId } from '@/lib/api/request-id';
 import { getConfig } from '@/lib/config';
@@ -28,6 +29,27 @@ export async function request<T>(
   schema: z.ZodType<T>,
   options: RequestOptions = {},
 ): Promise<T> {
+  const sentToken = isAuthPath(path) ? null : getAccessToken();
+  try {
+    return await execute(path, schema, options, sentToken);
+  } catch (error) {
+    // Ante 401 se renueva la sesión una sola vez y se reintenta una vez (RF-03).
+    if (!(error instanceof ApiError) || error.status !== 401 || isAuthPath(path)) throw error;
+    const current = getAccessToken();
+    // Otra petición ya renovó mientras esta viajaba: basta reintentar con el token nuevo.
+    const renewed = current !== null && current !== sentToken;
+    if (!renewed && sentToken === null) throw error;
+    if (!renewed && !(await refreshOnce())) throw error;
+    return execute(path, schema, options, getAccessToken());
+  }
+}
+
+async function execute<T>(
+  path: string,
+  schema: z.ZodType<T>,
+  options: RequestOptions,
+  token: string | null,
+): Promise<T> {
   const { prefix = API_PREFIX, ...init } = options;
   const { apiBaseUrl } = getConfig();
   const requestId = newRequestId();
@@ -47,6 +69,7 @@ export async function request<T>(
       headers: {
         Accept: 'application/json',
         ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
+        ...(token === null ? {} : { Authorization: `Bearer ${token}` }),
         ...init.headers,
         // Va al final para que nadie lo sobrescriba: correlaciona con los logs del servidor.
         'X-Request-Id': requestId,
