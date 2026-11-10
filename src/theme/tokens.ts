@@ -140,8 +140,8 @@ export const shadows = {
 
 export const sizes = {
   touch: { minSize: 44 },
-  /** Campos y botones: alto 56; adorno inicial de los campos: 36. */
-  control: { height: 56, iconBadge: 36 },
+  /** Campos y botones: alto 56, borde 1.5; adorno inicial de los campos: 36. */
+  control: { height: 56, border: 1.5, iconBadge: 36 },
   avatar: 36,
   brandTile: 40,
   tabBar: { height: 68 },

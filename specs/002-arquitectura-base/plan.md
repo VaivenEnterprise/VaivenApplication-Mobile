@@ -111,11 +111,11 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 | `LoadingState` | Indicador de actividad con texto accesible |
 | `ErrorState` | Mensaje (por `ApiError.code` → `i18n`), `requestId` pequeño opcional y botón de reintento |
 | `AppIcon` | Ícono por nombre de un conjunto cerrado (mapa propio sobre `@expo/vector-icons`); tamaño y color por *token*; sin `accessibilityLabel` cuando es decorativo |
-| `IconBadge` | Ícono dentro de un círculo `primarySoft` (o `secondarySoft`) de `control.iconBadge`; es el adorno inicial de los campos |
+| `IconBadge` | Ícono dentro de un círculo de color suave (tonos `primary`, `secondary`, `danger`, `warning`), tamaños `md` (`control.iconBadge`) y `lg` (`thumbLg`); es el adorno inicial de los campos |
 | `BrandMark` | Recuadro terracota con «V» y el nombre «VaiVen»; tamaños `sm` y `md` |
 | `GradientBackground` | Fondo de pantalla con degradado de `gradients`; variantes `auth` y `plain` |
 | `Card` | Superficie `surface` con radio `xl` y sombra `card`; variante `muted` (`surfaceMuted`, sin sombra) |
-| `Chip` | Píldora con ícono y texto (zona, «Comunidad segura»); variantes `neutral` y `success` |
+| `Chip` | Píldora con ícono y texto (zona, «Comunidad segura»); variantes `neutral`, `success` y `warning` |
 | `Divider` | Línea `border` con texto central opcional |
 | `BottomSheet` | Hoja inferior sobre `scrim`: asa, esquinas superiores `xl`, botón cerrar «X», se cierra tocando fuera o deslizando; contenido desplazable y pie fijo opcional. Base de filtros, solicitud, resumen, aceptar, cancelar, reportar y eliminar cuenta (sin dependencia nueva: `Modal` + `Animated`) |
 | `SearchBar` | Campo en píldora con lupa, botón «borrar» y `accessibilityRole="search"`; acepta un botón final (filtros) |
@@ -124,8 +124,10 @@ Secciones: `common` (reintentar, cargando, volver), `home` (título y subtítulo
 | `ProgressBar` | Barra de avance `border`/`secondary`, con valor accesible |
 | `SegmentedControl` | Dos a cuatro opciones en píldora; la activa en `surface` con sombra `soft`; insignia numérica opcional por opción |
 | `RatingStars` | Cinco estrellas, solo lectura o táctil (≥ 44 pt cada una); lee «N de 5» a lector de pantalla |
+| `Squiggle` | Subrayado ondulado decorativo (SVG) del título de bienvenida |
 | `Skeleton` | Bloque `surfaceMuted` con brillo suave; versiones de línea, tarjeta y círculo |
 | `Banner` | Aviso de ancho completo con ícono y una línea; variantes `info`, `success`, `warning`, `danger`, `offline` |
+`LoadingState` con `variant="card"` dibuja los bloques de carga con la forma de una tarjeta (sin animación en esta spec; `Skeleton` como componente propio llega con la primera lista).
 `AppErrorBoundary` (clase) muestra `ErrorState` genérico y permite reintentar (reinicia su estado).
 
 ### 4.5.1 Fuentes e íconos

@@ -44,6 +44,115 @@ opencode          # desde la raíz de este repositorio
 - Los Artículos **IV** (contrato de API) y **V** (dinero, fechas, idioma) deben mantenerse idénticos en las constituciones de backend y móvil. Si cambias uno, cámbialo en ambos repositorios y registra la decisión en ambos `memoria.md`.
 - `ROADMAP.md` y `docs/VAIVEN_Idea_y_Objetivo.pdf` son copias en cada repositorio; si se actualiza una, hay que actualizar las demás.
 
+## Desarrollo local
+
+La app **no se conecta a MongoDB**: solo habla con la API del backend. Para ver datos reales necesitas tres cosas en marcha: MongoDB, la API en Go y la app en Expo Go.
+
+### Requisitos
+
+| Herramienta | Para qué |
+|---|---|
+| Node.js (LTS) y npm | Instalar dependencias y correr Expo |
+| Expo Go en el teléfono (Android o iOS) | Ver la app; también sirve un emulador o simulador |
+| Go 1.26 | Correr la API del backend (`go version`) |
+| Docker Desktop (o Podman) | MongoDB local |
+| Teléfono y equipo en la **misma red Wi-Fi** | Solo si usas un teléfono físico |
+
+Los repositorios deben estar clonados lado a lado (`vaiven-frontend` y `vaiven-backend` en la misma carpeta).
+
+### 1. Levantar el backend (terminal 1, PowerShell)
+
+```powershell
+cd ..\vaiven-backend
+
+# MongoDB como replica set (solo para tu máquina)
+docker compose up -d
+
+# Copia la plantilla y ajústala: la sección «API en desarrollo local»
+copy .env.example .env
+```
+
+En `.env` del backend deben tener valor estas variables (las de Cloudinary pueden ser de relleno, como `dev`, porque la API no llama a Cloudinary al arrancar; el secreto de JWT debe tener al menos 32 caracteres y **nunca** se sube a git):
+
+```
+MONGO_URI=mongodb://localhost:27017/?replicaSet=rs0
+MONGO_DB=vaiven_dev
+HTTP_ADDR=:8080
+CLOUDINARY_CLOUD_NAME=dev
+CLOUDINARY_API_KEY=dev
+CLOUDINARY_API_SECRET=dev
+JWT_ACCESS_SECRET=<cadena aleatoria de 32 caracteres o más>
+```
+
+La API **no lee el archivo `.env`**, solo variables de entorno: cárgalas en la terminal y arranca.
+
+```powershell
+Get-Content .env | Where-Object { $_ -match '^[A-Z_]+=' } | ForEach-Object { $k, $v = $_ -split '=', 2; Set-Item "env:$k" $v }
+go run ./cmd/api
+```
+
+Debe aparecer `servidor iniciado addr=:8080`. Déjala corriendo y comprueba desde otra terminal:
+
+```powershell
+curl http://localhost:8080/api/v1/meta     # {"name":"vaiven-backend","version":"dev",...}
+```
+
+`/readyz` puede decir `"redis":"degradado"` en local: es normal, sin `REDIS_URL` se usa memoria.
+
+### 2. Configurar la app (terminal 2)
+
+```powershell
+cd ..\vaiven-frontend
+npm install
+copy .env.example .env
+```
+
+Abre `.env` y deja **una sola** línea `EXPO_PUBLIC_API_URL` activa, según dónde corras la app:
+
+| Dónde la corres | Valor |
+|---|---|
+| Teléfono físico con Expo Go | `http://<IPv4 de tu equipo>:8080` |
+| Emulador Android | `http://10.0.2.2:8080` |
+| Simulador iOS | `http://localhost:8080` |
+
+> **El error más común.** El valor de `.env.example` (`192.168.1.50`) es solo un ejemplo. Con un teléfono físico debes poner **la IPv4 real de tu equipo**: ejecuta `ipconfig` y usa «Dirección IPv4» del adaptador Wi-Fi. Nunca uses `localhost` ni `10.0.2.2` en un teléfono físico.
+
+Antes de abrir la app, comprueba desde el **navegador del teléfono** que llega al backend: `http://<tu-IP>:8080/api/v1/meta` debe mostrar un JSON. Si no carga, abre el puerto en el firewall de Windows (PowerShell como administrador):
+
+```powershell
+New-NetFirewallRule -DisplayName "Vaiven API 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow
+```
+
+### 3. Abrir la app
+
+```powershell
+npx expo start -c
+```
+
+Escanea el QR con Expo Go (o pulsa `a` para el emulador Android, `i` para el simulador iOS). **Cada vez que cambies `.env`, reinicia con `-c`**: Expo solo lo lee al arrancar.
+
+- **Inicio:** la pantalla de bienvenida con la marca y el subtítulo.
+- **Diagnóstico** (solo con `EXPO_PUBLIC_APP_ENV=development`): no hay botón, se abre por enlace. Con Expo Go en el teléfono, escribe en su navegador `exp://<tu-IP>:8081/--/diagnostico`; en emulador o simulador, `vaiven://diagnostico`. Debe mostrar nombre, versión, entorno y hora del servidor.
+
+### Si algo falla
+
+| Síntoma | Causa probable |
+|---|---|
+| «Sin conexión. Revisa tu internet.» en Diagnóstico | La API no está corriendo, `EXPO_PUBLIC_API_URL` tiene otra IP (o la de ejemplo), reiniciaste sin `-c`, o el firewall bloquea el puerto 8080. En el log de la API debe verse un `GET /api/v1/meta` cuando pulsas «Reintentar»; si no aparece, la app no está llegando. |
+| «La app no está bien configurada» | `EXPO_PUBLIC_API_URL` falta, está vacía o no es una URL `http(s)` válida (en `production` debe ser `https`). |
+| `go run` termina al arrancar | Falta una variable obligatoria; el mensaje las lista todas. Recuerda cargar el `.env` en esa terminal. |
+| Mongo no conecta | `docker ps` debe mostrar el contenedor de `vaiven-local`; si acaba de crearse, espera unos segundos a que inicie el replica set. |
+| La IP cambió | Al cambiar de red cambia tu IPv4: actualiza `.env` y reinicia con `-c`. |
+
+### Comandos de calidad
+
+```powershell
+npm run typecheck
+npm run lint
+npx prettier --check .
+npm test -- --coverage
+```
+
 ## Estado
 
-Todavía no hay código ni se han ejecutado tareas: están definidos los archivos de gobierno, el SDD por spec y la configuración de OpenCode con MCP. El repositorio y el pipeline se integrarán de cero.
+Spec 002 (arquitectura base): fases 0 a 3 completas (configuración, tokens, textos, cliente de API, componentes base, rutas y pantalla de diagnóstico). Falta la fase 4 (cierre). Detalle por tarea en `specs/002-arquitectura-base/tasks.md` y decisiones en `memoria.md`.

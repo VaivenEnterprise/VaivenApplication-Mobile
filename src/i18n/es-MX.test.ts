@@ -12,7 +12,15 @@ describe('textos es-MX', () => {
   });
 
   it('tiene las secciones del plan §4.3', () => {
-    expect(Object.keys(es).sort()).toEqual(['common', 'diagnostics', 'errors', 'home', 'notFound']);
+    expect(Object.keys(es).sort()).toEqual([
+      'brand',
+      'common',
+      'configError',
+      'diagnostics',
+      'errors',
+      'home',
+      'notFound',
+    ]);
   });
 
   it('no deja textos vacíos ni con marcadores pendientes', () => {

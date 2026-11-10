@@ -104,35 +104,35 @@
 
 ## Fase 3 — UI y rutas
 
-- [ ] **T014** Componentes base: `Screen` y `AppText`
+- [x] **T014** Componentes base: `Screen` y `AppText`
   - Archivos: `src/components/ui/{Screen,AppText,AppIcon,GradientBackground,BrandMark}.tsx`, `src/components/ui/ui.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T006
   - Aceptación: solo usan *tokens* (sin valores literales); `Screen` respeta área segura, admite fondo con degradado y evita el teclado; `AppText` admite todas las variantes de `typography` con su familia de fuente (sin `fontWeight` suelto); `AppIcon` solo acepta nombres de su conjunto cerrado; `BrandMark` en tamaños `sm` y `md`; pruebas de renderizado
   - Refs: plan §4.5 · RF-04 · Art. VII
 
-- [ ] **T015** Componentes base: `Button`, `LoadingState`, `ErrorState`
+- [x] **T015** Componentes base: `Button`, `LoadingState`, `ErrorState`
   - Archivos: `src/components/ui/{Button,LoadingState,ErrorState,Card,Chip,IconBadge,Divider}.tsx`, `src/components/ui/states.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T007, T010, T014
   - Aceptación: `Button` con rol `button`, alto 56, variantes `primary`/`secondary`/`outline`/`link`, ícono final opcional, estado cargando/deshabilitado sin cambiar de ancho y escala al pulsar; `ErrorState` muestra el mensaje de `i18n` según `ApiError.code` y llama `onRetry` al pulsar; `LoadingState` con texto accesible; `Card`, `Chip`, `IconBadge` y `Divider` solo con *tokens*; pruebas por rol y texto · Diseño de estados: spec §9.1 (ErrorState y LoadingState con `Skeleton`)
   - Refs: plan §4.5 · RF-04 · RNF-07 · Art. VII
 
-- [ ] **T016** Manejador global de errores de renderizado
+- [x] **T016** Manejador global de errores de renderizado
   - Archivos: `src/components/AppErrorBoundary.tsx`, `src/components/AppErrorBoundary.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T015
   - Aceptación: captura un error de render, muestra mensaje en español y permite reintentar; no registra datos personales; prueba con componente que lanza (CA-08)
   - Refs: RF-10 · Art. VIII
 
-- [ ] **T017** Rutas, layout raíz y pantalla base
+- [x] **T017** Rutas, layout raíz y pantalla base
   - Archivos: `src/app/_layout.tsx`, `src/app/index.tsx`, `src/app/+not-found.tsx`
   - Agente: `dev-expo`
   - Depende de: T005, T012, T015, T016
   - Aceptación: `_layout` carga las fuentes (`useFonts`) y mantiene el *splash* hasta que estén listas, o continúa con la fuente del sistema si fallan (RF-15); envuelve con `AppErrorBoundary` y `AppProviders`; si la configuración es inválida muestra pantalla de error de configuración; `index` y `+not-found` usan solo componentes de `ui/` y textos de `i18n`; la app abre en emulador (CA-01, CA-02) · `+not-found` y pantalla de error de configuración según spec §9.1
   - Refs: plan §4.6 · RF-02, RF-03 · Art. VI
 
-- [ ] **T018** Pantalla de diagnóstico (solo desarrollo)
+- [x] **T018** Pantalla de diagnóstico (solo desarrollo)
   - Archivos: `src/app/(dev)/_layout.tsx`, `src/app/(dev)/diagnostico.tsx`
   - Agente: `dev-expo`
   - Depende de: T013, T015, T017

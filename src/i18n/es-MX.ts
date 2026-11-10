@@ -7,6 +7,10 @@ export const es = {
     loading: 'Cargando…',
     back: 'Volver',
   },
+  brand: {
+    name: 'Vaivén',
+    initial: 'V',
+  },
   home: {
     title: 'Vaivén',
     subtitle: 'Presta y renta objetos cerca de ti.',
@@ -18,6 +22,7 @@ export const es = {
     version: 'Versión',
     environment: 'Entorno',
     serverTime: 'Hora del servidor',
+    devOnly: 'Esta pantalla solo existe en desarrollo.',
   },
   errors: {
     // Códigos del servidor
@@ -39,7 +44,12 @@ export const es = {
   },
   notFound: {
     title: 'No encontramos esta página',
+    description: 'Puede que el enlace haya cambiado.',
     action: 'Ir al inicio',
+  },
+  configError: {
+    title: 'La app no está bien configurada',
+    description: 'Revisa las variables del archivo .env.',
   },
 } as const;
 
