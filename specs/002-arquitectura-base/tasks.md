@@ -7,28 +7,28 @@
 
 ## Fase 0 — Preparación
 
-- [ ] **T001** Crear el proyecto Expo con TypeScript y reorganizarlo a `src/`
+- [x] **T001** Crear el proyecto Expo con TypeScript y reorganizarlo a `src/`
   - Archivos: `package.json`, `app.config.ts`, `tsconfig.json`, `.gitignore`, estructura `src/` vacía según plan §2 (con `.gitkeep`)
   - Agente: `dev-expo`
   - Depende de: —
   - Aceptación: `npx expo start` arranca sin errores; `npx expo-doctor` sin problemas críticos; versión del SDK anotada en `memoria.md`; el contenido de ejemplo de la plantilla fue eliminado
   - Refs: plan P-01 · Art. VI, X
 
-- [ ] **T002** TypeScript estricto y alias `@/`
+- [x] **T002** TypeScript estricto y alias `@/`
   - Archivos: `tsconfig.json`
   - Agente: `dev-expo`
   - Depende de: T001
   - Aceptación: `strict: true`, `noUncheckedIndexedAccess: true`, alias `@/*` → `src/*`; `npx tsc --noEmit` pasa
   - Refs: plan P-02 · Art. III
 
-- [ ] **T003** [P] ESLint, Prettier y scripts de calidad
+- [x] **T003** [P] ESLint, Prettier y scripts de calidad
   - Archivos: `eslint.config.js`, `.prettierrc`, `package.json` (scripts)
   - Agente: `dev-expo`
   - Depende de: T002
   - Aceptación: existen `typecheck`, `lint`, `format`; `eslint` prohíbe `any` explícito y `@ts-ignore`; `npm run lint` pasa
   - Refs: RF-13 · Art. III, IX
 
-- [ ] **T004** [P] Jest, jest-expo y React Native Testing Library
+- [x] **T004** [P] Jest, jest-expo y React Native Testing Library
   - Archivos: `jest.config.js`, `jest.setup.ts`, `package.json` (script `test`), `src/lib/smoke.test.ts`
   - Agente: `qa-mobile`
   - Depende de: T002

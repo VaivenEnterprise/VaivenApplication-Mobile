@@ -25,10 +25,26 @@ export function validatePR(pr) {
   // Los titulos son texto libre; nunca se ejecutan como comandos.
   if (!bot) for (const heading of ['Resumen','Validación','Seguridad']) {
     const section = (pr.body || '').match(new RegExp('^## ' + heading + '\\s*\\n([\\s\\S]*?)(?=^## |$(?![\\s\\S]))','m'));
-    const text = section?.[1].replace(/<!--[\s\S]*?-->/g,'').trim();
+    const text = section && stripHtmlComments(section[1]).trim();
     if (!text || text.length < 8) errors.push('Completa la seccion ' + heading + ' del PR.');
   }
   return errors;
+}
+
+// Quita comentarios HTML en una sola pasada de izquierda a derecha. Solo sirve para
+// comprobar que la seccion no este vacia; evita un replace con regex que CodeQL
+// marca como saneamiento incompleto (js/incomplete-multi-character-sanitization).
+function stripHtmlComments(text) {
+  let out = '';
+  let from = 0;
+  for (;;) {
+    const open = text.indexOf('<!--', from);
+    if (open === -1) return out + text.slice(from);
+    out += text.slice(from, open);
+    const close = text.indexOf('-->', open + 4);
+    if (close === -1) return out;
+    from = close + 3;
+  }
 }
 
 export function validateFiles(files) {
