@@ -52,6 +52,7 @@ export function RegisterScreen() {
   const { signUp } = useSession();
   const [formError, setFormError] = useState<string | null>(null);
   const { control, handleSubmit, setError, formState } = useForm<RegisterInput>({
+    mode: 'onTouched',
     resolver: zodResolver(registerSchema),
     defaultValues: {
       displayName: '',

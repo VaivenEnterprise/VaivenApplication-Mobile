@@ -16,9 +16,11 @@ export const colors = {
   surface: '#FFFFFF',
   surfaceMuted: '#F3EEE7',
   border: '#E9DED2',
+  /** Borde en reposo de campos y casillas: contraste ≥ 3:1 (WCAG 1.4.11). */
+  fieldBorder: '#968880',
   ink: '#2A1F1A',
   muted: '#6F6058',
-  placeholder: '#8F8179',
+  placeholder: '#7D6F67',
   onPrimary: '#FFFFFF',
   // Estado
   danger: '#B3261E',
@@ -146,7 +148,7 @@ export const sizes = {
   field: { border: 1, borderFocus: 2, halo: 3, checkbox: 24 },
   avatar: 36,
   brandTile: 40,
-  tabBar: { height: 68, pillPaddingX: 14, pillPaddingY: 6 },
+  tabBar: { height: 68, pillPaddingX: 6, pillPaddingY: 6 },
   thumb: 56,
   thumbLg: 72,
   pin: 36,

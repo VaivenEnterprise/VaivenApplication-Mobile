@@ -28,6 +28,7 @@ export function LoginScreen() {
   const { height } = useWindowDimensions();
   const [formError, setFormError] = useState<string | null>(null);
   const { control, handleSubmit, formState } = useForm<LoginInput>({
+    mode: 'onTouched',
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
@@ -109,7 +110,7 @@ export function LoginScreen() {
       {height >= sizes.illustrationMinHeight ? <NeighborhoodIllustration /> : null}
 
       <View style={styles.footer}>
-        <AppText color="muted">{t.noAccount}</AppText>
+        <AppText color="ink">{t.noAccount}</AppText>
         <Pressable
           accessibilityRole="link"
           accessibilityLabel={t.createOne}

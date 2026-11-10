@@ -45,7 +45,13 @@ export function TabBar({ state, navigateToTab, insets }: TabBarProps) {
           >
             <View style={[styles.pill, selected && styles.pillActive]}>
               <AppIcon name={item.icon} color={tone} />
-              <AppText variant="tab" color={tone}>
+              <AppText
+                variant="tab"
+                color={tone}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+              >
                 {item.label}
               </AppText>
             </View>

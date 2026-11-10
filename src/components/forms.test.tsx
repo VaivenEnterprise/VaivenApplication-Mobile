@@ -53,7 +53,7 @@ describe('TextField', () => {
   it('reposo: borde fino; foco: borde primario más grueso; error: borde de error', async () => {
     const { rerender } = await render(<TextField label="Correo" value="" testID="email" />);
     expect(borderOf('email')).toMatchObject({
-      borderColor: colors.border,
+      borderColor: colors.fieldBorder,
       borderWidth: sizes.field.border,
     });
 

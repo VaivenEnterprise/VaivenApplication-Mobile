@@ -106,8 +106,14 @@ describe('ProjectCard', () => {
     expect(screen.getByText('3 herramientas ›')).toBeTruthy();
   });
 
-  it('por defecto es compact', async () => {
+  it('por defecto es compact y, como en la referencia, solo muestra el título (sin etiqueta)', async () => {
     await render(<ProjectCard project={project} onPress={jest.fn()} />);
+    expect(screen.getByText('Colgar un cuadro')).toBeTruthy();
+    expect(screen.queryByText('3 herramientas')).toBeNull();
+  });
+
+  it('solo la variante hero muestra la etiqueta de herramientas', async () => {
+    await render(<ProjectCard project={project} variant="hero" onPress={jest.fn()} />);
     expect(screen.getByText('3 herramientas')).toBeTruthy();
   });
 });

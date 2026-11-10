@@ -66,7 +66,9 @@ export function ProjectCard({ project, variant = 'compact', onPress }: ProjectCa
             <AppText variant={variant === 'hero' ? 'heading' : 'bodyStrong'} numberOfLines={2}>
               {title}
             </AppText>
-            <Chip label={tools} variant={project.tone === 'warm' ? 'neutral' : 'success'} />
+            {variant === 'hero' ? (
+              <Chip label={tools} variant={project.tone === 'warm' ? 'neutral' : 'success'} />
+            ) : null}
           </View>
         </>
       )}

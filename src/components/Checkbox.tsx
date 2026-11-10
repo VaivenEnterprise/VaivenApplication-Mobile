@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     height: sizes.field.checkbox,
     borderRadius: radius.sm,
     borderWidth: sizes.control.border,
-    borderColor: colors.border,
+    borderColor: colors.fieldBorder,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
