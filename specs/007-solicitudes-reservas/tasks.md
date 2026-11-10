@@ -24,19 +24,19 @@
 - [ ] **T004** [P] Componentes de presentación
   - Archivos: `src/features/bookings/components/{StatusBadge,QuoteSummary,BookingCard,ExpiryCountdown,MeetingPointCard}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T001
-  - Aceptación: `StatusBadge` con color de tokens y texto (no solo color); `QuoteSummary` con desglose y política; cuenta regresiva con reloj falso en pruebas
+  - Aceptación: `StatusBadge` con color de tokens y texto (no solo color); `QuoteSummary` con desglose y política; cuenta regresiva con reloj falso en pruebas · `StatusBadge` con los colores de spec 002 §9.2; `BookingCard` según spec §7.4
   - Refs: RF-03, RF-09
 
 - [ ] **T005** [P] Selectores de fechas y modo de pago
   - Archivos: `src/features/bookings/components/{DateRangePicker,PaymentModePicker}.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T001, 002-T024
-  - Aceptación: `@react-native-community/datetimepicker` en Android e iOS; bloquea pasadas y > 7 días (CA-02)
+  - Aceptación: `@react-native-community/datetimepicker` en Android e iOS; bloquea pasadas y > 7 días (CA-02) · `PaymentModePicker` como dos tarjetas seleccionables (spec §7.3)
   - Refs: RF-02
 
 - [ ] **T006** Pantalla Solicitar
   - Archivos: `src/features/bookings/screens/RequestScreen.tsx`, `src/app/solicitar/[itemId].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T003, T004, T005
-  - Aceptación: CA-01, CA-03; casilla «Entiendo»; envío con `acceptedTotalCents`; errores de conflicto y cambio de precio; al éxito navega al detalle de la reserva
+  - Aceptación: CA-01, CA-03; casilla «Entiendo»; envío con `acceptedTotalCents`; errores de conflicto y cambio de precio; al éxito navega al detalle de la reserva · `RequestScreen` como `BottomSheet` según spec §7.3, con estados de éxito y errores `quote_changed` y fechas ocupadas
   - Refs: RF-02…RF-04
 
 - [ ] **T007** Botón «Solicitar» en el detalle del objeto
@@ -48,19 +48,19 @@
 - [ ] **T008** Pestaña Actividad
   - Archivos: `src/features/bookings/screens/ActivityScreen.tsx`, `src/app/(tabs)/actividad/index.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T003, T004, 003-T008
-  - Aceptación: CA-04; segmentos propietario/solicitante; filtro de estado; paginación; vacío; error
+  - Aceptación: CA-04; segmentos propietario/solicitante; filtro de estado; paginación; vacío; error · Diseño: spec §7.4
   - Refs: RF-05
 
 - [ ] **T009** Acciones de la reserva
   - Archivos: `src/features/bookings/components/BookingActions.tsx`, `src/features/bookings/components/CancelSheet.tsx`, `src/features/bookings/components/AcceptSheet.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, T003
-  - Aceptación: CA-05, CA-07; aceptar con punto de encuentro opcional; cancelar con motivo y confirmación con consecuencias; punto de encuentro editable en `accepted`
+  - Aceptación: CA-05, CA-07; aceptar con punto de encuentro opcional; cancelar con motivo y confirmación con consecuencias; punto de encuentro editable en `accepted` · `AcceptSheet`, `CancelSheet` y hoja de rechazo según spec §7.5
   - Refs: RF-07, RF-08
 
 - [ ] **T010** Detalle de reserva con *slots*
   - Archivos: `src/features/bookings/slots.ts`, `src/features/bookings/screens/BookingDetailScreen.tsx`, `src/app/reserva/[id].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T004, T009
-  - Aceptación: CA-06; secciones `chat`, `deliveryAndPayments`, `ratingsAndIncidents` que se pintan si hay componente registrado; documentación del registro en `slots.ts`
+  - Aceptación: CA-06; secciones `chat`, `deliveryAndPayments`, `ratingsAndIncidents` que se pintan si hay componente registrado; documentación del registro en `slots.ts` · Diseño: spec §7.5 (línea de avance, tarjetas y barra inferior por rol)
   - Refs: RF-06, RF-10 · P-04
 
 - [ ] **T011** Prueba de integración del flujo de solicitud
@@ -71,15 +71,27 @@
 
 - [ ] **T012** Memoria y revisión
   - Archivos: `memoria.md` (solo anexar)
-  - Agente: `revisor-constitucion` · Depende de: T011
+  - Agente: `revisor-constitucion` · Depende de: T011, T015
   - Aceptación: **CONFORME**; hito H3 (móvil) marcado; se avisa a MO-B (008, 010, 011) y a MO-A (009) cómo registrar *slots*
   - Refs: DoD
 
 - [ ] **T013** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/007/` (capturas)
   - Agente: `probador-expo` · Depende de: T012 (y todas las anteriores `[x]`) y backend 007-T013 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
-| Total | 13 tareas |
+- [ ] **T014** [P] Mapa del vecindario
+  - Archivos: `src/components/map/NeighborhoodMap.tsx`, `src/features/project-guide/geometry.ts`, pruebas
+  - Agente: `dev-expo` · Depende de: T001, 002-T006
+  - Aceptación: dibuja el esquema con `react-native-svg` y solo *tokens* de mapa; `geometry.ts` convierte ubicaciones aproximadas en posiciones relativas y escala al 80 % del radio (prueba de tabla: un pin a 300 m, otro a 800 m, uno sin ubicación → no se dibuja); cada pin con etiqueta accesible; sin dependencias nuevas
+  - Refs: RF-14 · P-08
+
+- [ ] **T015** Pantalla de proyecto
+  - Archivos: `src/features/project-guide/{hooks.ts,screens/ProjectScreen.tsx}`, `src/features/project-guide/components/{ToolRow,StepCard,PinCard,ProjectDoneSheet}.tsx`, `src/app/proyecto/[id].tsx`, `src/features/project-guide/index.ts`, pruebas
+  - Agente: `dev-expo` · Depende de: T006, T014, 006-T002, 006-T011, 002-T030
+  - Aceptación: CA-08 a CA-13; reproduce spec §7.1 y no muestra nada de §7.6; una consulta por herramienta (`useQueries`) y «Ampliar» a 10 km; fila y pin se sincronizan; «Terminé mi proyecto» según avance; ubicación negada → invitación a activarla; pruebas con doble de red y de ubicación
+  - Refs: RF-12 a RF-15 · P-09, P-10, P-11
+
+| Total | 15 tareas |
 |---|---|

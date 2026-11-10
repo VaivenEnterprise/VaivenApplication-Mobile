@@ -40,3 +40,16 @@ Foto de perfil (avatar), edición/recorte avanzado, video, galería a pantalla c
 
 ## 6. Preguntas abiertas
 - [NEEDS CLARIFICATION: ¿máximo de fotos por objeto? Provisional: 6.]
+
+## 7. Diseño de pantallas
+
+Lenguaje y reglas generales: spec 002 §9. Textos desde `src/i18n/images.ts`.
+
+### 7.1 `PhotoPicker`
+- **Fila horizontal** de casillas cuadradas de 88 pt con radio `lg`; la primera casilla es «+» con el contador «0/5». Tocar «+» abre una `BottomSheet` con dos filas: «Tomar foto» (cámara) y «Elegir de la galería».
+- **Casilla con foto:** miniatura con «X» en la esquina para quitar; la primera lleva la etiqueta «Portada» (mover al inicio con una pulsación larga y «Hacer portada»).
+- **Estados por foto:** subiendo (anillo de avance sobre la miniatura) · listo (sin adorno) · falló (velo `dangerSoft` con ícono de reintentar).
+- **Límite:** al llegar al máximo, la casilla «+» desaparece.
+
+### 7.2 `RemoteImage`
+Muestra un `Skeleton` mientras carga y, si falla, un fondo `slotWarm` con ícono de imagen; nunca deja un hueco vacío ni un texto de error.

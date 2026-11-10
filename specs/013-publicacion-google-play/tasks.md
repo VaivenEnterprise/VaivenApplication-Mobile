@@ -30,7 +30,7 @@
 - [ ] **T005** [P] Recursos gráficos de la ficha
   - Archivos: `assets/store/icon-512.png`, `assets/store/feature-1024x500.png`, `assets/store/screenshots/*.png`
   - Agente: `dev-expo` (ícono y gráfico) / **persona** (capturas reales) · Depende de: 012-T005, una versión instalable (T008)
-  - Aceptación: ícono 512×512; gráfico 1024×500; ≥ 4 capturas del teléfono sin datos personales; una versión provisional alcanza para empezar y se reemplaza antes de producción
+  - Aceptación: ícono 512×512; gráfico 1024×500; ≥ 4 capturas del teléfono sin datos personales; una versión provisional alcanza para empezar y se reemplaza antes de producción · Ícono actual provisional; dirección y recursos según spec §7
   - Refs: RF-03
 
 - [ ] **T006** [P] Documento de cumplimiento

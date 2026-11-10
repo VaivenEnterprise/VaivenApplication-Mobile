@@ -13,7 +13,7 @@ Dejar una **app instalable y presentable**: verificación en Expo Go, estados va
 | RF-02 | **Banner de conexión**: aviso global «Sin conexión» cuando no hay red y reintento automático al volver (sin librería nueva: `fetch` a `/healthz` y `AppState`); las pantallas con datos en caché muestran lo último disponible. |
 | RF-03 | **Pulido de estados**: toda pantalla con datos tiene estado de carga, vacío, error y reintento; revisión pantalla por pantalla con una lista de comprobación. |
 | RF-04 | **Accesibilidad básica**: etiquetas en botones e íconos, objetivos táctiles ≥ 44 dp, contraste suficiente en tokens, texto escalable, orden de lectura lógico en formularios y QR. |
-| RF-05 | **Identidad visual mínima**: ícono, pantalla de inicio (*splash*), nombre y colores de marca en tokens (según lo que defina el equipo). |
+| RF-05 | **Identidad visual mínima**: ícono, pantalla de inicio (*splash*), nombre y colores de marca en tokens (los *tokens* de la spec 002 §4.2 y la dirección de la spec 013 §7; el ícono actual se conserva y se mejorará después). |
 | RF-06 | **Recorrido manual con 2 teléfonos** (lista en `docs/validacion.md`): registro de A y B → A publica con fotos → B busca y solicita → A acepta → chat → entrega con QR → pago → devolución con QR → calificaciones → incidencia (opcional) → notificaciones. Se anotan fallos y su resolución. |
 | RF-07 | **Revisión de seguridad**: sin secretos en el repositorio ni en el código de la app, tokens solo en `SecureStore`, sin PII en logs, evidencia sin caché persistente, permisos mínimos declarados. |
 | RF-08 | **Rendimiento básico**: listas con paginación y `keyExtractor`, imágenes con miniaturas, arranque en < 3 s en un teléfono de gama media (medición anotada). |
@@ -34,5 +34,19 @@ Dejar una **app instalable y presentable**: verificación en Expo Go, estados va
 Publicación en tiendas, iOS firmado, modo oscuro completo, soporte de tabletas, analítica.
 
 ## 5. Preguntas abiertas
-- [NEEDS CLARIFICATION: paleta y logotipo definitivos (identificador visual); provisional: tokens neutros de 002.]
+- [RESUELTA 9 nov 2026] Paleta y tipografía definitivas: *tokens* de la spec 002 §4.2 (diseño de Stitch). El logotipo actual se conserva como provisional y se mejorará después (spec 013 §7).
 - [NEEDS CLARIFICATION: ¿personas externas probarán la app en Expo Go antes del 22 nov? Define el alcance de `validacion.md`.]
+
+## 6. Preguntas abiertas
+Ninguna.
+
+## 7. Diseño de pantallas
+
+### 7.1 Aviso global de conexión (`OfflineBanner`)
+- Franja de 36 pt **en el flujo**, bajo la barra de estado y encima del contenido y de las pestañas (el contenido se recorre hacia abajo mientras es visible; no tapa los encabezados).
+- **Sin conexión:** fondo `ink`, texto `onPrimary`, ícono de wifi tachado, «Sin conexión» y un indicador pequeño de reintento.
+- **Al volver:** fondo `secondary`, «De vuelta en línea» durante 2 s y desaparece.
+- Misma pieza que `Banner` de `ui` (variantes `offline` y `success`); sin librerías nuevas (RF-02).
+
+### 7.2 Lista de comprobación de estados (RF-03)
+Para cada pantalla con datos se revisa que existan, con el diseño de la spec 002 §9.1: **cargando** (`Skeleton`), **vacío** (`EmptyState`, ≤ 2 líneas), **error** (`ErrorState` con «Reintentar») y **sin conexión** (`Banner`). La lista de pantallas sale de las secciones «Diseño» de las specs 003 a 011.

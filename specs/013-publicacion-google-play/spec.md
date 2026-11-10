@@ -54,3 +54,12 @@ iOS/App Store, anuncios, compras dentro de la app, suscripciones, lanzamiento po
 - [NEEDS CLARIFICATION: ¿Quiénes serán los 15–20 testers y cómo se les asegura que sigan inscritos hasta el final? Aún no se sabe; reunirlos antes del 9 nov.]
 - [NEEDS CLARIFICATION: categoría de la tienda (provisional: «Estilo de vida»; aún sin decidir).]
 - [NEEDS CLARIFICATION: trámites legales (aviso de privacidad, términos): aún no existen; los borradores de la landing requieren revisión humana antes de publicarse.]
+
+## 7. Dirección de marca y recursos de la ficha
+
+El ícono actual **se conserva como provisional** (RF-03 admite una versión provisional) y se mejorará más adelante. Para que la mejora no cambie la ficha ni las pantallas, queda fijada esta dirección:
+- **Ícono:** recuadro redondeado en terracota (`primary` con degradado `primaryButton`) con la «V» en crema. Android adaptable: primer plano con la «V» y fondo con el degradado; versión monocromática para íconos temáticos. Sin texto ni sombras duras; 512×512, sin transparencia en la versión de Play.
+- ***Splash*:** `BrandMark` `md` centrado sobre `authBackground`; es la misma imagen que la pantalla de sesión restaurando (spec 003 §7.12), para que el arranque se sienta continuo.
+- **Gráfico de funciones (1024×500):** fondo `authBackground`, `NeighborhoodIllustration` abajo y el `BrandMark` con una frase corta a la izquierda.
+- **Capturas (≥ 4, 1080×1920, con datos de `seed` y sin datos personales):** Inicio · Proyecto con herramientas y mapa · Solicitar · Chat · QR de entrega. Cada una con un pie de **tres palabras como máximo**.
+- [NEEDS CLARIFICATION: la frase del gráfico y los pies de las capturas (texto de marca) los define el equipo.]

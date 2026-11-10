@@ -27,3 +27,6 @@ Hook y componente con la API simulada; estados de carga, error, límite y apagad
 | II | Sin dependencias nuevas |
 | VI | La foto solo se envía por acción explícita |
 | XIII | Carpeta propia, i18n propio, *slot* |
+
+## 6. Diseño
+Las pantallas siguen la spec §7; `SuggestionBanner` se compone de `Card`, `Chip`, `IconBadge`, `Skeleton` y `Banner` de `ui`.

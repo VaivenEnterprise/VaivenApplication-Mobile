@@ -6,7 +6,7 @@
 - [ ] **T001** [P] Detección de conexión y banner
   - Archivos: `src/features/connectivity/{useOnline.ts, OfflineBanner.tsx, useOnline.test.ts, OfflineBanner.test.tsx}`, `src/app/_layout.tsx` (una línea)
   - Dueño: MO-B · Agente: `dev-expo` · Depende de: 003-T008
-  - Aceptación: CA-02; sin dependencia nueva (P-01); reintento con *backoff*; el banner no bloquea
+  - Aceptación: CA-02; sin dependencia nueva (P-01); reintento con *backoff*; el banner no bloquea · Diseño: spec §7.1
   - Refs: RF-02
 
 - [ ] **T002** Prueba E2E con red simulada
@@ -18,7 +18,7 @@
 - [ ] **T003** Pasada de estados por pantalla
   - Archivos: `docs/validacion.md` (lista), correcciones puntuales en las features afectadas (cada una por su dueño)
   - Dueño: MO-A y MO-B (reparten por feature) · Agente: `qa-mobile` · Depende de: 011 integradas
-  - Aceptación: CA-03; cada pantalla con datos tiene carga, vacío, error y reintento; lista de comprobación completa
+  - Aceptación: CA-03; cada pantalla con datos tiene carga, vacío, error y reintento; lista de comprobación completa · Lista de comprobación según spec §7.2
   - Refs: RF-03 · P-03
 
 - [ ] **T004** [P] Accesibilidad básica
@@ -30,13 +30,13 @@
 - [ ] **T005** [P] Ícono, *splash* e identidad mínima
   - Archivos: `assets/*`, `app.config.ts`, `src/theme/tokens.ts`
   - Dueño: MO-B · Agente: `dev-expo` · Depende de: 002-T025
-  - Aceptación: ícono adaptable, splash y color de marca; sin elementos con derechos de terceros
+  - Aceptación: ícono adaptable, splash y color de marca; sin elementos con derechos de terceros · Identidad según spec 013 §7 (ícono actual provisional; *splash* con `BrandMark` sobre `authBackground`)
   - Refs: RF-05
 
 - [ ] **T006** Verificación en Expo Go apuntando a staging
   - Archivos: `docs/entorno-local.md`, `memoria.md` (solo anexar)
   - Dueño: MO-B · Agente: — (manual) · Depende de: T005, 012-T009 (backend)
-  - Aceptación: app abierta en Expo Go en 2 teléfonos contra staging; evidencia anotada; `/readyz` verde en diagnóstico
+  - Aceptación: app abierta en Expo Go en 2 teléfonos contra staging; evidencia anotada; `/readyz` verde en diagnóstico · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: RF-01 · P-06
 
 - [ ] **T007** Recorrido manual con 2 teléfonos
@@ -72,7 +72,7 @@
 - [ ] **T012** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/012/` (capturas)
   - Agente: `probador-expo` · Depende de: T011 (y todas las anteriores `[x]`) y backend 012-T012 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 12 tareas |

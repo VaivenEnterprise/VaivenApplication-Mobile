@@ -10,7 +10,8 @@ src/features/search/
   components/{SearchBar, CategoryChips, FilterSheet, DateRangeField, DistanceField, ResultsList}.tsx
   screens/ExploreScreen.tsx
 src/app/(tabs)/explorar/index.tsx (reemplaza el marcador)
-src/i18n/search.ts (+ reexport)
+src/features/projects/{catalog.ts, match.ts, index.ts, components/{ProjectCard,PopularProjects}.tsx}   # catálogo empaquetado; lo reutilizan 003 (Inicio) y 007
+src/i18n/{search.ts, projects.ts} (+ reexport)
 ```
 Reutiliza `ItemCard` y `useCategories` de `features/items` mediante su `index.ts` (no se copian).
 
@@ -26,6 +27,9 @@ Reutiliza `ItemCard` y `useCategories` de `features/items` mediante su `index.ts
 | P-04 | Fechas en `YYYY-MM-DD`; el selector bloquea fechas pasadas y exige `from ≤ to` | V |
 | P-05 | Si hay `lat/lng`, el servidor usa el modo geo; la app no calcula distancias | III |
 | P-06 | Coordenadas del dispositivo solo viajan en la consulta, no se guardan | VI |
+| P-07 | **Catálogo de proyectos empaquetado** en la app (provisional, spec §6): `catalog.ts` con `{ id, titleKey, keywords[], minutes, difficulty, tools[{ id, nameKey, query }], steps[{ id, titleKey, bodyKey, tipKey? }] }` y los textos en `i18n/projects.ts` | V, XIII |
+| P-08 | `matchProjects(text)` es una función pura: normaliza (minúsculas, sin acentos, sin signos), separa en palabras y puntúa por coincidencia con `keywords` y título; devuelve hasta 2 proyectos con al menos una coincidencia. No usa red ni IA | III |
+| P-09 | Las pantallas siguen la spec §7; `ItemCard` `grid` es el de 005 | VII |
 
 ## 4. Pruebas
 `filters.ts` (ida y vuelta), `useSearchItems` (debounce, cancelación, paginación, errores), `FilterSheet` (aplicar/limpiar), `ExploreScreen` (estados: carga, vacío, error, más resultados), permiso de ubicación negado.

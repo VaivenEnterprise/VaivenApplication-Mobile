@@ -1,7 +1,9 @@
 # Spec 001 — Servicios y entorno local con MCP de Expo (móvil)
 
-- **Dueño:** MO-B · **Prioridad:** P0 · **Depende de:** — (primera spec; no requiere código)
-- **Constitución:** v1.2.0 (Art. XIV) · **Estado:** Borrador, pendiente de aprobación
+- **Dueño:** MO-B · **Prioridad:** P3 (opcional) · **Depende de:** —
+- **Constitución:** v1.2.0 (Art. XIV) · **Estado:** **OPCIONAL, diferida (9 nov 2026)**; no bloquea a ninguna spec
+
+> **Decisión del 9 nov 2026:** por ahora la app corre **solo en local** (Expo Go contra el backend local; sin staging ni producción) y el equipo ya trabaja con Claude, así que **no se configura el MCP de Expo**. Esta spec queda **opcional**: ninguna otra spec depende de ella. Se omiten RF-01, RF-05 y las tareas T001 y T004. Siguen siendo útiles, sin bloquear: RF-02 (Expo Go en un teléfono), RF-03 (registrar el SDK en `memoria.md`) y RF-04 / T003 (`docs/entorno-local.md`). Se retoma si algún día hay staging o se quiere el MCP.
 
 ## 1. Objetivo y por qué
 Dejar listo el entorno para desarrollar y **probar la app en local con Expo Go**, y conectar OpenCode con el **MCP de Expo**. La app no se compila ni se despliega en las specs de funcionalidad: cada spec se verifica en Expo Go contra el backend de staging.

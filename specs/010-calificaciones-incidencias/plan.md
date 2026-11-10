@@ -39,3 +39,6 @@ Cada feature tiene su `index.ts`, que registra los *slots* de 003 (`renderReputa
 | VI | Evidencia privada |
 | X | Accesibilidad de estrellas, estados vacíos |
 | XIII | *Slots* y archivos por feature |
+
+## 6. Diseño
+Las pantallas siguen la spec §7. `RatingStars` viene de `components/ui` (002-T030); aquí solo se crean `RatingSummary`, `RatingCard`, `RatingSheet` y `ReasonPicker`.

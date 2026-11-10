@@ -41,3 +41,6 @@ src/i18n/handover.ts (+ reexport)
 | VI | Tokens QR solo en memoria; evidencia sin caché persistente |
 | X | Estados, permisos y tokens de diseño |
 | XIII | *Slot* sin editar el detalle de 007 |
+
+## 6. Diseño
+Las pantallas siguen la spec §7. La consulta cada 5 s de la pantalla del QR (RF-12) usa `refetchInterval` de TanStack Query, solo con la app en primer plano, y se detiene al salir. Ningún QR ni token se escribe en logs ni en disco (RF-11).

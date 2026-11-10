@@ -45,11 +45,11 @@
   - Refs: plan §4.1 · RF-02 · Art. II, VIII
 
 - [ ] **T006** [P] Tokens de diseño
-  - Archivos: `src/theme/tokens.ts`, `src/theme/index.ts`
+  - Archivos: `src/theme/tokens.ts`, `src/theme/index.ts`, `package.json`, `package-lock.json`
   - Agente: `dev-expo`
   - Depende de: T003
-  - Aceptación: exporta `colors`, `spacing`, `radius`, `typography`, `touch` con los valores de plan §4.2 como `as const`; `typecheck` pasa
-  - Refs: plan §4.2 · RF-04 · Art. VII
+  - Aceptación: exporta `colors`, `gradients`, `spacing`, `radius`, `fontFamily`, `typography`, `shadows`, `sizes`, `motion` con los valores de plan §4.2 como `as const`; instala con `npx expo install` solo `expo-font`, `@expo-google-fonts/plus-jakarta-sans`, `expo-linear-gradient`, `react-native-svg` y `@expo/vector-icons` (plan §5); `typecheck` pasa
+  - Refs: plan §4.2, §5 · RF-04 · Art. II.4, VII
 
 - [ ] **T007** [P] Textos es-MX
   - Archivos: `src/i18n/es-MX.ts`
@@ -105,17 +105,17 @@
 ## Fase 3 — UI y rutas
 
 - [ ] **T014** Componentes base: `Screen` y `AppText`
-  - Archivos: `src/components/ui/Screen.tsx`, `src/components/ui/AppText.tsx`, `src/components/ui/ui.test.tsx`
+  - Archivos: `src/components/ui/{Screen,AppText,AppIcon,GradientBackground,BrandMark}.tsx`, `src/components/ui/ui.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T006
-  - Aceptación: solo usan *tokens* (sin valores literales); `Screen` respeta área segura; `AppText` admite variantes de `typography`; pruebas de renderizado
+  - Aceptación: solo usan *tokens* (sin valores literales); `Screen` respeta área segura, admite fondo con degradado y evita el teclado; `AppText` admite todas las variantes de `typography` con su familia de fuente (sin `fontWeight` suelto); `AppIcon` solo acepta nombres de su conjunto cerrado; `BrandMark` en tamaños `sm` y `md`; pruebas de renderizado
   - Refs: plan §4.5 · RF-04 · Art. VII
 
 - [ ] **T015** Componentes base: `Button`, `LoadingState`, `ErrorState`
-  - Archivos: `src/components/ui/Button.tsx`, `src/components/ui/LoadingState.tsx`, `src/components/ui/ErrorState.tsx`, `src/components/ui/states.test.tsx`
+  - Archivos: `src/components/ui/{Button,LoadingState,ErrorState,Card,Chip,IconBadge,Divider}.tsx`, `src/components/ui/states.test.tsx`
   - Agente: `dev-expo`
   - Depende de: T007, T010, T014
-  - Aceptación: `Button` con rol `button`, área ≥ 44, variantes y estado cargando/deshabilitado; `ErrorState` muestra el mensaje de `i18n` según `ApiError.code` y llama `onRetry` al pulsar; `LoadingState` con texto accesible; pruebas por rol y texto
+  - Aceptación: `Button` con rol `button`, alto 56, variantes `primary`/`secondary`/`outline`/`link`, ícono final opcional, estado cargando/deshabilitado sin cambiar de ancho y escala al pulsar; `ErrorState` muestra el mensaje de `i18n` según `ApiError.code` y llama `onRetry` al pulsar; `LoadingState` con texto accesible; `Card`, `Chip`, `IconBadge` y `Divider` solo con *tokens*; pruebas por rol y texto · Diseño de estados: spec §9.1 (ErrorState y LoadingState con `Skeleton`)
   - Refs: plan §4.5 · RF-04 · RNF-07 · Art. VII
 
 - [ ] **T016** Manejador global de errores de renderizado
@@ -129,7 +129,7 @@
   - Archivos: `src/app/_layout.tsx`, `src/app/index.tsx`, `src/app/+not-found.tsx`
   - Agente: `dev-expo`
   - Depende de: T005, T012, T015, T016
-  - Aceptación: `_layout` envuelve con `AppErrorBoundary` y `AppProviders`; si la configuración es inválida muestra pantalla de error de configuración; `index` y `+not-found` usan solo componentes de `ui/` y textos de `i18n`; la app abre en emulador (CA-01, CA-02)
+  - Aceptación: `_layout` carga las fuentes (`useFonts`) y mantiene el *splash* hasta que estén listas, o continúa con la fuente del sistema si fallan (RF-15); envuelve con `AppErrorBoundary` y `AppProviders`; si la configuración es inválida muestra pantalla de error de configuración; `index` y `+not-found` usan solo componentes de `ui/` y textos de `i18n`; la app abre en emulador (CA-01, CA-02) · `+not-found` y pantalla de error de configuración según spec §9.1
   - Refs: plan §4.6 · RF-02, RF-03 · Art. VI
 
 - [ ] **T018** Pantalla de diagnóstico (solo desarrollo)
@@ -180,8 +180,8 @@
 
 - [ ] **T024** Instalar dependencias nativas aprobadas
   - Archivos: `package.json`, `package-lock.json`
-  - Agente: `dev-expo` · Depende de: T023, 001-T002
-  - Aceptación: instaladas con `npx expo install` las de plan P-S3 (**sin** `expo-dev-client`); `npx expo-doctor` sin errores; ninguna dependencia fuera de la constitución
+  - Agente: `dev-expo` · Depende de: T023
+  - Aceptación: instaladas con `npx expo install` las de plan P-S3 (**sin** `expo-dev-client`); `npx expo-doctor` sin errores; ninguna dependencia fuera de la constitución · Para la ruta crítica (docs/ruta-critica-login-inicio.md) bastan `expo-secure-store`, `expo-font`, `expo-linear-gradient` y `react-native-svg`; cámara, ubicación, imágenes y notificaciones se instalan cuando su spec los necesite
   - Refs: Art. X.4, XIV
 
 - [ ] **T025** Configuración de la app y permisos
@@ -205,14 +205,20 @@
 - [ ] **T028** Diagnóstico ampliado
   - Archivos: `src/features/diagnostics/{api.ts, useDiagnostics.ts, DiagnosticsScreen.tsx}`, pruebas
   - Agente: `dev-expo` · Depende de: T027
-  - Aceptación: muestra URL activa, `/healthz`, `/readyz` y versión y entorno (de `GET /api/v1/meta`); estados de carga y error con `LoadingState`/`ErrorState`
+  - Aceptación: muestra URL activa, `/healthz`, `/readyz` y versión y entorno (de `GET /api/v1/meta`); estados de carga y error con `LoadingState`/`ErrorState` · Diagnóstico según spec §9.1 (`Card` clave–valor, `Chip` «DEV»)
   - Refs: RF-S3
 
 - [ ] **T029** Verificación en Expo Go contra staging (**la hace una persona** con `probador-expo`)
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/002/` (capturas)
   - Agente: `probador-expo` · Depende de: T028, backend 002-T031
-  - Aceptación: con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go en un teléfono Android real; el diagnóstico muestra `/readyz` en verde; el MCP `expo` toma una captura; `docs/entorno-local.md` se sigue sin ayuda (001-CA-03). **La spec 003 no empieza hasta que esta tarea pase.**
+  - Aceptación: con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go en un teléfono Android real; el diagnóstico muestra `/readyz` en verde; el MCP `expo` toma una captura; `docs/entorno-local.md` se sigue sin ayuda (001-CA-03). **La spec 003 no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: RF-S4 · Art. XIV.4
+
+- [ ] **T030** [P] Componentes de interacción
+  - Archivos: `src/components/ui/{BottomSheet,SearchBar,Avatar,ListRow,ProgressBar,SegmentedControl,RatingStars,Skeleton,Banner}.tsx`, `src/components/ui/interaction.test.tsx`
+  - Agente: `dev-expo` · Depende de: T015
+  - Aceptación: solo *tokens*; `BottomSheet` se cierra con «X», tocando fuera y deslizando, y es utilizable con lector de pantalla; `SearchBar` con botón de borrar y rol de búsqueda; `RatingStars` táctil con área ≥ 44 y valor leído; `SegmentedControl` con insignia opcional; `Skeleton` sin animación si el sistema pide reducir movimiento; `Banner` con las cinco variantes de §9.1; `Button` gana la variante `danger`; pruebas por rol y texto · Puede entregarse en dos partes: primero `Skeleton`, `Avatar` y `Banner` (los necesita el Inicio) y después el resto
+  - Refs: RF-16 · Art. VII, XIII.5
 
 ## Resumen
 
@@ -222,6 +228,7 @@
 | 1 Fundamentos | T005–T009 | 5 |
 | 2 Datos y errores | T010–T013 | 4 |
 | 3 UI y rutas | T014–T018 | 5 |
+| 6 Componentes de interacción | T030 | 1 |
 | 4 Cierre | T019–T023 | 5 |
 | 5 Servicios y entorno local | T024–T029 | 6 |
-| **Total** | | **29** |
+| **Total** | | **30** |

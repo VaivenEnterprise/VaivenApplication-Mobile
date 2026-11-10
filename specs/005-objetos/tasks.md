@@ -30,31 +30,31 @@
 - [ ] **T005** Componentes de presentación
   - Archivos: `src/features/items/components/{ItemCard,ItemStatusBadge,PhotoGallery,OwnerCard,ConditionPicker,ModalityPicker}.tsx`, pruebas, `src/features/items/index.ts`
   - Agente: `dev-expo` · Depende de: T001, 004-T007
-  - Aceptación: `ItemCard` (foto, título, precio, estado); `PhotoGallery` paginada; `OwnerCard` enlaza a `usuario/[id]`; todo con tokens y accesible; `index.ts` exporta lo que 006 reutiliza
+  - Aceptación: `ItemCard` (foto, título, precio, estado); `PhotoGallery` paginada; `OwnerCard` enlaza a `usuario/[id]`; todo con tokens y accesible; `index.ts` exporta lo que 006 reutiliza · `ItemCard` con variantes `grid` y `row` según spec §7.1 y §7.3; `OwnerCard` con `Avatar` y `RatingStars`
   - Refs: RF-06 · P-05
 
 - [ ] **T006** Mis objetos
   - Archivos: `src/features/items/screens/MyItemsScreen.tsx`, `src/app/(tabs)/mis-objetos/index.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T004, T005, 003-T008
-  - Aceptación: lista paginada con filtro por estado; vacío con acción; error con reintento; refresco manual
+  - Aceptación: lista paginada con filtro por estado; vacío con acción; error con reintento; refresco manual · Diseño: spec §7.1
   - Refs: RF-01
 
 - [ ] **T007** Formulario de publicar
   - Archivos: `src/features/items/screens/ItemFormScreen.tsx`, `src/features/items/components/LocationField.tsx`, `src/app/(tabs)/mis-objetos/nuevo.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T002, T003, T004, 004-T008
-  - Aceptación: CA-01, CA-02, CA-04; `PhotoPicker` con `item_photo`; ubicación opcional con `expo-location`; conserva lo escrito si falla una foto (RNF-01); expone el *slot* `renderFormExtras({ photos, setValues })` para que la spec 014 (IA) agregue su banner sin editar el formulario
+  - Aceptación: CA-01, CA-02, CA-04; `PhotoPicker` con `item_photo`; ubicación opcional con `expo-location`; conserva lo escrito si falla una foto (RNF-01); expone el *slot* `renderFormExtras({ photos, setValues })` para que la spec 014 (IA) agregue su banner sin editar el formulario · Diseño: spec §7.2 (secciones, casillas de foto, chips, hoja de moderación)
   - Refs: RF-02, RF-03, RF-05, RF-09
 
 - [ ] **T008** Detalle del objeto
   - Archivos: `src/features/items/screens/ItemDetailScreen.tsx`, `src/app/objeto/[id].tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T004, T005
-  - Aceptación: CA-05; *slots* `renderActions`, `renderOwnerExtras` y `renderEffects(item)` (para efectos sin interfaz, como registrar la vista de la spec 015) documentados; estados de carga, error y no encontrado
+  - Aceptación: CA-05; *slots* `renderActions`, `renderOwnerExtras` y `renderEffects(item)` (para efectos sin interfaz, como registrar la vista de la spec 015) documentados; estados de carga, error y no encontrado · Diseño: spec §7.3
   - Refs: RF-06, RF-08
 
 - [ ] **T009** [P] Editar, pausar, reanudar y eliminar
   - Archivos: `src/app/(tabs)/mis-objetos/[id]/editar.tsx`, `src/features/items/components/OwnerActions.tsx`, pruebas
   - Agente: `dev-expo` · Depende de: T007, T008
-  - Aceptación: CA-06; reutiliza `ItemFormScreen` en modo edición; eliminar con confirmación; errores 403/409 con mensaje
+  - Aceptación: CA-06; reutiliza `ItemFormScreen` en modo edición; eliminar con confirmación; errores 403/409 con mensaje · Confirmación de eliminar en `BottomSheet` según spec §7.3
   - Refs: RF-07
 
 - [ ] **T010** [P] Sugerencia de precio
@@ -78,7 +78,7 @@
 - [ ] **T013** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/005/` (capturas)
   - Agente: `probador-expo` · Depende de: T012 (y todas las anteriores `[x]`) y backend 005-T010 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 13 tareas |

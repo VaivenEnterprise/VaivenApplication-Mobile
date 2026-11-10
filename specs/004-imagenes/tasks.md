@@ -35,13 +35,13 @@
 - [ ] **T006** Componente `PhotoPicker`
   - Archivos: `src/features/images/components/{PhotoPicker.tsx, UploadProgress.tsx}`, `PhotoPicker.test.tsx`
   - Agente: `dev-expo` · Depende de: T004, T005, 002-T015
-  - Aceptación: vista previa, quitar, mover al inicio, progreso y error por foto, bloqueo al llegar al límite (CA-05); accesible
+  - Aceptación: vista previa, quitar, mover al inicio, progreso y error por foto, bloqueo al llegar al límite (CA-05); accesible · Diseño: spec §7.1
   - Refs: RF-01, RF-04
 
 - [ ] **T007** Componente `RemoteImage`
   - Archivos: `src/features/images/components/RemoteImage.tsx`, `RemoteImage.test.tsx`
   - Agente: `dev-expo` · Depende de: T001
-  - Aceptación: `expo-image` con *placeholder* y error; usa `thumbUrl` o `url` según `variant` (CA-04); evidencia sin caché persistente
+  - Aceptación: `expo-image` con *placeholder* y error; usa `thumbUrl` o `url` según `variant` (CA-04); evidencia sin caché persistente · Diseño: spec §7.2
   - Refs: RF-05 · P-06
 
 - [ ] **T008** Exportar la API pública del módulo
@@ -59,7 +59,7 @@
 - [ ] **T010** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/004/` (capturas)
   - Agente: `probador-expo` · Depende de: T009 (y todas las anteriores `[x]`) y backend 004-T011 **desplegada**
-  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.**
+  - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
 
 | Total | 10 tareas |
