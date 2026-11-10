@@ -111,3 +111,12 @@ test('fases requieren evidencia y aceptan titulos libres', () => {
   assert.deepEqual(validatePR(item),[]);
   item.body=''; assert.ok(validatePR(item).length);
 });
+test('los comentarios HTML no cuentan como contenido de la seccion', () => {
+  const sections = body => '## Resumen\n' + body + '\n## Validación\nPruebas ejecutadas con exito.\n## Seguridad\nSin cambios de seguridad.\n';
+  for (const body of ['<!-- pendiente -->', '<!-- a --><!-- b -->', '<!-- sin cerrar texto']) {
+    const item=pr(); item.body=sections(body); assert.ok(validatePR(item).length, body);
+  }
+  const item=pr(); item.body=sections('<!-- guia -->Agrega la estructura base.'); assert.deepEqual(validatePR(item),[]);
+  // Una sola pasada no reconstruye comentarios: el texto restante cuenta como contenido visible.
+  item.body=sections('<!<!-- x -->-- visible -->'); assert.deepEqual(validatePR(item),[]);
+});
