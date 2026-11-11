@@ -4,6 +4,7 @@
 import { authEs } from '@/i18n/auth';
 import { imagesEs } from '@/i18n/images';
 import { inicioEs } from '@/i18n/inicio';
+import { itemsEs } from '@/i18n/items';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
 import { tabsEs } from '@/i18n/tabs';
@@ -28,6 +29,7 @@ export const es = {
   tabs: tabsEs,
   inicio: inicioEs,
   images: imagesEs,
+  items: itemsEs,
   projects: projectsEs,
   home: {
     title: 'Vaivén',

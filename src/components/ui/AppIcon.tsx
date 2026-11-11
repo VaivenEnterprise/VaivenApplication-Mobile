@@ -44,6 +44,14 @@ const ICONS = {
   leaf: 'leaf-outline',
   image: 'image-outline',
   construct: 'construct-outline',
+  cash: 'cash-outline',
+  pin: 'location-outline',
+  locate: 'locate-outline',
+  pause: 'pause-circle-outline',
+  play: 'play-circle-outline',
+  ellipsis: 'ellipsis-horizontal',
+  hand: 'hand-left-outline',
+  chevronDown: 'chevron-down',
 } as const satisfies Record<string, IoniconName>;
 
 export type IconName = keyof typeof ICONS;

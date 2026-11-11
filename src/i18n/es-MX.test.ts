@@ -22,6 +22,7 @@ describe('textos es-MX', () => {
       'home',
       'images',
       'inicio',
+      'items',
       'notFound',
       'profile',
       'projects',

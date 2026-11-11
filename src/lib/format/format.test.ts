@@ -1,5 +1,5 @@
 import { formatDate, formatDateTime, formatMonthYear } from '@/lib/format/date';
-import { formatMXN } from '@/lib/format/money';
+import { formatMXN, fromCents, toCents } from '@/lib/format/money';
 
 // Intl puede insertar espacios no separables según la plataforma.
 const normalize = (text: string): string => text.replace(/\s/g, ' ');
@@ -82,5 +82,59 @@ describe('formatMonthYear', () => {
   it('con una fecha inválida devuelve cadena vacía', () => {
     expect(formatMonthYear('no-es-fecha')).toBe('');
     expect(formatMonthYear('')).toBe('');
+  });
+});
+
+describe('toCents / fromCents', () => {
+  it.each([
+    ['90', 9000],
+    ['90.5', 9050],
+    ['90.50', 9050],
+    ['0.05', 5],
+    ['.5', 50],
+    ['1,234.56', 123_456],
+    ['  12 ', 1200],
+    ['12.', 1200],
+    ['0', 0],
+  ])('convierte «%s» a %i centavos', (text, cents) => {
+    expect(toCents(text)).toBe(cents);
+  });
+
+  it.each(['', '.', 'abc', '12.345', '-5', '1e3', '12,3,4x', '1234567890'])(
+    'rechaza «%s» sin redondear en silencio',
+    (text) => {
+      expect(toCents(text)).toBeNull();
+    },
+  );
+
+  it('redondea un número de pesos al centavo más cercano', () => {
+    expect(toCents(1.005)).toBe(101);
+    expect(toCents(19.99)).toBe(1999);
+    expect(toCents(0.1 + 0.2)).toBe(30);
+    expect(toCents(30)).toBe(3000);
+  });
+
+  it('rechaza números negativos o no finitos', () => {
+    expect(toCents(-1)).toBeNull();
+    expect(toCents(Number.NaN)).toBeNull();
+    expect(toCents(Number.POSITIVE_INFINITY)).toBeNull();
+  });
+
+  it('fromCents da pesos para editar, sin símbolo', () => {
+    expect(fromCents(9000)).toBe('90');
+    expect(fromCents(9050)).toBe('90.50');
+    expect(fromCents(5)).toBe('0.05');
+    expect(fromCents(0)).toBe('0');
+  });
+
+  it('fromCents devuelve vacío con entradas inválidas', () => {
+    expect(fromCents(1.5)).toBe('');
+    expect(fromCents(-1)).toBe('');
+  });
+
+  it('ida y vuelta conserva los centavos', () => {
+    for (const cents of [0, 1, 99, 100, 101, 12_345, 10_000_000]) {
+      expect(toCents(fromCents(cents))).toBe(cents);
+    }
   });
 });

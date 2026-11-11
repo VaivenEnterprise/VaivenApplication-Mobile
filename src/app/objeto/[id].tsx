@@ -1,7 +1,12 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { useLocalSearchParams } from 'expo-router';
+import { ItemDetailScreen } from '@/features/items/screens/ItemDetailScreen';
 
-/** Ruta de detalle vacía: la spec dueña reemplaza este contenido. */
+/**
+ * Detalle del objeto. Aquí se conectan los *slots* de `ItemDetailScreen` sin editar la pantalla:
+ * `renderActions` → «Solicitar» (spec 007); `renderOwnerExtras` → «Reportar» (011);
+ * `renderEffects` → efectos de otras specs (010, 011).
+ */
 export default function Screen() {
-  return <PlaceholderScreen icon="cube" title={es.tabs.placeholder.item} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <ItemDetailScreen id={id} />;
 }
