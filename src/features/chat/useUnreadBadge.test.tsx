@@ -25,9 +25,22 @@ function wrapper() {
 
 describe('useUnreadBadge', () => {
   it('devuelve mis no leídos y 0 mientras no hay dato', async () => {
-    installFakeApi({ 'GET /conversations/unread-count': () => ok({ count: 3 }) });
+    // La respuesta se libera a mano: así «sin dato» no depende de la velocidad de la máquina.
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    installFakeApi({
+      'GET /conversations/unread-count': async () => {
+        await gate;
+        return ok({ count: 3 });
+      },
+    });
     const { result } = await renderHook(() => useUnreadBadge(), { wrapper: wrapper() });
     expect(result.current).toBe(0);
+    await act(async () => {
+      release();
+    });
     await waitFor(() => expect(result.current).toBe(3));
   });
 
