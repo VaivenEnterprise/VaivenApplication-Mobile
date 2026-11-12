@@ -172,6 +172,14 @@ export const sizes = {
   progressRing: { size: 40, stroke: 4 },
   /** Mapa del vecindario (spec 007 §7.2): alto, pin visible, zona táctil del pin y punto «Tú». */
   neighborhoodMap: { height: 220, pin: 28, pinTouch: 44, userDot: 12, road: 8 },
+  /** Chat (spec 008 §7): ancho máximo de burbuja, miniatura del encabezado, botón de enviar, alto máximo del campo (4 líneas) e insignia de no leídos. */
+  chat: {
+    bubbleMaxWidth: '80%',
+    headerThumb: 20,
+    sendButton: 44,
+    inputMaxHeight: 112,
+    unreadBadge: 22,
+  },
 } as const;
 
 export const motion = {

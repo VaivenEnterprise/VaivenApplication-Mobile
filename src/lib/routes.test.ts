@@ -15,6 +15,7 @@ describe('routes', () => {
     expect(routes.project('p 1')).toBe('/proyecto/p%201');
     expect(routes.request('abc')).toBe('/solicitar/abc');
     expect(routes.booking('a/b')).toBe('/reserva/a%2Fb');
+    expect(routes.chat('c 1')).toBe('/chat/c%201');
     expect(routes.editItem('a/b')).toBe('/mis-objetos/a%2Fb/editar');
   });
 });

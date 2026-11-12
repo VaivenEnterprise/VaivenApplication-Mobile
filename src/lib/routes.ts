@@ -22,4 +22,5 @@ export const routes = {
   booking: (id: string): Href => href(`/reserva/${encodeURIComponent(id)}`),
   user: (id: string): Href => href(`/usuario/${encodeURIComponent(id)}`),
   project: (id: string): Href => href(`/proyecto/${encodeURIComponent(id)}`),
+  chat: (id: string): Href => href(`/chat/${encodeURIComponent(id)}`),
 } as const;
