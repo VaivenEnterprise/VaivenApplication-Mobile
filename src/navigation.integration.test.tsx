@@ -38,6 +38,7 @@ const sessionApi = {
   'GET /items': () => ok({ items: [], nextCursor: null }),
   'GET /me/items': () => ok({ items: [], nextCursor: null }),
   'GET /categories': () => ok([]),
+  'GET /me/bookings': () => ok({ items: [], nextCursor: null }),
 };
 
 beforeEach(() => {
@@ -138,12 +139,13 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(screen.getByRole('tab', { name: es.tabs.explore, selected: false })).toBeTruthy();
   });
 
-  it('CA-06: «Actividad» abre su pantalla marcador', async () => {
+  it('CA-06: «Actividad» abre la lista real de la spec 007', async () => {
     await openSignedIn();
     await fireEvent.press(screen.getByRole('tab', { name: es.tabs.activity }));
     await waitFor(() => expect(screen).toHavePathname('/actividad'));
     expect(screen.getByRole('tab', { name: es.tabs.activity, selected: true })).toBeTruthy();
-    expect(await screen.findByText(es.tabs.soon)).toBeTruthy();
+    expect(await screen.findByText(es.bookings.activity.emptyRequesterTitle)).toBeTruthy();
+    expect(screen.queryByText(es.tabs.soon)).toBeNull();
   });
 
   it('«Explorar» abre la búsqueda real de la spec 006', async () => {
@@ -179,11 +181,14 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(screen.queryByRole('tab', { name: es.tabs.messages })).toBeNull();
   });
 
-  it('el detalle de objeto es real (spec 005) y el de proyecto sigue siendo marcador', async () => {
+  it('el detalle de objeto, el de reserva y el de proyecto son reales (specs 005 y 007)', async () => {
     await openSignedIn();
     await testRouter.navigate('/objeto/abc');
     expect(await screen.findByText(es.items.detail.notFoundTitle)).toBeTruthy();
-    await testRouter.navigate('/proyecto/colgar-un-cuadro');
-    expect(await screen.findByText(es.tabs.placeholder.project)).toBeTruthy();
+    await testRouter.navigate('/reserva/abc');
+    expect(await screen.findByText(es.bookings.detail.notFoundTitle)).toBeTruthy();
+    await testRouter.navigate('/proyecto/no-existe');
+    expect(await screen.findByText(es.bookings.guide.notFoundTitle)).toBeTruthy();
+    expect(screen.queryByText(es.tabs.placeholder.project)).toBeNull();
   });
 });

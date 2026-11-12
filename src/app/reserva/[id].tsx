@@ -1,7 +1,8 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { useLocalSearchParams } from 'expo-router';
+import { BookingDetailScreen } from '@/features/bookings/screens/BookingDetailScreen';
 
-/** Ruta de detalle vacía: la spec dueña reemplaza este contenido. */
+/** Detalle de una solicitud o reserva (spec 007 §7.5). */
 export default function Screen() {
-  return <PlaceholderScreen icon="swap" title={es.tabs.placeholder.booking} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <BookingDetailScreen id={id} />;
 }

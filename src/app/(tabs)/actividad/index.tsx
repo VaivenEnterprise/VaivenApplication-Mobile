@@ -1,7 +1,6 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { ActivityScreen } from '@/features/bookings/screens/ActivityScreen';
 
-/** Marcador de la pestaña; la spec dueña reemplaza este contenido. */
+/** Pestaña «Actividad»: solicitudes y reservas (spec 007). */
 export default function Screen() {
-  return <PlaceholderScreen icon="swap" title={es.tabs.activity} />;
+  return <ActivityScreen />;
 }
