@@ -27,9 +27,9 @@ const mockFetch = () => jest.spyOn(globalThis, 'fetch');
 /** Un `fetch` que nunca responde y falla con AbortError cuando se aborta la señal. */
 const hangingFetch = (_url: unknown, init?: RequestInit) =>
   new Promise<Response>((_resolve, reject) => {
-    init?.signal?.addEventListener('abort', () => {
-      reject(Object.assign(new Error('aborted'), { name: 'AbortError' }));
-    });
+    const abort = () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+    if (init?.signal?.aborted) abort();
+    init?.signal?.addEventListener('abort', abort);
   });
 
 async function captureError(promise: Promise<unknown>): Promise<ApiError> {
@@ -213,6 +213,34 @@ describe('request: red y tiempo máximo', () => {
     expect(error).toMatchObject({ code: 'timeout', status: null });
     expect(error.message).toBe(es.errors.timeout);
     expect(error.requestId).toMatch(/^[0-9a-f]{32}$/);
+  });
+
+  it('una señal externa cancela la petición sin esperar al tiempo máximo (RF-08 de 006)', async () => {
+    mockFetch().mockImplementation(hangingFetch);
+    const controller = new AbortController();
+    const pending = captureError(request('/meta', schema, { signal: controller.signal }));
+    controller.abort();
+    const error = await pending;
+    expect(error).toMatchObject({ code: 'network_error', status: null });
+  });
+
+  it('una señal externa ya cancelada aborta de inmediato', async () => {
+    mockFetch().mockImplementation(hangingFetch);
+    const controller = new AbortController();
+    controller.abort();
+    const error = await captureError(request('/meta', schema, { signal: controller.signal }));
+    expect(error.code).toBe('network_error');
+  });
+
+  it('con señal externa, el tiempo máximo sigue aplicando y el escucha se retira al terminar', async () => {
+    jest.useFakeTimers();
+    mockFetch().mockImplementation(hangingFetch);
+    const controller = new AbortController();
+    const remove = jest.spyOn(controller.signal, 'removeEventListener');
+    const pending = captureError(request('/meta', schema, { signal: controller.signal }));
+    await jest.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS);
+    expect((await pending).code).toBe('timeout');
+    expect(remove).toHaveBeenCalledWith('abort', expect.any(Function));
   });
 
   it('no vence antes de 10 s', async () => {

@@ -40,6 +40,10 @@ const config: ExpoConfig = {
     ],
     'expo-notifications',
   ],
+  // Identificador público del proyecto en EAS (no es un secreto).
+  extra: {
+    eas: { projectId: '8deada84-79bf-4146-a4c4-479561f7d2ad' },
+  },
   experiments: {
     typedRoutes: true,
   },

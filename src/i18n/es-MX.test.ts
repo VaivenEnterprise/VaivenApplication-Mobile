@@ -26,6 +26,7 @@ describe('textos es-MX', () => {
       'notFound',
       'profile',
       'projects',
+      'search',
       'tabs',
       'ui',
     ]);

@@ -1,4 +1,15 @@
-import { formatDate, formatDateTime, formatMonthYear } from '@/lib/format/date';
+import {
+  addDaysYmd,
+  dateToYmd,
+  diffDaysYmd,
+  formatDate,
+  formatDateTime,
+  formatMonthYear,
+  formatYmd,
+  isYmd,
+  todayYmd,
+  ymdToDate,
+} from '@/lib/format/date';
 import { formatMXN, fromCents, toCents } from '@/lib/format/money';
 
 // Intl puede insertar espacios no separables según la plataforma.
@@ -136,5 +147,42 @@ describe('toCents / fromCents', () => {
     for (const cents of [0, 1, 99, 100, 101, 12_345, 10_000_000]) {
       expect(toCents(fromCents(cents))).toBe(cents);
     }
+  });
+});
+
+describe('fechas de calendario YYYY-MM-DD', () => {
+  it('valida fechas reales y rechaza las imposibles', () => {
+    expect(isYmd('2026-11-09')).toBe(true);
+    expect(isYmd('2028-02-29')).toBe(true);
+    expect(isYmd('2026-02-30')).toBe(false);
+    expect(isYmd('2026-13-01')).toBe(false);
+    expect(isYmd('09/11/2026')).toBe(false);
+    expect(isYmd('')).toBe(false);
+  });
+
+  it('calcula «hoy» en la Ciudad de México, no en UTC', () => {
+    // 01:30 UTC del día 10 sigue siendo el día 9 a las 19:30 en CDMX.
+    expect(todayYmd(new Date('2026-11-10T01:30:00Z'))).toBe('2026-11-09');
+    expect(todayYmd(new Date('2026-11-10T07:00:00Z'))).toBe('2026-11-10');
+  });
+
+  it('suma días y calcula diferencias a través de fin de mes y año bisiesto', () => {
+    expect(addDaysYmd('2026-11-28', 5)).toBe('2026-12-03');
+    expect(addDaysYmd('2028-02-28', 1)).toBe('2028-02-29');
+    expect(addDaysYmd('xx', 1)).toBe('');
+    expect(diffDaysYmd('2026-11-09', '2026-11-16')).toBe(7);
+    expect(diffDaysYmd('2026-11-09', '2026-11-08')).toBe(-1);
+    expect(diffDaysYmd('xx', '2026-11-08')).toBeNaN();
+  });
+
+  it('convierte entre Date local y YYYY-MM-DD sin saltar de día', () => {
+    expect(dateToYmd(new Date(2026, 10, 9, 23, 59))).toBe('2026-11-09');
+    expect(dateToYmd(ymdToDate('2026-11-09'))).toBe('2026-11-09');
+    expect(Number.isNaN(ymdToDate('nope').getTime())).toBe(true);
+  });
+
+  it('da formato es-MX a la fecha de calendario', () => {
+    expect(formatYmd('2026-11-09')).toBe('9 de noviembre de 2026');
+    expect(formatYmd('2026-02-30')).toBe('');
   });
 });

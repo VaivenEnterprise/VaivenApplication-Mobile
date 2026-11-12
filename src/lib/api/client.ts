@@ -14,6 +14,8 @@ export const API_PREFIX = '/api/v1';
 /** Opciones de `fetch` sin `signal` (el cliente controla el tiempo máximo). */
 export type RequestOptions = Omit<RequestInit, 'signal' | 'headers'> & {
   headers?: Record<string, string>;
+  /** Cancelación externa (p. ej. la de TanStack Query al cambiar la búsqueda); el cliente conserva su propio tiempo máximo. */
+  signal?: AbortSignal;
   /** Prefijo de la ruta; por defecto `/api/v1`. Vacío para `/healthz` y `/readyz`, que viven fuera de él. */
   prefix?: string;
 };
@@ -50,10 +52,13 @@ async function execute<T>(
   options: RequestOptions,
   token: string | null,
 ): Promise<T> {
-  const { prefix = API_PREFIX, ...init } = options;
+  const { prefix = API_PREFIX, signal: external, ...init } = options;
   const { apiBaseUrl } = getConfig();
   const requestId = newRequestId();
   const controller = new AbortController();
+  const abortFromOutside = () => controller.abort();
+  if (external?.aborted) controller.abort();
+  else external?.addEventListener('abort', abortFromOutside);
   let timedOut = false;
   const timer = setTimeout(() => {
     timedOut = true;
@@ -97,5 +102,6 @@ async function execute<T>(
     throw new ApiError('network_error', messageForCode('network_error'), null, requestId);
   } finally {
     clearTimeout(timer);
+    external?.removeEventListener('abort', abortFromOutside);
   }
 }

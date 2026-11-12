@@ -12,7 +12,7 @@ import { OwnerCard } from '@/features/items/components/OwnerCard';
 import { PhotoGallery } from '@/features/items/components/PhotoGallery';
 import { PriceSuggestion } from '@/features/items/components/PriceSuggestion';
 import { clearDraft, getDraft, saveDraft } from '@/features/items/draft';
-import { priceSpoken, priceText, toCardData } from '@/features/items/format';
+import { metaSpoken, metaText, priceSpoken, priceText, toCardData } from '@/features/items/format';
 import { emptyItemForm } from '@/features/items/schemas';
 import { es } from '@/i18n/es-MX';
 import { failure, installFakeApi, ok } from '@/test/fakeApi';
@@ -59,6 +59,16 @@ describe('format', () => {
     expect(priceSpoken({ modality: 'loan', pricePerDayCents: 0 })).toBe(t.money.free);
   });
 
+  it('arma la línea «~1 km · ★ 4.9» con distancia redondeada a 1 km (006 §6)', () => {
+    expect(metaText({ distanceKm: 1.4, ratingAverage: 4.94 })).toBe('~1 km · ★ 4.9');
+    expect(metaText({ distanceKm: 0.2, ratingAverage: null })).toBe('~1 km');
+    expect(metaText({ distanceKm: 2.6 })).toBe('~3 km');
+    expect(metaText({ distanceKm: null, ratingAverage: 5 })).toBe('★ 5.0');
+    expect(metaText({})).toBeNull();
+    expect(metaSpoken({ distanceKm: 2, ratingAverage: 4.9 })).toBe('a unos 2 km, calificación 4.9');
+    expect(metaSpoken({ distanceKm: null, ratingAverage: null })).toBeNull();
+  });
+
   it('toCardData usa la primera foto como portada', () => {
     expect(toCardData(fakeItem()).thumbUrl).toBe(fakePhoto(1).thumbUrl);
     expect(toCardData(fakeItem({ photos: [] })).thumbUrl).toBeNull();
@@ -88,6 +98,24 @@ describe('ItemCard', () => {
   it('la etiqueta de accesibilidad resume título, precio y estado', async () => {
     await render(<ItemCard item={data} variant="row" onPress={jest.fn()} />);
     expect(screen.getByLabelText(`${data.title}, $30 por día, ${t.status.active}`)).toBeTruthy();
+  });
+
+  it('variante grid con datos de búsqueda: línea pequeña y etiqueta con distancia', async () => {
+    await render(
+      <ItemCard
+        item={{ ...data, status: undefined, distanceKm: 1.2, ratingAverage: 4.9 }}
+        onPress={jest.fn()}
+      />,
+    );
+    expect(screen.getByText('~1 km · ★ 4.9')).toBeTruthy();
+    expect(
+      screen.getByLabelText(`${data.title}, $30 por día, a unos 1 km, calificación 4.9`),
+    ).toBeTruthy();
+  });
+
+  it('sin distancia ni calificación no dibuja la línea pequeña', async () => {
+    await render(<ItemCard item={{ ...data, status: undefined }} onPress={jest.fn()} />);
+    expect(screen.queryByText(/★|km/)).toBeNull();
   });
 
   it('sin foto muestra un ícono de respaldo', async () => {
