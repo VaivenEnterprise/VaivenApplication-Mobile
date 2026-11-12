@@ -62,7 +62,7 @@
   - Aceptación: **CONFORME**; hito H3 (móvil) marcado
   - Refs: DoD
 
-- [ ] **T011** Verificación en Expo Go contra staging
+- [x] **T011** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/008/` (capturas)
   - Agente: `probador-expo` · Depende de: T010 (y todas las anteriores `[x]`) y backend 008-T010 **desplegada**
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
