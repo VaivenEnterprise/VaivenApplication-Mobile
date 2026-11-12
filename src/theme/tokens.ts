@@ -170,6 +170,8 @@ export const sizes = {
   photoRemove: 28,
   /** Anillo de avance sobre la miniatura: diámetro y grosor. */
   progressRing: { size: 40, stroke: 4 },
+  /** Mapa del vecindario (spec 007 §7.2): alto, pin visible, zona táctil del pin y punto «Tú». */
+  neighborhoodMap: { height: 220, pin: 28, pinTouch: 44, userDot: 12, road: 8 },
 } as const;
 
 export const motion = {

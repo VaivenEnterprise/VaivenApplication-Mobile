@@ -1,7 +1,8 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { useLocalSearchParams } from 'expo-router';
+import { ProjectScreen } from '@/features/project-guide';
 
-/** Ruta de detalle vacía: la spec dueña reemplaza este contenido. */
+/** Proyecto guiado: herramientas, mapa del vecindario y paso a paso (spec 007 §7.1). */
 export default function Screen() {
-  return <PlaceholderScreen icon="compass" title={es.tabs.placeholder.project} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <ProjectScreen id={id} />;
 }

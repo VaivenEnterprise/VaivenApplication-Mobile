@@ -18,6 +18,8 @@ export const routes = {
   profile: href('/perfil'),
   editProfile: href('/perfil/editar'),
   item: (id: string): Href => href(`/objeto/${encodeURIComponent(id)}`),
+  request: (itemId: string): Href => href(`/solicitar/${encodeURIComponent(itemId)}`),
+  booking: (id: string): Href => href(`/reserva/${encodeURIComponent(id)}`),
   user: (id: string): Href => href(`/usuario/${encodeURIComponent(id)}`),
   project: (id: string): Href => href(`/proyecto/${encodeURIComponent(id)}`),
 } as const;

@@ -49,6 +49,7 @@ function ConfigErrorScreen({ error }: { error: ConfigError }) {
 const SIGNED_IN_SCREENS = [
   '(tabs)',
   'objeto/[id]',
+  'solicitar/[itemId]',
   'reserva/[id]',
   'chat/[id]',
   'usuario/[id]',
