@@ -1,7 +1,6 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { MyItemsScreen } from '@/features/items/screens/MyItemsScreen';
 
-/** Marcador de la pestaña; la spec dueña reemplaza este contenido. */
+/** Pestaña Mis objetos: delega en la pantalla de la feature (Art. VI). */
 export default function Screen() {
-  return <PlaceholderScreen icon="cube" title={es.tabs.myItems} />;
+  return <MyItemsScreen />;
 }

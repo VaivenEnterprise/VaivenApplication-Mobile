@@ -23,6 +23,8 @@ type ScreenProps = {
   contentStyle?: StyleProp<ViewStyle>;
   /** Jalar para recargar (solo con `scroll`). */
   refreshControl?: ReactElement<RefreshControlProps>;
+  /** Barra fija bajo el contenido (p. ej. la acción principal), siempre visible sobre el teclado. */
+  footer?: ReactNode;
 };
 
 /** Contenedor de toda pantalla: área segura, fondo, margen `gutter` y manejo del teclado. */
@@ -33,6 +35,7 @@ export function Screen({
   scroll = true,
   contentStyle,
   refreshControl,
+  footer,
 }: ScreenProps) {
   const content = (
     <>
@@ -61,6 +64,7 @@ export function Screen({
           ) : (
             <View style={[styles.fill, styles.content, contentStyle]}>{content}</View>
           )}
+          {footer === undefined ? null : <View style={styles.footer}>{footer}</View>}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </GradientBackground>
@@ -69,6 +73,7 @@ export function Screen({
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
+  footer: { paddingHorizontal: spacing.gutter, paddingVertical: spacing.smd },
   content: {
     paddingHorizontal: spacing.gutter,
     paddingVertical: spacing.lg,

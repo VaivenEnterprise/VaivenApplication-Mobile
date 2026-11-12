@@ -36,6 +36,8 @@ const sessionApi = {
   'POST /auth/refresh': () => ok({ tokens: fakeTokens(2) }),
   'GET /me': () => ok(fakeUser),
   'GET /items': () => ok({ items: [], nextCursor: null }),
+  'GET /me/items': () => ok({ items: [], nextCursor: null }),
+  'GET /categories': () => ok([]),
 };
 
 beforeEach(() => {
@@ -138,7 +140,6 @@ describe('pestañas (RF-05, RF-13)', () => {
 
   it.each([
     [es.tabs.explore, '/explorar'],
-    [es.tabs.myItems, '/mis-objetos'],
     [es.tabs.activity, '/actividad'],
   ])('CA-06: «%s» abre su pantalla marcador', async (label, pathname) => {
     await openSignedIn();
@@ -148,6 +149,22 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(await screen.findByText(es.tabs.soon)).toBeTruthy();
   });
 
+  it('«Mis objetos» abre la lista real de la spec 005', async () => {
+    await openSignedIn();
+    await fireEvent.press(screen.getByRole('tab', { name: es.tabs.myItems }));
+    await waitFor(() => expect(screen).toHavePathname('/mis-objetos'));
+    expect(screen.getByRole('tab', { name: es.tabs.myItems, selected: true })).toBeTruthy();
+    expect(await screen.findByText(es.items.list.emptyTitle)).toBeTruthy();
+  });
+
+  it('las rutas de publicar y editar objeto existen dentro de Mis objetos', async () => {
+    await openSignedIn();
+    await testRouter.navigate('/mis-objetos/nuevo');
+    expect(await screen.findByRole('header', { name: es.items.form.createTitle })).toBeTruthy();
+    await testRouter.navigate('/mis-objetos/abc/editar');
+    expect(await screen.findByText(es.items.detail.notFoundTitle)).toBeTruthy();
+  });
+
   it('la ruta Mensajes existe aunque no aparezca en la barra', async () => {
     await openSignedIn();
     await testRouter.navigate('/mensajes');
@@ -155,10 +172,10 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(screen.queryByRole('tab', { name: es.tabs.messages })).toBeNull();
   });
 
-  it('las rutas de detalle son marcadores con sesión', async () => {
+  it('el detalle de objeto es real (spec 005) y el de proyecto sigue siendo marcador', async () => {
     await openSignedIn();
     await testRouter.navigate('/objeto/abc');
-    expect(await screen.findByText(es.tabs.placeholder.item)).toBeTruthy();
+    expect(await screen.findByText(es.items.detail.notFoundTitle)).toBeTruthy();
     await testRouter.navigate('/proyecto/colgar-un-cuadro');
     expect(await screen.findByText(es.tabs.placeholder.project)).toBeTruthy();
   });

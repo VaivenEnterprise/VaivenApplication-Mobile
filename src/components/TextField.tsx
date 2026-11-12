@@ -23,6 +23,7 @@ export type TextFieldProps = Pick<
   | 'onSubmitEditing'
   | 'secureTextEntry'
   | 'maxLength'
+  | 'multiline'
 > & {
   label: string;
   /** Ícono decorativo a la izquierda (dentro de un `IconBadge`). */
