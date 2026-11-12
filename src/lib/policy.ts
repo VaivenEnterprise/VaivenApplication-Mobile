@@ -14,4 +14,15 @@ export const POLICY = {
   minRentPriceCents: 1_000,
   /** Objetos por página en «Mis objetos». */
   pageSize: 20,
+  /** Búsqueda (spec 006, contrato `GET /items`): texto de 2 a 80, radios en km, periodo máximo en días. */
+  search: {
+    qMin: 2,
+    qMax: 80,
+    debounceMs: 400,
+    pageSize: 20,
+    radiiKm: [1, 3, 5, 10],
+    maxRangeDays: 7,
+    /** Decimales de las coordenadas enviadas (≈1 km): ubicación mínima, Art. VI. */
+    coordDecimals: 2,
+  },
 } as const;

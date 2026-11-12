@@ -4,7 +4,13 @@ import { AppIcon } from '@/components/ui/AppIcon';
 import { AppText } from '@/components/ui/AppText';
 import { Chip } from '@/components/ui/Chip';
 import { ItemStatusBadge } from '@/features/items/components/ItemStatusBadge';
-import { priceSpoken, priceText, type ItemCardData } from '@/features/items/format';
+import {
+  metaSpoken,
+  metaText,
+  priceSpoken,
+  priceText,
+  type ItemCardData,
+} from '@/features/items/format';
 import { es } from '@/i18n/es-MX';
 import { colors, motion, radius, sizes, spacing } from '@/theme';
 
@@ -60,7 +66,9 @@ function Price({ item }: { item: ItemCardData }) {
 export function ItemCard({ item, variant = 'grid', onPress }: ItemCardProps) {
   const spoken = priceSpoken(item);
   const status = item.status === undefined ? '' : `, ${es.items.status[item.status]}`;
-  const label = `${item.title}, ${spoken}${status}`;
+  const meta = metaText(item);
+  const metaA11y = metaSpoken(item);
+  const label = `${item.title}, ${spoken}${metaA11y === null ? '' : `, ${metaA11y}`}${status}`;
   const feedback = ({ pressed }: { pressed: boolean }) =>
     pressed ? { transform: [{ scale: motion.pressScale }] } : null;
 
@@ -97,6 +105,11 @@ export function ItemCard({ item, variant = 'grid', onPress }: ItemCardProps) {
         {item.title}
       </AppText>
       <Price item={item} />
+      {meta === null ? null : (
+        <AppText variant="caption" color="muted" numberOfLines={1}>
+          {meta}
+        </AppText>
+      )}
     </Pressable>
   );
 }

@@ -1,7 +1,6 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { ExploreScreen } from '@/features/search/screens/ExploreScreen';
 
-/** Marcador de la pestaña; la spec dueña reemplaza este contenido. */
+/** Pestaña Explorar (spec 006): la pantalla vive en `features/search`. */
 export default function Screen() {
-  return <PlaceholderScreen icon="compass" title={es.tabs.explore} />;
+  return <ExploreScreen />;
 }

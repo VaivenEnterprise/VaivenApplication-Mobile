@@ -10,6 +10,9 @@ export type ItemCardData = {
   pricePerDayCents: number;
   thumbUrl: string | null;
   status?: ItemStatus;
+  /** Solo en resultados de búsqueda (006): distancia aproximada y calificación del dueño. */
+  distanceKm?: number | null;
+  ratingAverage?: number | null;
 };
 
 /** Tarjeta a partir del detalle/listado propio: la portada es la primera foto. */
@@ -22,6 +25,37 @@ export function toCardData(item: Item): ItemCardData {
     thumbUrl: item.photos[0]?.thumbUrl ?? null,
     status: item.status,
   };
+}
+
+/**
+ * Línea pequeña de la tarjeta de Explorar: «~1 km · ★ 4.9» (spec 006 §7.1). La distancia se
+ * redondea a 1 km y nunca baja de 1; sin datos devuelve `null` y la línea no se muestra.
+ */
+export function metaText(item: Pick<ItemCardData, 'distanceKm' | 'ratingAverage'>): string | null {
+  const parts: string[] = [];
+  if (typeof item.distanceKm === 'number') {
+    const km = Math.max(1, Math.round(item.distanceKm));
+    parts.push(`${es.search.card.distancePrefix}${km} ${es.search.card.distanceUnit}`);
+  }
+  if (typeof item.ratingAverage === 'number') {
+    parts.push(`${es.search.card.rating} ${item.ratingAverage.toFixed(1)}`);
+  }
+  return parts.length === 0 ? null : parts.join(' · ');
+}
+
+/** Lo mismo para lectores de pantalla: «a unos 2 km, calificación 4.9». */
+export function metaSpoken(
+  item: Pick<ItemCardData, 'distanceKm' | 'ratingAverage'>,
+): string | null {
+  const parts: string[] = [];
+  if (typeof item.distanceKm === 'number') {
+    const km = Math.max(1, Math.round(item.distanceKm));
+    parts.push(`${es.search.card.distanceA11y} ${km} ${es.search.card.distanceUnit}`);
+  }
+  if (typeof item.ratingAverage === 'number') {
+    parts.push(`${es.search.card.ratingA11y} ${item.ratingAverage.toFixed(1)}`);
+  }
+  return parts.length === 0 ? null : parts.join(', ');
 }
 
 /** «$90» en vez de «$90.00» cuando el precio es redondo; `null` cuando es gratis. */

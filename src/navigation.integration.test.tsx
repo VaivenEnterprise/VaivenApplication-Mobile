@@ -138,15 +138,22 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(screen.getByRole('tab', { name: es.tabs.explore, selected: false })).toBeTruthy();
   });
 
-  it.each([
-    [es.tabs.explore, '/explorar'],
-    [es.tabs.activity, '/actividad'],
-  ])('CA-06: «%s» abre su pantalla marcador', async (label, pathname) => {
+  it('CA-06: «Actividad» abre su pantalla marcador', async () => {
     await openSignedIn();
-    await fireEvent.press(screen.getByRole('tab', { name: label }));
-    await waitFor(() => expect(screen).toHavePathname(pathname));
-    expect(screen.getByRole('tab', { name: label, selected: true })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('tab', { name: es.tabs.activity }));
+    await waitFor(() => expect(screen).toHavePathname('/actividad'));
+    expect(screen.getByRole('tab', { name: es.tabs.activity, selected: true })).toBeTruthy();
     expect(await screen.findByText(es.tabs.soon)).toBeTruthy();
+  });
+
+  it('«Explorar» abre la búsqueda real de la spec 006', async () => {
+    await openSignedIn();
+    await fireEvent.press(screen.getByRole('tab', { name: es.tabs.explore }));
+    await waitFor(() => expect(screen).toHavePathname('/explorar'));
+    expect(screen.getByRole('tab', { name: es.tabs.explore, selected: true })).toBeTruthy();
+    expect(await screen.findByPlaceholderText(es.search.placeholder)).toBeTruthy();
+    expect(screen.getByText(es.search.popularProjects)).toBeTruthy();
+    expect(screen.queryByText(es.tabs.soon)).toBeNull();
   });
 
   it('«Mis objetos» abre la lista real de la spec 005', async () => {

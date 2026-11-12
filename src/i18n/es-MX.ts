@@ -7,6 +7,7 @@ import { inicioEs } from '@/i18n/inicio';
 import { itemsEs } from '@/i18n/items';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
+import { searchEs } from '@/i18n/search';
 import { tabsEs } from '@/i18n/tabs';
 
 export const es = {
@@ -31,6 +32,7 @@ export const es = {
   images: imagesEs,
   items: itemsEs,
   projects: projectsEs,
+  search: searchEs,
   home: {
     title: 'Vaivén',
     subtitle: 'Presta y renta objetos cerca de ti.',

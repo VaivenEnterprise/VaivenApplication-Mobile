@@ -52,6 +52,7 @@ const ICONS = {
   ellipsis: 'ellipsis-horizontal',
   hand: 'hand-left-outline',
   chevronDown: 'chevron-down',
+  calendar: 'calendar-outline',
 } as const satisfies Record<string, IoniconName>;
 
 export type IconName = keyof typeof ICONS;
