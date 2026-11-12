@@ -3,3 +3,5 @@ export { RequestButton } from '@/features/bookings/components/RequestButton';
 export { slots } from '@/features/bookings/slots';
 export type { Booking, BookingStatus, ViewerRole } from '@/features/bookings/types';
 export { useMyBookings } from '@/features/bookings/hooks';
+export { StatusBadge } from '@/features/bookings/components/StatusBadge';
+export { BOOKING_STATUSES } from '@/features/bookings/types';

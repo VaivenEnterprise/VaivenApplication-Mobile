@@ -39,6 +39,8 @@ const sessionApi = {
   'GET /me/items': () => ok({ items: [], nextCursor: null }),
   'GET /categories': () => ok([]),
   'GET /me/bookings': () => ok({ items: [], nextCursor: null }),
+  'GET /conversations': () => ok({ items: [], nextCursor: null }),
+  'GET /conversations/unread-count': () => ok({ count: 2 }),
 };
 
 beforeEach(() => {
@@ -174,11 +176,35 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(await screen.findByText(es.items.detail.notFoundTitle)).toBeTruthy();
   });
 
-  it('la ruta Mensajes existe aunque no aparezca en la barra', async () => {
+  it('la ruta Mensajes es la lista real de la spec 008 y no aparece en la barra', async () => {
     await openSignedIn();
     await testRouter.navigate('/mensajes');
-    expect(await screen.findByText(es.tabs.soon)).toBeTruthy();
+    expect(await screen.findByText(es.chat.list.emptyTitle)).toBeTruthy();
+    expect(screen.queryByText(es.tabs.soon)).toBeNull();
     expect(screen.queryByRole('tab', { name: es.tabs.messages })).toBeNull();
+  });
+
+  it('Inicio muestra la insignia de mensajes sin leer en el botón de mensajes (spec 008)', async () => {
+    await openSignedIn();
+    expect(
+      await screen.findByRole('button', { name: `${es.inicio.messages}, 2 ${es.inicio.unread}` }),
+    ).toBeTruthy();
+  });
+
+  it('el botón de mensajes de Inicio abre la lista de conversaciones', async () => {
+    await openSignedIn();
+    await fireEvent.press(
+      await screen.findByRole('button', { name: new RegExp(`^${es.inicio.messages}`) }),
+    );
+    await waitFor(() => expect(screen).toHavePathname('/mensajes'));
+    expect(await screen.findByText(es.chat.list.emptyTitle)).toBeTruthy();
+  });
+
+  it('la ruta del chat es la pantalla real: una conversación ajena no se encuentra', async () => {
+    await openSignedIn();
+    await testRouter.navigate('/chat/abc');
+    expect(await screen.findByText(es.chat.chat.notFound)).toBeTruthy();
+    expect(screen.queryByText(es.tabs.placeholder.chat)).toBeNull();
   });
 
   it('el detalle de objeto, el de reserva y el de proyecto son reales (specs 005 y 007)', async () => {

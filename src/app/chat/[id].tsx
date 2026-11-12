@@ -1,7 +1,8 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { useLocalSearchParams } from 'expo-router';
+import { ChatScreen } from '@/features/chat/screens/ChatScreen';
 
-/** Ruta de detalle vacía: la spec dueña reemplaza este contenido. */
+/** Chat de una reserva (spec 008 §7.2). */
 export default function Screen() {
-  return <PlaceholderScreen icon="chat" title={es.tabs.placeholder.chat} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <ChatScreen id={id} />;
 }

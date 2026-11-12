@@ -16,6 +16,7 @@ describe('textos es-MX', () => {
       'auth',
       'bookings',
       'brand',
+      'chat',
       'common',
       'configError',
       'diagnostics',

@@ -1,7 +1,6 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { ConversationsScreen } from '@/features/chat/screens/ConversationsScreen';
 
-/** Marcador de la pestaña; la spec dueña reemplaza este contenido. */
+/** Pestaña oculta Mensajes: delega en la pantalla de la feature (Art. VI). */
 export default function Screen() {
-  return <PlaceholderScreen icon="chat" title={es.tabs.messages} />;
+  return <ConversationsScreen />;
 }
