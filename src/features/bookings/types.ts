@@ -48,6 +48,43 @@ export type Quote = z.infer<typeof quoteSchema>;
 
 const meetingPointSchema = z.object({ description: z.string() });
 
+// Etapas presenciales y pagos (backend 009: `Stage`, `Adjustment`, `BookingPayment`). Los campos
+// nuevos son opcionales para tolerar un servidor que aún no los envía (spec 009, RF-05).
+export const QR_STATES = ['none', 'active', 'expired', 'used'] as const;
+export const PAYMENT_STATUSES = ['pending', 'reported', 'confirmed'] as const;
+export type QrState = (typeof QR_STATES)[number];
+export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
+export const handoverStageSchema = z.object({
+  recordedAt: z.string().nullish(),
+  recordedById: z.string().nullish(),
+  conditionNotes: z.string(),
+  photos: z.array(z.object({ publicId: z.string(), url: z.string(), thumbUrl: z.string() })),
+  evidenceVersion: z.number().int(),
+  qr: z.object({ state: z.enum(QR_STATES), expiresAt: z.string().nullish() }),
+  confirmedAt: z.string().nullish(),
+  confirmedById: z.string().nullish(),
+});
+export type HandoverStage = z.infer<typeof handoverStageSchema>;
+
+export const adjustmentSchema = z.object({
+  type: z.literal('late_return'),
+  lateDays: z.number().int().min(1),
+  amountCents: z.number().int(),
+  status: z.literal('recorded'),
+});
+export type Adjustment = z.infer<typeof adjustmentSchema>;
+
+const paymentSchema = z.object({
+  stage: stageSchema,
+  amountCents: z.number().int().min(0),
+  status: z.enum(PAYMENT_STATUSES).optional(),
+  reportedAt: z.string().nullish(),
+  note: z.string().nullish(),
+  confirmedAt: z.string().nullish(),
+});
+export type BookingPayment = z.infer<typeof paymentSchema>;
+
 export const bookingSchema = z.object({
   id: z.string(),
   item: z.object({
@@ -69,13 +106,7 @@ export const bookingSchema = z.object({
     currency: z.literal('MXN'),
   }),
   paymentMode: z.enum(PAYMENT_MODES),
-  payments: z.array(
-    z.object({
-      stage: stageSchema,
-      amountCents: z.number().int().min(0),
-      status: z.enum(['pending', 'reported', 'confirmed']).optional(),
-    }),
-  ),
+  payments: z.array(paymentSchema),
   status: z.enum(BOOKING_STATUSES),
   expiresAt: z.string().nullish(),
   meetingPoint: meetingPointSchema.nullish(),
@@ -83,6 +114,11 @@ export const bookingSchema = z.object({
   cancelledBy: z.enum(['owner', 'requester']).nullish(),
   rejectReason: z.string().nullish(),
   conversationId: z.string().nullish(),
+  delivery: handoverStageSchema.nullish(),
+  return: handoverStageSchema.nullish(),
+  isLate: z.boolean().optional(),
+  adjustments: z.array(adjustmentSchema).optional(),
+  affectedBy: z.string().nullish(),
   viewerRole: z.enum(VIEWER_ROLES),
   createdAt: z.string(),
   updatedAt: z.string(),

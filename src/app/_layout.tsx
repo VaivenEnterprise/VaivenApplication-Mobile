@@ -18,6 +18,8 @@ import { Screen } from '@/components/ui/Screen';
 import { RestoringScreen } from '@/features/auth/screens/RestoringScreen';
 import { SuspendedScreen } from '@/features/auth/screens/SuspendedScreen';
 import { useSession } from '@/features/auth/useSession';
+// Registra la sección de entrega y pagos en el detalle de la reserva (spec 009, plan P-06).
+import '@/features/handover';
 import { es } from '@/i18n/es-MX';
 import { configResult, type ConfigError } from '@/lib/config';
 import { AppProviders } from '@/providers/AppProviders';
@@ -52,6 +54,9 @@ const SIGNED_IN_SCREENS = [
   'solicitar/[itemId]',
   'reserva/[id]',
   'chat/[id]',
+  'entrega/[bookingId]/evidencia',
+  'entrega/[bookingId]/qr',
+  'entrega/[bookingId]/escanear',
   'usuario/[id]',
   'incidencia/[id]',
   'proyecto/[id]',
