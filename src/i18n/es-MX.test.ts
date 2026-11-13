@@ -21,6 +21,7 @@ describe('textos es-MX', () => {
       'configError',
       'diagnostics',
       'errors',
+      'handover',
       'home',
       'images',
       'inicio',

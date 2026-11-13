@@ -168,6 +168,13 @@ export const sizes = {
   /** Casilla cuadrada del selector de fotos (spec 004 §7.1) y botón «quitar» sobre ella. */
   photoSlot: 88,
   photoRemove: 28,
+  /** Lado del código QR que se muestra para confirmar la entrega o la devolución (spec 009 §7.3). */
+  qr: 240,
+  /** Ventana del escáner (spec 009 §7.4): lado, largo y grosor de cada esquina. */
+  scanFrame: { size: 260, corner: 36, stroke: 4 },
+  /** Punto del rastreador de etapas (spec 009 §7.1) y grosor de su línea de unión. */
+  stepDot: 24,
+  stepLine: 2,
   /** Anillo de avance sobre la miniatura: diámetro y grosor. */
   progressRing: { size: 40, stroke: 4 },
   /** Mapa del vecindario (spec 007 §7.2): alto, pin visible, zona táctil del pin y punto «Tú». */

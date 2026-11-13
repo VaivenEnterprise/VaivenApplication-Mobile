@@ -1,0 +1,9 @@
+# Falsos positivos revisados de gitleaks (una huella por línea: commit:archivo:regla:línea).
+# Solo valores de prueba inventados; nunca credenciales reales.
+
+# SPEC-09: token QR de prueba (base64 de texto fijo) usado en pruebas unitarias de handover.
+88be8fab13cbd8d09835e8ae64c25202e6de4d87:src/features/handover/qr.test.ts:generic-api-key:4
+88be8fab13cbd8d09835e8ae64c25202e6de4d87:src/test/fakeHandover.ts:generic-api-key:36
+# Misma constante vista por el escaneo del árbol de trabajo (sin commit).
+src/features/handover/qr.test.ts:generic-api-key:4
+src/test/fakeHandover.ts:generic-api-key:36

@@ -4,6 +4,7 @@
 import { authEs } from '@/i18n/auth';
 import { bookingsEs } from '@/i18n/bookings';
 import { chatEs } from '@/i18n/chat';
+import { handoverEs } from '@/i18n/handover';
 import { imagesEs } from '@/i18n/images';
 import { inicioEs } from '@/i18n/inicio';
 import { itemsEs } from '@/i18n/items';
@@ -35,6 +36,7 @@ export const es = {
   items: itemsEs,
   bookings: bookingsEs,
   chat: chatEs,
+  handover: handoverEs,
   projects: projectsEs,
   search: searchEs,
   home: {
