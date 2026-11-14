@@ -55,6 +55,9 @@ const ICONS = {
   calendar: 'calendar-outline',
   clock: 'time-outline',
   send: 'send',
+  bell: 'notifications-outline',
+  doneAll: 'checkmark-done-outline',
+  flag: 'flag-outline',
 } as const satisfies Record<string, IoniconName>;
 
 export type IconName = keyof typeof ICONS;

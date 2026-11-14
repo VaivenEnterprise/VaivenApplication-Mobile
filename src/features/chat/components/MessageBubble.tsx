@@ -11,6 +11,8 @@ const m = es.chat.message;
 type MessageBubbleProps = {
   message: ChatMessage;
   onRetry: (clientId: string) => void;
+  /** Pulsación larga en un mensaje ajeno ya confirmado (spec 011, RF-06). */
+  onReport?: (message: ChatMessage) => void;
 };
 
 /**
@@ -18,7 +20,7 @@ type MessageBubbleProps = {
  * `surface` con borde. La hora va dentro; un mensaje que aún se envía lleva reloj y hora tenue, y
  * uno que falló, aviso «No enviado» con «Reintentar» (RF-03). El texto es siempre texto plano.
  */
-export function MessageBubble({ message, onRetry }: MessageBubbleProps) {
+export function MessageBubble({ message, onRetry, onReport }: MessageBubbleProps) {
   const { mine, status, body, clientId } = message;
   const time = formatClock(message.createdAt);
   const ink = mine ? 'onPrimary' : 'ink';
@@ -27,25 +29,42 @@ export function MessageBubble({ message, onRetry }: MessageBubbleProps) {
     .filter((part): part is string => part !== null && part !== '')
     .join(', ');
 
+  const bubbleStyle = [
+    styles.bubble,
+    mine ? styles.bubbleMine : styles.bubbleOther,
+    mine ? styles.cornerMine : styles.cornerOther,
+  ];
+  const content = (
+    <>
+      <AppText color={ink}>{body}</AppText>
+      <View style={styles.meta}>
+        {status === 'sending' ? <AppIcon name="clock" size="sm" color={ink} /> : null}
+        <AppText variant="caption" color={ink}>
+          {time}
+        </AppText>
+      </View>
+    </>
+  );
+  const reportable = onReport !== undefined && !mine && message.id !== null;
+
   return (
     <View style={[styles.row, mine ? styles.rowMine : styles.rowOther]}>
-      <View
-        accessible
-        accessibilityLabel={label}
-        style={[
-          styles.bubble,
-          mine ? styles.bubbleMine : styles.bubbleOther,
-          mine ? styles.cornerMine : styles.cornerOther,
-        ]}
-      >
-        <AppText color={ink}>{body}</AppText>
-        <View style={styles.meta}>
-          {status === 'sending' ? <AppIcon name="clock" size="sm" color={ink} /> : null}
-          <AppText variant="caption" color={ink}>
-            {time}
-          </AppText>
+      {reportable ? (
+        <Pressable
+          accessible
+          accessibilityLabel={label}
+          accessibilityActions={[{ name: 'report', label: es.reports.button.messageAction }]}
+          onAccessibilityAction={() => onReport(message)}
+          onLongPress={() => onReport(message)}
+          style={bubbleStyle}
+        >
+          {content}
+        </Pressable>
+      ) : (
+        <View accessible accessibilityLabel={label} style={bubbleStyle}>
+          {content}
         </View>
-      </View>
+      )}
       {status === 'failed' && clientId !== null ? (
         <View style={styles.failed}>
           <AppIcon name="danger" size="sm" color="danger" />

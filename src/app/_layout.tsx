@@ -22,6 +22,7 @@ import { useSession } from '@/features/auth/useSession';
 import '@/features/handover';
 // Registra la sección de calificaciones e incidencias en el detalle de la reserva (spec 010).
 import '@/features/incidents';
+import { NotificationsBootstrap } from '@/features/notifications';
 import { es } from '@/i18n/es-MX';
 import { configResult, type ConfigError } from '@/lib/config';
 import { AppProviders } from '@/providers/AppProviders';
@@ -63,6 +64,7 @@ const SIGNED_IN_SCREENS = [
   'incidencia/[id]',
   'incidencia/nueva/[bookingId]',
   'incidencias',
+  'notificaciones',
   'proyecto/[id]',
 ] as const;
 
@@ -116,6 +118,7 @@ export default function RootLayout() {
       {configResult.ok ? (
         <AppProviders>
           <RootNavigator />
+          <NotificationsBootstrap />
         </AppProviders>
       ) : (
         <ConfigErrorScreen error={configResult.error} />
