@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { login, logout, refreshTokens, register } from '@/features/auth/api';
+import { runBeforeSignOut } from '@/features/auth/signOutHooks';
 import {
   toRegisterRequest,
   type AuthResult,
@@ -172,6 +173,8 @@ export function SessionProvider({ children }: Props) {
   );
 
   const signOut = useCallback(async () => {
+    // Tareas de otras features que necesitan la sesión viva (p. ej. baja del token de push, 011).
+    await runBeforeSignOut();
     const token = refreshToken.current;
     await clearLocal();
     if (token === null) return;

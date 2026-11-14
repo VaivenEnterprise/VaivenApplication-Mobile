@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FlatList, KeyboardAvoidingView, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
@@ -26,15 +26,26 @@ import {
   mergeMessages,
   withDaySeparators,
   type ChatEntry,
+  type ChatMessage,
 } from '@/features/chat/merge';
 import { es } from '@/i18n/es-MX';
 import { ApiError } from '@/lib/api/errors';
+import type { SendRejection } from '@/features/chat/api';
 import { routes } from '@/lib/routes';
 import { colors, radius, sizes, spacing } from '@/theme';
 
 const t = es.chat;
 
-type ChatScreenProps = { id: string };
+type ChatScreenProps = {
+  id: string;
+  /** Hoja para reportar un mensaje ajeno (spec 011, RF-06); se monta al pulsarlo largo. */
+  renderMessageReport?: (message: ChatMessage, onClose: () => void) => ReactNode;
+  /** Aviso de moderación que reemplaza al aviso simple cuando se rechaza un texto (spec 011, RF-07). */
+  renderModeration?: (
+    rejection: Extract<SendRejection, { kind: 'moderation' }>,
+    onDismiss: () => void,
+  ) => ReactNode;
+};
 
 /**
  * Chat de una reserva (spec 008 §7.2, RF-02 a RF-08): mensajes cronológicos con los recientes
@@ -42,13 +53,14 @@ type ChatScreenProps = { id: string };
  * leído al abrir y consulta periódica cada 5 s. Con `canWrite` falso el campo se reemplaza por un
  * aviso de conversación cerrada.
  */
-export function ChatScreen({ id }: ChatScreenProps) {
+export function ChatScreen({ id, renderMessageReport, renderModeration }: ChatScreenProps) {
   const router = useRouter();
   const { user } = useSession();
   const userId = user?.id ?? null;
   const conversations = useConversations();
   const messages = useMessages(id);
   const [text, setText] = useState('');
+  const [reporting, setReporting] = useState<ChatMessage | null>(null);
   const outbox = useOutbox(id, setText);
   const { mutate: markRead } = useMarkRead(id);
   useChatSync(id, userId);
@@ -135,7 +147,13 @@ export function ChatScreen({ id }: ChatScreenProps) {
         inverted
         data={entries}
         keyExtractor={(entry) => entry.key}
-        renderItem={({ item }) => renderEntry(item, outbox.retry)}
+        renderItem={({ item }) =>
+          renderEntry(
+            item,
+            outbox.retry,
+            renderMessageReport === undefined ? undefined : setReporting,
+          )
+        }
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
         onEndReachedThreshold={0.4}
@@ -168,7 +186,10 @@ export function ChatScreen({ id }: ChatScreenProps) {
             </View>
           ) : (
             <>
-              {outbox.rejection === null ? null : (
+              {outbox.rejection === null ? null : outbox.rejection.kind === 'moderation' &&
+                renderModeration !== undefined ? (
+                renderModeration(outbox.rejection, outbox.dismissRejection)
+              ) : (
                 <RejectionNotice rejection={outbox.rejection} onDismiss={outbox.dismissRejection} />
               )}
               <Composer
@@ -181,15 +202,20 @@ export function ChatScreen({ id }: ChatScreenProps) {
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
+      {reporting === null ? null : renderMessageReport?.(reporting, () => setReporting(null))}
     </GradientBackground>
   );
 }
 
-function renderEntry(entry: ChatEntry, onRetry: (clientId: string) => void) {
+function renderEntry(
+  entry: ChatEntry,
+  onRetry: (clientId: string) => void,
+  onReport: ((message: ChatMessage) => void) | undefined,
+) {
   return entry.type === 'day' ? (
     <DaySeparator iso={entry.iso} />
   ) : (
-    <MessageBubble message={entry.message} onRetry={onRetry} />
+    <MessageBubble message={entry.message} onRetry={onRetry} onReport={onReport} />
   );
 }
 

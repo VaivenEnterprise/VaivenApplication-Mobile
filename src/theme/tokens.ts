@@ -165,6 +165,8 @@ export const sizes = {
   projectCard: { hero: 160, compact: 112, wide: 72 },
   /** Tarjeta de objeto del Inicio y su foto 4:3 (spec 003 §7.3). */
   homeTile: 160,
+  /** Punto de «no leído» de un aviso y alto de la insignia de no leídos del Perfil (spec 011 §7.1). */
+  notification: { unreadDot: 10, badge: 22 },
   /** Botón circular (volver, mensajes). */
   roundButton: 44,
   /** Casilla cuadrada del selector de fotos (spec 004 §7.1) y botón «quitar» sobre ella. */

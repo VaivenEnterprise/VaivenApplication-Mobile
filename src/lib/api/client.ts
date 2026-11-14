@@ -18,6 +18,8 @@ export type RequestOptions = Omit<RequestInit, 'signal' | 'headers'> & {
   signal?: AbortSignal;
   /** Prefijo de la ruta; por defecto `/api/v1`. Vacío para `/healthz` y `/readyz`, que viven fuera de él. */
   prefix?: string;
+  /** Se llama con el código HTTP de una respuesta exitosa (p. ej. 200 frente a 201 en un reporte repetido). */
+  onResponse?: (status: number) => void;
 };
 
 /**
@@ -52,7 +54,7 @@ async function execute<T>(
   options: RequestOptions,
   token: string | null,
 ): Promise<T> {
-  const { prefix = API_PREFIX, signal: external, ...init } = options;
+  const { prefix = API_PREFIX, signal: external, onResponse, ...init } = options;
   const { apiBaseUrl } = getConfig();
   const requestId = newRequestId();
   const controller = new AbortController();
@@ -95,6 +97,7 @@ async function execute<T>(
         requestId,
       );
     }
+    onResponse?.(response.status);
     return parsed.data;
   } catch (error) {
     if (error instanceof ApiError) throw error;

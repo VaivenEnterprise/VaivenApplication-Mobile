@@ -15,6 +15,7 @@ export const routes = {
   editItem: (id: string): Href => href(`/mis-objetos/${encodeURIComponent(id)}/editar`),
   activity: href('/actividad'),
   messages: href('/mensajes'),
+  notifications: href('/notificaciones'),
   profile: href('/perfil'),
   editProfile: href('/perfil/editar'),
   item: (id: string): Href => href(`/objeto/${encodeURIComponent(id)}`),

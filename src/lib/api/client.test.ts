@@ -287,3 +287,20 @@ describe('request: configuración', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe('request: onResponse', () => {
+  it('informa el código HTTP de una respuesta exitosa', async () => {
+    mockFetch().mockResolvedValue(response(201, okBody));
+    const onResponse = jest.fn();
+    await request('/x', schema, { onResponse });
+    expect(onResponse).toHaveBeenCalledWith(201);
+  });
+
+  it('no se llama si la respuesta falla ni se manda a fetch', async () => {
+    const fetchMock = mockFetch().mockResolvedValue(response(500, null));
+    const onResponse = jest.fn();
+    await expect(request('/x', schema, { onResponse })).rejects.toBeInstanceOf(ApiError);
+    expect(onResponse).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls[0]?.[1]).not.toHaveProperty('onResponse');
+  });
+});

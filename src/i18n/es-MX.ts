@@ -9,9 +9,11 @@ import { imagesEs } from '@/i18n/images';
 import { incidentsEs } from '@/i18n/incidents';
 import { inicioEs } from '@/i18n/inicio';
 import { itemsEs } from '@/i18n/items';
+import { notificationsEs } from '@/i18n/notifications';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
 import { ratingsEs } from '@/i18n/ratings';
+import { reportsEs } from '@/i18n/reports';
 import { searchEs } from '@/i18n/search';
 import { tabsEs } from '@/i18n/tabs';
 
@@ -41,6 +43,8 @@ export const es = {
   handover: handoverEs,
   ratings: ratingsEs,
   incidents: incidentsEs,
+  notifications: notificationsEs,
+  reports: reportsEs,
   projects: projectsEs,
   search: searchEs,
   home: {
