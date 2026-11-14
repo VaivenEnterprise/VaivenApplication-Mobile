@@ -44,7 +44,8 @@ export const fakeBooking = (over: Partial<Booking> = {}): Booking => ({
   paymentMode: 'full_on_delivery',
   payments: [{ stage: 'delivery', amountCents: 9000 }],
   status: 'pending',
-  expiresAt: '2026-11-13T18:00:00Z',
+  // Relativa a «ahora»: una fecha fija vence y rompe las pruebas que esperan «Vence en».
+  expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   meetingPoint: null,
   cancelReason: null,
   cancelledBy: null,
