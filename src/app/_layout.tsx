@@ -20,6 +20,8 @@ import { SuspendedScreen } from '@/features/auth/screens/SuspendedScreen';
 import { useSession } from '@/features/auth/useSession';
 // Registra la sección de entrega y pagos en el detalle de la reserva (spec 009, plan P-06).
 import '@/features/handover';
+// Registra la sección de calificaciones e incidencias en el detalle de la reserva (spec 010).
+import '@/features/incidents';
 import { es } from '@/i18n/es-MX';
 import { configResult, type ConfigError } from '@/lib/config';
 import { AppProviders } from '@/providers/AppProviders';
@@ -59,6 +61,8 @@ const SIGNED_IN_SCREENS = [
   'entrega/[bookingId]/escanear',
   'usuario/[id]',
   'incidencia/[id]',
+  'incidencia/nueva/[bookingId]',
+  'incidencias',
   'proyecto/[id]',
 ] as const;
 

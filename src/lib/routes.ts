@@ -23,6 +23,10 @@ export const routes = {
   user: (id: string): Href => href(`/usuario/${encodeURIComponent(id)}`),
   project: (id: string): Href => href(`/proyecto/${encodeURIComponent(id)}`),
   chat: (id: string): Href => href(`/chat/${encodeURIComponent(id)}`),
+  incident: (id: string): Href => href(`/incidencia/${encodeURIComponent(id)}`),
+  incidents: href('/incidencias'),
+  reportIncident: (bookingId: string): Href =>
+    href(`/incidencia/nueva/${encodeURIComponent(bookingId)}`),
   handoverEvidence: (bookingId: string, stage: string): Href =>
     href(`/entrega/${encodeURIComponent(bookingId)}/evidencia?stage=${encodeURIComponent(stage)}`),
   handoverQr: (bookingId: string, stage: string): Href =>

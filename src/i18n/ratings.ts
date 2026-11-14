@@ -1,0 +1,65 @@
+// Textos de calificaciones y reputación (spec 010). Segunda persona, verbo primero (Art. V).
+
+export const ratingsEs = {
+  summary: {
+    none: 'Sin calificaciones',
+    a11y: 'Calificación',
+    outOf: 'de 5',
+    count: 'calificaciones',
+    countOne: 'calificación',
+  },
+  card: {
+    title: 'Calificar',
+    prompt: 'Califica a',
+    yourRating: 'Tu calificación',
+    expired: 'Ya no puedes calificar',
+    expiredHint: 'El plazo de 14 días para calificar terminó.',
+    deadline: 'Puedes calificar hasta el',
+    loadFailed: 'No pudimos revisar si puedes calificar.',
+    starsHint: 'Toca una estrella para calificar',
+  },
+  sheet: {
+    question: '¿Cómo te fue con',
+    comment: 'Agregar comentario',
+    commentHint: 'Opcional. Cuenta qué tal fue la experiencia.',
+    counter: 'caracteres',
+    send: 'Enviar',
+    notNow: 'Ahora no',
+    thanks: 'Gracias',
+    thanksHint: 'Tu calificación ayuda a que la comunidad confíe.',
+    done: 'Listo',
+    starsLabel: 'Tu calificación',
+  },
+  words: {
+    1: 'Muy mal',
+    2: 'Mal',
+    3: 'Regular',
+    4: 'Bien',
+    5: 'Excelente',
+  },
+  chips: {
+    positive: ['Puntual', 'Amable', 'Cuidó el objeto'],
+    negative: ['Tardó', 'Objeto sucio', 'Mala comunicación'],
+  },
+  validation: {
+    scoreRequired: 'Elige de 1 a 5 estrellas.',
+    commentTooLong: 'El comentario puede tener hasta 300 caracteres.',
+  },
+  errors: {
+    conflict: 'Ya calificaste esta reserva o venció el plazo para hacerlo.',
+    forbidden: 'Solo quienes participaron en la reserva pueden calificar.',
+    notFound: 'No encontramos esta reserva.',
+    generic: 'No pudimos enviar tu calificación. Intenta de nuevo.',
+  },
+  reputation: {
+    title: 'Reputación',
+    empty: 'Aún sin calificaciones',
+    emptyHint: 'Cuando alguien califique, lo verás aquí.',
+    ratings: 'calificaciones',
+    ratingOne: 'calificación',
+    listTitle: 'Comentarios',
+    more: 'Ver más calificaciones',
+    loadFailed: 'No pudimos cargar las calificaciones.',
+    noComment: 'Sin comentario',
+  },
+} as const;
