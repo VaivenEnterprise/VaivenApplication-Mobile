@@ -154,9 +154,12 @@ describe('hooks de avisos', () => {
     await act(async () => {
       await mark.result.current.mutateAsync({ ids: ['n1'] });
     });
-    const items = list.result.current.data?.pages[0]?.items ?? [];
-    expect(items.find((n) => n.id === 'n1')?.readAt).not.toBeNull();
-    expect(items.find((n) => n.id === 'n2')?.readAt).toBeNull();
+    // El cambio de caché llega a `result.current` en el siguiente render: se espera, no se lee de golpe.
+    await waitFor(() => {
+      const items = list.result.current.data?.pages[0]?.items ?? [];
+      expect(items.find((n) => n.id === 'n1')?.readAt).not.toBeNull();
+      expect(items.find((n) => n.id === 'n2')?.readAt).toBeNull();
+    });
     await waitFor(() => expect(unread.result.current.data).toBe(1));
   });
 
