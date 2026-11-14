@@ -159,6 +159,8 @@ export const sizes = {
   /** Altura útil mínima (pt) para mostrar la ilustración del pie de inicio de sesión. */
   illustrationMinHeight: 700,
   illustrationHeight: 120,
+  /** Mosaico de motivo de incidencia (spec 010 §7.3): ancho de columna (2 por fila) y alto mínimo. */
+  reasonTile: { width: '48%', minHeight: 96 },
   /** Tarjetas de proyecto: alto de `hero` y `compact`, alto mínimo de `wide` (spec 006 §7.3). */
   projectCard: { hero: 160, compact: 112, wide: 72 },
   /** Tarjeta de objeto del Inicio y su foto 4:3 (spec 003 §7.3). */

@@ -1,7 +1,8 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { es } from '@/i18n/es-MX';
+import { useLocalSearchParams } from 'expo-router';
+import { IncidentDetailScreen } from '@/features/incidents/screens/IncidentDetailScreen';
 
-/** Ruta de detalle vacía: la spec dueña reemplaza este contenido. */
-export default function Screen() {
-  return <PlaceholderScreen icon="danger" title={es.tabs.placeholder.incident} />;
+/** Detalle de una incidencia (spec 010 §7.4). */
+export default function IncidentDetailRoute() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <IncidentDetailScreen id={id} />;
 }

@@ -6,10 +6,12 @@ import { bookingsEs } from '@/i18n/bookings';
 import { chatEs } from '@/i18n/chat';
 import { handoverEs } from '@/i18n/handover';
 import { imagesEs } from '@/i18n/images';
+import { incidentsEs } from '@/i18n/incidents';
 import { inicioEs } from '@/i18n/inicio';
 import { itemsEs } from '@/i18n/items';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
+import { ratingsEs } from '@/i18n/ratings';
 import { searchEs } from '@/i18n/search';
 import { tabsEs } from '@/i18n/tabs';
 
@@ -37,6 +39,8 @@ export const es = {
   bookings: bookingsEs,
   chat: chatEs,
   handover: handoverEs,
+  ratings: ratingsEs,
+  incidents: incidentsEs,
   projects: projectsEs,
   search: searchEs,
   home: {
