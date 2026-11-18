@@ -16,7 +16,7 @@ CI corre en PRs, push a main/develop/spec/**, manualmente y semanalmente. Requir
 
 Policy verifica nombres, destino, secciones del PR y archivos sensibles. Gitleaks examina el historial alcanzable completo y los archivos actuales, con salida redactada, binario versionado y SHA-256 verificado. Las acciones se fijan por commit y Dependabot propone actualizaciones hacia develop. El token es de lectura salvo la carga de resultados de CodeQL. No se usan secretos de despliegue en PRs.
 
-Al existir package.json: package-lock.json obligatorio, npm ci, typecheck, lint, Jest con cobertura y npm audit (bloquea high/critical). Cobertura minima del 80% por archivo de src/lib y hooks de features; Jest debe incluir todos esos archivos con collectCoverageFrom. CI no construye APK/AAB ni sustituye la verificacion manual en Expo Go.
+Al existir package.json: package-lock.json obligatorio, npm ci, typecheck, lint, Jest con cobertura y auditoria de dependencias con .github/scripts/audit.mjs (equivale a npm audit y bloquea high/critical; solo tolera los avisos listados en .github/audit-exceptions.json, cada uno con justificacion, aprobacion y fecha de vencimiento: una excepcion vencida falla). Cobertura minima del 80% por archivo de src/lib y hooks de features; Jest debe incluir todos esos archivos con collectCoverageFrom. CI no construye APK/AAB ni sustituye la verificacion manual en Expo Go.
 
 Mientras solo exista documentacion, Quality informa que no aplican las pruebas de aplicacion; los controles de politica y secretos siguen siendo reales. Agregar codigo sin su manifiesto/verificador hace fallar CI. Dependabot para npm empezara a trabajar cuando exista su manifiesto.
 
