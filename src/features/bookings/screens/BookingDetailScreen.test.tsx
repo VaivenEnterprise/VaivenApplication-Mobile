@@ -11,6 +11,7 @@ import { BOOKING_ID, fakeBooking } from '@/test/fakeBookings';
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
+  useIsFocused: () => true,
   useRouter: () => ({ push: mockPush, back: mockBack }),
 }));
 jest.mock('@/lib/config', () => ({

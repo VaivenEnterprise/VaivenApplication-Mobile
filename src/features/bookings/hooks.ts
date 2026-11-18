@@ -5,6 +5,7 @@ import {
   useQueryClient,
   type QueryClient,
 } from '@tanstack/react-query';
+import { usePolling } from '@/features/chat/usePolling';
 import {
   acceptBooking,
   cancelBooking,
@@ -47,22 +48,35 @@ export function useQuote({ itemId, startDate, endDate, paymentMode }: QuoteArgs,
   });
 }
 
-/** Detalle de una reserva; es el caché de verdad que actualizan las mutaciones (P-06). */
+/**
+ * Cada cuánto se vuelve a pedir una reserva abierta: la otra parte la cambia desde su teléfono y
+ * el backend no tiene *websockets* (solo sondeo), igual que el chat.
+ */
+export const BOOKING_POLL_MS = 10_000;
+
+/**
+ * Detalle de una reserva; es el caché de verdad que actualizan las mutaciones (P-06). Se refresca
+ * solo con la pantalla enfocada y la app en primer plano (hallazgo de 012-T007).
+ */
 export function useBooking(id: string) {
-  return useQuery({
+  const query = useQuery({
     queryKey: bookingsKeys.detail(id),
     queryFn: ({ signal }) => fetchBooking(id, signal),
   });
+  usePolling(() => query.refetch(), BOOKING_POLL_MS, { runOnMount: false });
+  return query;
 }
 
 /** Mis solicitudes y reservas por rol y estado, con paginación por cursor (RF-10). */
 export function useMyBookings(role: ListRole, status?: BookingStatus) {
-  return useInfiniteQuery({
+  const query = useInfiniteQuery({
     queryKey: [...bookingsKeys.mine(role), status ?? 'all'],
     queryFn: ({ pageParam, signal }) => fetchMyBookings(role, pageParam, status, signal),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   });
+  usePolling(() => query.refetch(), BOOKING_POLL_MS, { runOnMount: false });
+  return query;
 }
 
 /** Deja el detalle como verdad y marca las listas para recargar (P-06). */

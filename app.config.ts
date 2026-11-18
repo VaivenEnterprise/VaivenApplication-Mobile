@@ -39,6 +39,16 @@ const config: ExpoConfig = {
       },
     ],
     'expo-notifications',
+    // Pantalla de inicio (spec 012 T005): fondo crema de la marca, el mismo del ícono adaptable.
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/splash-icon.png',
+        imageWidth: 200,
+        resizeMode: 'contain',
+        backgroundColor: '#FAF6F0',
+      },
+    ],
   ],
   // Identificador público del proyecto en EAS (no es un secreto).
   extra: {

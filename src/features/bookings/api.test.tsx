@@ -26,6 +26,7 @@ import { ApiError } from '@/lib/api/errors';
 import { failure, installFakeApi, ok } from '@/test/fakeApi';
 import { BOOKING_ID, ITEM_ID, fakeBooking, fakeQuote } from '@/test/fakeBookings';
 
+jest.mock('expo-router', () => ({ useIsFocused: () => true }));
 jest.mock('@/lib/config', () => ({
   getConfig: () => ({ apiBaseUrl: 'http://api.test', appEnv: 'development' }),
 }));

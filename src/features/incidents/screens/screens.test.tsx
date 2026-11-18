@@ -16,6 +16,7 @@ const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
+  useIsFocused: () => true,
   useRouter: () => ({ push: mockPush, back: mockBack, replace: mockReplace }),
 }));
 jest.mock('@/lib/config', () => ({

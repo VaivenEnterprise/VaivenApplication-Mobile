@@ -22,6 +22,7 @@ import { useSession } from '@/features/auth/useSession';
 import '@/features/handover';
 // Registra la sección de calificaciones e incidencias en el detalle de la reserva (spec 010).
 import '@/features/incidents';
+import { OfflineBanner } from '@/features/connectivity/OfflineBanner';
 import { NotificationsBootstrap } from '@/features/notifications';
 import { es } from '@/i18n/es-MX';
 import { configResult, type ConfigError } from '@/lib/config';
@@ -117,6 +118,7 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       {configResult.ok ? (
         <AppProviders>
+          <OfflineBanner />
           <RootNavigator />
           <NotificationsBootstrap />
         </AppProviders>
