@@ -51,6 +51,9 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+// El primer test carga toda la app en frío (renderRouter); igual que las demás pruebas de integración.
+jest.setTimeout(30_000);
+
 describe('auth gate (RF-04)', () => {
   it('sin sesión solo se ven las rutas (auth)', async () => {
     installMemorySecureStore();

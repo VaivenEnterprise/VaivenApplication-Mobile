@@ -10,6 +10,7 @@ import { FAKE_TOKEN, fakeRecordedStage } from '@/test/fakeHandover';
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
+  useIsFocused: () => true,
   useRouter: () => ({ push: jest.fn(), back: mockBack, replace: mockReplace }),
 }));
 jest.mock('@/lib/config', () => ({

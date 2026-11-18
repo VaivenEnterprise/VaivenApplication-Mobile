@@ -19,6 +19,7 @@ describe('textos es-MX', () => {
       'chat',
       'common',
       'configError',
+      'connectivity',
       'diagnostics',
       'errors',
       'handover',

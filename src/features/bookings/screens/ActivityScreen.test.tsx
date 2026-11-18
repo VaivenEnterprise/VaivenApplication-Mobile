@@ -7,7 +7,10 @@ import { failure, installFakeApi, ok } from '@/test/fakeApi';
 import { fakeBooking } from '@/test/fakeBookings';
 
 const mockPush = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({
+  useIsFocused: () => true,
+  useRouter: () => ({ push: mockPush }),
+}));
 jest.mock('@/lib/config', () => ({
   getConfig: () => ({ apiBaseUrl: 'http://api.test', appEnv: 'development' }),
 }));
