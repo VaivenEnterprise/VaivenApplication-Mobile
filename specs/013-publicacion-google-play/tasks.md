@@ -1,6 +1,6 @@
 # Tareas 013 — Publicación en Google Play (móvil)
 
-- **Dueños:** MO-B y el **administrador de la cuenta** (marcado «admin») · **Estado:** sin ejecutar · `[P]` = paralelizable
+- **Dueños:** MO-B y el **administrador de la cuenta** (marcado «admin») · **Estado:** EN CURSO, **PENDIENTE DE CIERRE AL FINAL** (decisión del 2026-11-19: se sigue con la 014 mientras Google revisa la 1.0; hechas T004, T006 y T008; faltan T001, T002, T003, T005, T007, T009, T010 y T011; ver `docs/play/seguimiento.md`) · `[P]` = paralelizable
 - Las tareas «admin» no las hace un agente: son trámites en Play Console. Se listan para no olvidarlas y se registran en `memoria.md`.
 
 - [ ] **T001** Perfiles de EAS (APK `preview` y AAB `production`) y versión
@@ -21,7 +21,7 @@
   - Aceptación: ≥ 15 personas con cuenta de Google que aceptaron participar hasta ~el 30 de nov; instrucciones paso a paso (aceptar invitación, instalar, no salirse del programa, abrir la app al menos una vez por semana y enviar comentarios); lista guardada fuera del repositorio
   - Refs: RF-07 · CA-02
 
-- [ ] **T004** [P] Textos de la ficha
+- [x] **T004** [P] Textos de la ficha
   - Archivos: `docs/play/ficha.md`
   - Agente: `spec-writer` · Depende de: landing L002-T003 (contenido), L001-T010 (URL de privacidad)
   - Aceptación: nombre, descripción breve ≤ 80 y completa ≤ 4000, notas de versión del primer AAB, categoría, correo, sitio web; todo coherente con la landing y con las specs; sin promesas no cumplidas (pagos, seguros)
@@ -33,7 +33,7 @@
   - Aceptación: ícono 512×512; gráfico 1024×500; ≥ 4 capturas del teléfono sin datos personales; una versión provisional alcanza para empezar y se reemplaza antes de producción · Ícono actual provisional; dirección y recursos según spec §7
   - Refs: RF-03
 
-- [ ] **T006** [P] Documento de cumplimiento
+- [x] **T006** [P] Documento de cumplimiento
   - Archivos: `docs/play/cumplimiento.md`
   - Agente: `spec-writer` · Depende de: landing L001-T005
   - Aceptación: respuestas listas para copiar: seguridad de datos (dato → recopilado/compartido → finalidad → opcional/obligatorio → cifrado en tránsito → borrado), clasificación de contenido, público 18+, anuncios no, permisos con justificación, URL de eliminación de cuenta, declaración de contenido de usuarios (reportes y filtro), acceso de revisión con cuenta de prueba; coincide con el aviso de privacidad (CA-04)
@@ -45,7 +45,7 @@
   - Aceptación: ficha, seguridad de datos, clasificación, público, anuncios y acceso a la app completos sin advertencias; cuenta de revisión creada (P-05)
   - Refs: RF-05, RF-06
 
-- [ ] **T008** Primer AAB a la prueba cerrada (**~9 nov**, ver calendario vigente del ROADMAP)
+- [x] **T008** Primer AAB a la prueba cerrada (**~9 nov**, ver calendario vigente del ROADMAP)
   - Archivos: `docs/play/seguimiento.md`, `memoria.md` (solo anexar)
   - Agente: — (manual con `eas build -p android --profile production`; sube el **admin**) · Depende de: T001, T007, 003-T012
   - Aceptación: AAB instalable aprobado en la pista cerrada; testers invitados y con enlace de aceptación; **día 1 de 14 anotado** (fecha real; si la cuenta o el AAB se retrasan, se anota la fecha real); versión y fecha en `memoria.md`

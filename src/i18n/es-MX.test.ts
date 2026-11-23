@@ -13,6 +13,7 @@ describe('textos es-MX', () => {
 
   it('tiene las secciones del plan §4.3', () => {
     expect(Object.keys(es).sort()).toEqual([
+      'aiSuggestions',
       'auth',
       'bookings',
       'brand',
