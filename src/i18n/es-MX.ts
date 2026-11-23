@@ -1,6 +1,7 @@
 // Todos los textos visibles de la app (Art. V.3). Ningún componente lleva texto
 // literal. Las claves de `errors` cubren cada `ApiErrorCode` (lib/api/errors.ts).
 
+import { aiSuggestionsEs } from '@/i18n/aiSuggestions';
 import { authEs } from '@/i18n/auth';
 import { bookingsEs } from '@/i18n/bookings';
 import { chatEs } from '@/i18n/chat';
@@ -39,6 +40,7 @@ export const es = {
   inicio: inicioEs,
   images: imagesEs,
   items: itemsEs,
+  aiSuggestions: aiSuggestionsEs,
   bookings: bookingsEs,
   chat: chatEs,
   handover: handoverEs,

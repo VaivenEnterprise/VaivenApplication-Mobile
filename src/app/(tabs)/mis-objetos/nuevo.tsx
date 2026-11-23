@@ -1,9 +1,10 @@
+import { renderFormExtras } from '@/features/ai-suggestions';
 import { ItemFormScreen } from '@/features/items/screens/ItemFormScreen';
 
 /**
- * Publicar objeto. El *slot* `renderFormExtras` de `ItemFormScreen` es donde la spec 014 monta el
- * botón de IA; se conecta aquí sin tocar la pantalla.
+ * Publicar objeto. El *slot* `renderFormExtras` de `ItemFormScreen` monta aquí las sugerencias con IA
+ * de la spec 014 (solo si el servidor las enciende y hay una foto subida), sin tocar la pantalla.
  */
 export default function Screen() {
-  return <ItemFormScreen />;
+  return <ItemFormScreen renderFormExtras={renderFormExtras} />;
 }

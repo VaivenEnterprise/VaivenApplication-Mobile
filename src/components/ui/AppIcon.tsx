@@ -58,6 +58,7 @@ const ICONS = {
   bell: 'notifications-outline',
   doneAll: 'checkmark-done-outline',
   flag: 'flag-outline',
+  sparkles: 'sparkles-outline',
 } as const satisfies Record<string, IoniconName>;
 
 export type IconName = keyof typeof ICONS;

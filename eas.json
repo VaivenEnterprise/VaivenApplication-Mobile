@@ -11,7 +11,8 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "https://vaiven-staging.westus2.cloudapp.azure.com:8443"
+        "EXPO_PUBLIC_API_URL": "https://vaiven-staging.westus2.cloudapp.azure.com",
+        "EXPO_PUBLIC_LEGAL_URL": "https://vaiven-landing.onrender.com"
       }
     },
     "production": {
@@ -21,7 +22,8 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "https://vaiven-staging.westus2.cloudapp.azure.com:8443"
+        "EXPO_PUBLIC_API_URL": "https://vaiven-staging.westus2.cloudapp.azure.com",
+        "EXPO_PUBLIC_LEGAL_URL": "https://vaiven-landing.onrender.com"
       }
     }
   }

@@ -1,0 +1,82 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef } from 'react';
+import { useSession } from '@/features/auth/useSession';
+import { createListingSuggestion, getAiSuggestionsEnabled } from '@/features/ai-suggestions/api';
+import { aiSuggestionsKeys } from '@/features/ai-suggestions/keys';
+import type { ListingSuggestion, SuggestionStatus } from '@/features/ai-suggestions/types';
+import { ApiError } from '@/lib/api/errors';
+
+/** El interruptor casi no cambia: se consulta una vez y se reutiliza unos minutos. */
+const ENABLED_STALE_MS = 5 * 60 * 1000;
+
+/** `true` si `GET /meta` trae `features.aiSuggestions = true`; mientras carga o si falla, `false`. */
+export function useAiSuggestionsEnabled(): boolean {
+  const { status } = useSession();
+  const query = useQuery({
+    queryKey: aiSuggestionsKeys.enabled,
+    queryFn: ({ signal }) => getAiSuggestionsEnabled(signal),
+    staleTime: ENABLED_STALE_MS,
+    enabled: status === 'signedIn',
+  });
+  return query.data === true;
+}
+
+export type ListingSuggestionState = {
+  status: SuggestionStatus;
+  suggestion: ListingSuggestion | null;
+  /** Pide una sugerencia para esta foto; nunca se reintenta sola (cuesta cuota, plan P-01). */
+  suggest: (imagePublicId: string) => void;
+  /** Cancela la petición en curso y vuelve al inicio. */
+  cancel: () => void;
+  /** Descarta el resultado o el error y vuelve al inicio. */
+  reset: () => void;
+};
+
+/**
+ * `POST /ai/listing-suggestions` (RF-03, RF-04). Estados: `idle`, `loading`, `success`, `error` y
+ * `limit` (429, tope diario). Sin reintentos automáticos y cancelable; al desmontar cancela.
+ */
+export function useListingSuggestion(): ListingSuggestionState {
+  const controller = useRef<AbortController | null>(null);
+  const mutation = useMutation({
+    mutationFn: (imagePublicId: string) => {
+      controller.current = new AbortController();
+      return createListingSuggestion(imagePublicId, controller.current.signal);
+    },
+    retry: false,
+  });
+  const { mutate, reset: resetMutation } = mutation;
+
+  const cancel = useCallback(() => {
+    controller.current?.abort();
+    controller.current = null;
+    resetMutation();
+  }, [resetMutation]);
+
+  useEffect(
+    () => () => {
+      controller.current?.abort();
+    },
+    [],
+  );
+
+  const suggest = useCallback((imagePublicId: string) => mutate(imagePublicId), [mutate]);
+
+  let status: SuggestionStatus = 'idle';
+  if (mutation.isPending) status = 'loading';
+  else if (mutation.isSuccess) status = 'success';
+  else if (mutation.isError) {
+    status =
+      mutation.error instanceof ApiError && mutation.error.code === 'rate_limited'
+        ? 'limit'
+        : 'error';
+  }
+
+  return {
+    status,
+    suggestion: mutation.data ?? null,
+    suggest,
+    cancel,
+    reset: resetMutation,
+  };
+}
