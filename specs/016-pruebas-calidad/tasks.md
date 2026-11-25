@@ -1,6 +1,6 @@
 # Tareas 016 — Pruebas de calidad y auditoría de evaluación (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** T001, T002 y T004–T008 implementadas y verificadas; T003 implementada y cubierta por la corrida real, sin marcar en esta fase (alcance T001–T002); T009–T011 pendientes · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** T001–T008 implementadas y verificadas con ejecución real (2026-11-25); T009–T011 pendientes · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I) y la 015 y la 017 estén cerradas. Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde.
 
 ### Fase 1 — Medir (sin cambiar la app)
@@ -21,12 +21,12 @@
 
 ### Fase 2 — Cerrar brechas
 
-- [ ] **T003** [P] Pruebas unitarias de pantallas y hooks sin prueba propia
+- [x] **T003** [P] Pruebas unitarias de pantallas y hooks sin prueba propia
   - Archivos: `src/features/auth/screens/{RestoringScreen,SuspendedScreen}.test.tsx` y los que marque T002
   - Agente: `qa-mobile` · Depende de: T002
   - Aceptación: CA-02 para unitarias; estados de carga, vacío y error; cobertura mínima intacta
   - Refs: RF-03
-  - Nota 2026-11-25: `RestoringScreen` (2) y `SuspendedScreen` (4) pasan. **Sin marcar:** falta `npm test` completo para comprobar la cobertura mínima.
+  - Nota 2026-11-25 (verificación real): `RestoringScreen` (2 pruebas: indicador de progreso accesible como estado de carga y sin botones) y `SuspendedScreen` (4 pruebas: encabezado, descripción, acción, con/sin fecha y pulsación) pasan dentro de la corrida completa. `npm test`: **146 suites / 1 864 pruebas en verde**, cobertura global 99,65 % sentencias / 97,68 % ramas / 100 % funciones / 99,6 % líneas (80 % mínimo intacto). La matriz (`pantallas.md` + `pantallas-notas.md`) justifica el resto de unitarias por archivos compartidos y confirma que ninguna pantalla con endpoints queda sin prueba. `npm run typecheck` y `npm run lint` limpios.
 
 - [x] **T004** Suite de seguridad S-01 a S-11 y S-13
   - Archivos: `src/lib/storage/secureStorage.security.test.ts`, `src/lib/api/client.security.test.ts`, `src/features/auth/session.security.test.tsx`, `src/features/profile/deleteAccount.security.test.tsx`, `src/features/images/upload.security.test.ts`, `src/features/notifications/push.security.test.ts` (y los que haga falta, con el ID `S-NN` y la categoría OWASP en cada nombre)
@@ -60,13 +60,14 @@
   - Aceptación: CA-08 (sin dispositivo o sin Maestro falla con mensaje claro y sin resultados); el script muestra la URL activa y se niega con la de producción; sin credenciales en el repositorio. **Instalar Maestro en la máquina de la persona requiere su autorización.**
   - Refs: RF-07, RF-08 · P-03, P-07
   - Nota 2026-11-25: CA-08 verificado con ejecuciones reales y pruebas de las guardas. Los flujos Maestro y el `.ps1` **no se ejecutaron** en un teléfono (T009).
+  - Nota Fase 3 (2026-11-25, reverificación sin cambios de código): `npm run test:scripts` **22/22 en verde** y `npm run test:device` ejecutado de verdad en este equipo sin dispositivo: imprimió la URL activa (`https://vaiven-staging.westus2.cloudapp.azure.com`, fuente `eas.json (preview)`), falló con «No encuentro `adb`…», código de salida **2** y **0 archivos** en `docs/calidad/dispositivo/`. `adb` y `maestro` no están instalados. Sin instalar nada ni tocar el teléfono.
 
 - [ ] **T009** Ejecución en el dispositivo físico
   - Archivos: `docs/calidad/dispositivo/` (informe JUnit y registro), `memoria.md` (solo anexar)
   - Agente: `probador-expo` + **persona** (teléfono por USB, `E2E_*`) · Depende de: T008 y backend 016-T012 (datos en staging)
   - Aceptación: CA-07; la corrida real en verde con su fecha y comando; la cuenta de prueba eliminada al final
   - Refs: RF-07, RF-08
-  - Nota 2026-11-25: pendiente; necesita teléfono, Maestro (autorización) y datos de staging del backend 016-T012.
+  - Nota 2026-11-25 (Fase 3, preparación; **sigue sin marcar**): checklist en `docs/calidad/dispositivo.md` §«Comprobaciones previas». Estado real: `adb devices -l` y `maestro --version` responden «no se reconoce…» en la máquina de la sesión; no hay teléfono ni autorización para instalar las herramientas o ejecutar los flujos, así que **no se corrió** `.\scripts\device-tests.ps1`. **Bloqueos:** (1) backend 016-T012 sigue `[ ]` con el bloqueo conocido del `seed` (archivo de credenciales que `vm-admin.sh` no monta), por lo que no se pudo confirmar la existencia de datos de demostración ni un `E2E_ITEM_TITLE` de otra persona; (2) `eas.json` apunta en `preview` y `production` a `https://vaiven-staging.westus2.cloudapp.azure.com` (443), cuyo `/api/v1/meta` responde `environment: production` y sin `features`, mientras `:8443` responde `environment: staging` con las tres funciones activas. El script decide por el **host**, no por `/meta`: para T009 hay que fijar `E2E_API_URL=https://vaiven-staging.westus2.cloudapp.azure.com:8443` (o usar `--modo expo-go`, que lee `.env`). Queda pendiente la confirmación de la persona.
 
 ### Fase 4 — Informar y cerrar
 
