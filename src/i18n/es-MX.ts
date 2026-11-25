@@ -15,6 +15,7 @@ import { notificationsEs } from '@/i18n/notifications';
 import { profileEs } from '@/i18n/profile';
 import { projectsEs } from '@/i18n/projects';
 import { ratingsEs } from '@/i18n/ratings';
+import { recommendationsEs } from '@/i18n/recommendations';
 import { reportsEs } from '@/i18n/reports';
 import { searchEs } from '@/i18n/search';
 import { tabsEs } from '@/i18n/tabs';
@@ -45,6 +46,7 @@ export const es = {
   chat: chatEs,
   handover: handoverEs,
   ratings: ratingsEs,
+  recommendations: recommendationsEs,
   incidents: incidentsEs,
   notifications: notificationsEs,
   connectivity: connectivityEs,

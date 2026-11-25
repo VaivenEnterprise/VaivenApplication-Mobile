@@ -34,6 +34,7 @@ describe('textos es-MX', () => {
       'profile',
       'projects',
       'ratings',
+      'recommendations',
       'reports',
       'search',
       'tabs',
