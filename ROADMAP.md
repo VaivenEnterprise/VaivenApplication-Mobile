@@ -275,7 +275,7 @@ Incluye la tarea final de cierre de cada spec («Despliegue» en backend, «Veri
 | 013 | 9 | 11 |
 | 014 | 9 | 8 |
 | 015 | 11 | 8 |
-| 016 | 11 | 0 |
-| **Total** | **202** | **183** |
+| 016 | 14 | 11 |
+| **Total** | **205** | **194** |
 
-Landing: L001 (12 tareas) y L002 (11 tareas), ver `specs/` del repositorio `vaiven-landing-page`. **Total general: 408 tareas.**
+Landing: L001 (12 tareas) y L002 (11 tareas), ver `specs/` del repositorio `vaiven-landing-page`. **Total general: 422 tareas.**

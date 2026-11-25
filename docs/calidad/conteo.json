@@ -1,0 +1,768 @@
+{
+  "fecha": "2026-11-25T18:06:14.463Z",
+  "comando": "npx jest --coverage --coverageReporters=json-summary --json --outputFile=coverage/jest-resultados.json",
+  "cobertura": "sentencias 99.65 %, ramas 97.68 %, funciones 100 %, líneas 99.6 %",
+  "porTipo": {
+    "unitarias": {
+      "suites": 122,
+      "casos": 1677,
+      "pasaron": 1677,
+      "fallaron": 0,
+      "omitidas": 0
+    },
+    "integración": {
+      "suites": 14,
+      "casos": 93,
+      "pasaron": 93,
+      "fallaron": 0,
+      "omitidas": 0
+    },
+    "seguridad": {
+      "suites": 10,
+      "casos": 94,
+      "pasaron": 94,
+      "fallaron": 0,
+      "omitidas": 0
+    }
+  },
+  "total": {
+    "suites": 146,
+    "casos": 1864,
+    "pasaron": 1864,
+    "fallaron": 0,
+    "omitidas": 0
+  },
+  "noEjecutadas": [],
+  "archivos": [
+    {
+      "ruta": "src/__arch__/rules.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 25
+    },
+    {
+      "ruta": "src/features/images/upload.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 10
+    },
+    {
+      "ruta": "src/lib/storage/secureStorage.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 3
+    },
+    {
+      "ruta": "src/features/notifications/push.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 11
+    },
+    {
+      "ruta": "src/lib/api/client.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/auth/schemas.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 16
+    },
+    {
+      "ruta": "src/lib/config.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 5
+    },
+    {
+      "ruta": "src/lib/api/moderation.security.test.ts",
+      "tipo": "seguridad",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/profile/deleteAccount.security.test.tsx",
+      "tipo": "seguridad",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/auth/session.security.test.tsx",
+      "tipo": "seguridad",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/auth/screens/RestoringScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/auth/screens/SuspendedScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/recommendations/flow.test.tsx",
+      "tipo": "integración",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/recommendations/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 17
+    },
+    {
+      "ruta": "src/__a11y__/a11y.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/search/search.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 5
+    },
+    {
+      "ruta": "src/features/ratings/trust.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 5
+    },
+    {
+      "ruta": "src/features/profile/profile.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 5
+    },
+    {
+      "ruta": "src/features/recommendations/hooks.test.ts",
+      "tipo": "unitarias",
+      "casos": 22
+    },
+    {
+      "ruta": "src/features/chat/chat.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 7
+    },
+    {
+      "ruta": "src/features/bookings/bookings.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/ratings/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 24
+    },
+    {
+      "ruta": "src/navigation.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 17
+    },
+    {
+      "ruta": "src/features/ai-suggestions/flow.test.tsx",
+      "tipo": "integración",
+      "casos": 17
+    },
+    {
+      "ruta": "src/features/auth/session.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/project-guide/screens/ProjectScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 20
+    },
+    {
+      "ruta": "src/features/items/screens/ItemFormScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 26
+    },
+    {
+      "ruta": "src/features/items/screens/ItemDetailScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 23
+    },
+    {
+      "ruta": "src/features/search/screens/ExploreScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 21
+    },
+    {
+      "ruta": "src/features/bookings/components/actions.test.tsx",
+      "tipo": "unitarias",
+      "casos": 16
+    },
+    {
+      "ruta": "src/features/bookings/screens/BookingDetailScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/auth/screens/RegisterScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/bookings/screens/RequestScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/incidents/screens/screens.test.tsx",
+      "tipo": "unitarias",
+      "casos": 30
+    },
+    {
+      "ruta": "src/__e2e__/journey.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/chat/screens/ChatScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 18
+    },
+    {
+      "ruta": "src/features/handover/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 23
+    },
+    {
+      "ruta": "src/features/bookings/screens/ActivityScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 10
+    },
+    {
+      "ruta": "src/features/images/components/PhotoPicker.test.tsx",
+      "tipo": "unitarias",
+      "casos": 13
+    },
+    {
+      "ruta": "src/features/handover/screens/ScanScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 20
+    },
+    {
+      "ruta": "src/features/search/components/filters.test.tsx",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/reports/reports.wiring.test.tsx",
+      "tipo": "integración",
+      "casos": 7
+    },
+    {
+      "ruta": "src/features/notifications/screens/NotificationsScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 17
+    },
+    {
+      "ruta": "src/features/handover/components/PaymentsSection.test.tsx",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/profile/screens/EditProfileScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/chat/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 25
+    },
+    {
+      "ruta": "src/features/auth/screens/LoginScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/chat/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 30
+    },
+    {
+      "ruta": "src/features/notifications/notifications.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 3
+    },
+    {
+      "ruta": "src/features/handover/handover.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/handover/screens/QrScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/features/items/screens/MyItemsScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/ratings/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/profile/screens/ProfileScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/features/incidents/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/search/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/items/items.integration.test.tsx",
+      "tipo": "integración",
+      "casos": 1
+    },
+    {
+      "ruta": "src/features/handover/screens/EvidenceScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/items/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 29
+    },
+    {
+      "ruta": "src/conventions.test.ts",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/notifications/NotificationsBootstrap.test.tsx",
+      "tipo": "unitarias",
+      "casos": 13
+    },
+    {
+      "ruta": "src/features/reports/components/ReportSheet.test.tsx",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/chat/screens/ConversationsScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/search/location.test.tsx",
+      "tipo": "unitarias",
+      "casos": 13
+    },
+    {
+      "ruta": "src/features/home/home.test.tsx",
+      "tipo": "unitarias",
+      "casos": 10
+    },
+    {
+      "ruta": "src/features/search/hooks.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/profile/screens/PublicProfileScreen.test.tsx",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/bookings/components/pickers.test.tsx",
+      "tipo": "unitarias",
+      "casos": 10
+    },
+    {
+      "ruta": "src/features/notifications/usePushRegistration.test.tsx",
+      "tipo": "unitarias",
+      "casos": 27
+    },
+    {
+      "ruta": "src/features/ai-suggestions/components/SuggestionBanner.test.tsx",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/components/ui/interaction.test.tsx",
+      "tipo": "unitarias",
+      "casos": 41
+    },
+    {
+      "ruta": "src/features/ai-suggestions/useListingSuggestion.test.tsx",
+      "tipo": "unitarias",
+      "casos": 22
+    },
+    {
+      "ruta": "src/features/chat/components/OpenChatButton.test.tsx",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/bookings/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 10
+    },
+    {
+      "ruta": "src/features/handover/components/StageSection.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/search/filters.test.ts",
+      "tipo": "unitarias",
+      "casos": 24
+    },
+    {
+      "ruta": "src/components/ui/states.test.tsx",
+      "tipo": "unitarias",
+      "casos": 28
+    },
+    {
+      "ruta": "src/features/chat/useUnreadBadge.test.tsx",
+      "tipo": "unitarias",
+      "casos": 3
+    },
+    {
+      "ruta": "src/features/bookings/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 17
+    },
+    {
+      "ruta": "src/features/images/components/RemoteImage.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/connectivity/OfflineBanner.test.tsx",
+      "tipo": "unitarias",
+      "casos": 3
+    },
+    {
+      "ruta": "src/components/ui/ui.test.tsx",
+      "tipo": "unitarias",
+      "casos": 20
+    },
+    {
+      "ruta": "src/features/projects/projects.test.tsx",
+      "tipo": "unitarias",
+      "casos": 35
+    },
+    {
+      "ruta": "src/components/AppErrorBoundary.test.tsx",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/components/map/NeighborhoodMap.test.tsx",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/diagnostics/hooks/useHealth.test.tsx",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/notifications/components/NotificationsRow.test.tsx",
+      "tipo": "unitarias",
+      "casos": 2
+    },
+    {
+      "ruta": "src/components/forms.test.tsx",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/notifications/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/chat/index.test.ts",
+      "tipo": "unitarias",
+      "casos": 1
+    },
+    {
+      "ruta": "src/features/handover/components/Timeline.test.tsx",
+      "tipo": "unitarias",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/notifications/components/components.test.tsx",
+      "tipo": "unitarias",
+      "casos": 13
+    },
+    {
+      "ruta": "src/features/bookings/components/RequestButton.test.tsx",
+      "tipo": "unitarias",
+      "casos": 5
+    },
+    {
+      "ruta": "src/features/items/components/MoneyInput.test.tsx",
+      "tipo": "unitarias",
+      "casos": 7
+    },
+    {
+      "ruta": "src/features/handover/components/LateBanner.test.tsx",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/bookings/polling.test.tsx",
+      "tipo": "unitarias",
+      "casos": 2
+    },
+    {
+      "ruta": "src/providers/AppProviders.test.tsx",
+      "tipo": "unitarias",
+      "casos": 1
+    },
+    {
+      "ruta": "src/features/diagnostics/hooks/useDiagnostics.test.tsx",
+      "tipo": "unitarias",
+      "casos": 3
+    },
+    {
+      "ruta": "src/i18n/es-MX.test.ts",
+      "tipo": "unitarias",
+      "casos": 14
+    },
+    {
+      "ruta": "src/features/diagnostics/hooks/useMeta.test.tsx",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/auth/session.test.tsx",
+      "tipo": "unitarias",
+      "casos": 19
+    },
+    {
+      "ruta": "src/features/reports/api.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/images/components/UploadProgress.test.tsx",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/items/api.test.ts",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/features/connectivity/useOnline.test.tsx",
+      "tipo": "unitarias",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/images/api.test.ts",
+      "tipo": "unitarias",
+      "casos": 7
+    },
+    {
+      "ruta": "src/features/bookings/components/Timeline.test.tsx",
+      "tipo": "unitarias",
+      "casos": 7
+    },
+    {
+      "ruta": "src/theme/tokens.test.ts",
+      "tipo": "unitarias",
+      "casos": 18
+    },
+    {
+      "ruta": "src/features/chat/merge.test.ts",
+      "tipo": "unitarias",
+      "casos": 20
+    },
+    {
+      "ruta": "src/lib/api/client.test.ts",
+      "tipo": "unitarias",
+      "casos": 24
+    },
+    {
+      "ruta": "src/features/images/useImageUpload.test.ts",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/lib/smoke.test.ts",
+      "tipo": "unitarias",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/notifications/push.test.ts",
+      "tipo": "unitarias",
+      "casos": 26
+    },
+    {
+      "ruta": "src/lib/api/authInterceptor.test.ts",
+      "tipo": "unitarias",
+      "casos": 17
+    },
+    {
+      "ruta": "src/features/auth/api.test.ts",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/lib/config.test.ts",
+      "tipo": "unitarias",
+      "casos": 23
+    },
+    {
+      "ruta": "src/features/images/usePickImages.test.ts",
+      "tipo": "unitarias",
+      "casos": 9
+    },
+    {
+      "ruta": "src/features/chat/usePolling.test.tsx",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/lib/query/queryClient.test.ts",
+      "tipo": "unitarias",
+      "casos": 18
+    },
+    {
+      "ruta": "src/features/bookings/rules.test.ts",
+      "tipo": "unitarias",
+      "casos": 34
+    },
+    {
+      "ruta": "src/lib/api/errors.test.ts",
+      "tipo": "unitarias",
+      "casos": 49
+    },
+    {
+      "ruta": "src/features/ratings/schemas.test.ts",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/auth/schemas.test.ts",
+      "tipo": "unitarias",
+      "casos": 18
+    },
+    {
+      "ruta": "src/features/incidents/schemas.test.ts",
+      "tipo": "unitarias",
+      "casos": 5
+    },
+    {
+      "ruta": "src/features/items/schemas.test.ts",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/lib/api/moderation.test.ts",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/chat/format.test.ts",
+      "tipo": "unitarias",
+      "casos": 7
+    },
+    {
+      "ruta": "src/features/notifications/format.test.ts",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/bookings/dates.test.ts",
+      "tipo": "unitarias",
+      "casos": 13
+    },
+    {
+      "ruta": "src/lib/format/format.test.ts",
+      "tipo": "unitarias",
+      "casos": 49
+    },
+    {
+      "ruta": "src/features/images/cloudinary.test.ts",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/handover/qr.test.ts",
+      "tipo": "unitarias",
+      "casos": 24
+    },
+    {
+      "ruta": "src/app.config.test.ts",
+      "tipo": "unitarias",
+      "casos": 6
+    },
+    {
+      "ruta": "src/features/incidents/rules.test.ts",
+      "tipo": "unitarias",
+      "casos": 16
+    },
+    {
+      "ruta": "src/lib/storage/secureStorage.test.ts",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/features/handover/stageState.test.ts",
+      "tipo": "unitarias",
+      "casos": 11
+    },
+    {
+      "ruta": "src/features/chat/clientId.test.ts",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/notifications/routing.test.ts",
+      "tipo": "unitarias",
+      "casos": 15
+    },
+    {
+      "ruta": "src/features/images/resize.test.ts",
+      "tipo": "unitarias",
+      "casos": 12
+    },
+    {
+      "ruta": "src/features/project-guide/geometry.test.ts",
+      "tipo": "unitarias",
+      "casos": 18
+    },
+    {
+      "ruta": "src/features/auth/signOutHooks.test.ts",
+      "tipo": "unitarias",
+      "casos": 4
+    },
+    {
+      "ruta": "src/features/bookings/slots.test.tsx",
+      "tipo": "unitarias",
+      "casos": 3
+    },
+    {
+      "ruta": "src/features/images/keys.test.ts",
+      "tipo": "unitarias",
+      "casos": 1
+    },
+    {
+      "ruta": "src/features/handover/roles.test.ts",
+      "tipo": "unitarias",
+      "casos": 8
+    },
+    {
+      "ruta": "src/lib/routes.test.ts",
+      "tipo": "unitarias",
+      "casos": 2
+    },
+    {
+      "ruta": "src/features/search/cards.test.ts",
+      "tipo": "unitarias",
+      "casos": 3
+    }
+  ]
+}

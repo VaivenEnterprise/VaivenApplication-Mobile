@@ -1,0 +1,28 @@
+# RF-07 · Registro con una cuenta de prueba nueva (spec 003). Empieza sin sesión.
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- runFlow: _shared/abrir.yaml
+- extendedWaitUntil:
+    visible: 'Crea una'
+    timeout: 60000
+- tapOn: 'Crea una'
+- tapOn: 'Tu nombre'
+- inputText: 'Prueba Automatizada'
+- tapOn: 'tu@correo.com'
+- inputText: ${E2E_EMAIL}
+- tapOn: 'Mínimo 8 caracteres'
+- inputText: ${E2E_PASSWORD}
+- tapOn: 'Repite tu contraseña'
+- inputText: ${E2E_PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element: 'Crear cuenta'
+- tapOn: 'Soy mayor de edad'
+- tapOn: 'Acepto los.*'
+- tapOn: 'Crear cuenta'
+- extendedWaitUntil:
+    visible: 'Explorar'
+    timeout: 30000
+- assertNotVisible: 'Crear cuenta'

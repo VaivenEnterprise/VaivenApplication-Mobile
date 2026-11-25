@@ -1,0 +1,3 @@
+# Spec 016 · T008. Flujos en orden numérico; los de _shared son subflujos y no se ejecutan solos.
+flows:
+  - '0*.yaml'
