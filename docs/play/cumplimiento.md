@@ -14,6 +14,7 @@ Cifrado en tránsito: **sí**. Todo el tráfico va por `request` y en `EXPO_PUBL
 | Ubicación aproximada | Zona para mostrar objetos cercanos; **nunca precisa** (Android bloquea `ACCESS_FINE_LOCATION`) | Sí | No¹ | Funciones de la app | Opcional | Con la cuenta |
 | Fotos | Fotos de objetos y evidencia de entrega y devolución | Sí | No¹ | Funciones de la app | Obligatorio para publicar o registrar evidencia | Al borrar el objeto o la cuenta (la evidencia de incidencias se conserva anonimizada) |
 | Fotos (v1.1, solo con IA activa): primera foto del objeto enviada a un proveedor de IA | Foto de portada, **solo cuando la persona toca «Sugerir con IA»** al publicar, para proponer título y categoría | Sí (a petición) | **Sí²** (proveedor de IA) | Funciones de la app | **Opcional**: publicar funciona igual sin usarla | VAIVÉN no guarda la foto enviada ni la respuesta del modelo (solo un contador de uso por persona y día) |
+| Actividad en la app (v1.1, con recomendaciones activas): objetos vistos | Identificador del objeto abierto y fecha (no el texto ni la ubicación), para «Recomendado para ti» | Sí | No¹ | Personalización | Se genera al abrir un objeto ajeno; la persona puede **borrarlo** en Perfil | **90 días**, o antes al borrar el historial desde Perfil (RF-04) |
 | Mensajes en la app | Chat de una reserva | Sí | No¹ | Funciones de la app | Opcional | Con la cuenta (anonimizado) |
 | Contenido de la persona usuaria: calificaciones, reportes e incidencias | Evaluaciones y reportes de contenido | Sí | No¹ | Funciones de la app, seguridad | Opcional | Anonimizado |
 | Identificadores: token de notificaciones | Envío de avisos push sobre reservas | Sí | No¹ | Funciones de la app | Opcional (se puede negar el permiso) | Se da de baja al cerrar sesión |
@@ -23,7 +24,7 @@ Cifrado en tránsito: **sí**. Todo el tráfico va por `request` y en `EXPO_PUBL
 
 ² **v1.1 (spec 014, T006).** La foto sale de VAIVÉN hacia un proveedor de IA (hoy OpenRouter, con un modelo gratuito con visión; ver backend spec 014 RF-03) y ese proveedor la procesa conforme a sus propias condiciones, así que **se declara como compartida**, con finalidad «Funciones de la app», **opcional** y **a petición de la persona**. Si Play Console permite marcarla como procesamiento de un proveedor de servicio, lo decide quien llena el formulario. **Por confirmar** con quien llena el formulario y con la revisión legal. Este cambio debe publicarse en «Seguridad de los datos» **antes de subir la v1.1** (la 1.0 no envía fotos a ningún proveedor de IA).
 
-No se recopila: contactos, SMS, micrófono, historial de navegación, datos financieros, datos de salud, ID de publicidad.
+No se recopila: contactos, SMS, micrófono, historial de navegación fuera de la app (el historial de objetos vistos dentro de la app se declara arriba), datos financieros, datos de salud, ID de publicidad.
 
 ## 2. Clasificación de contenido (cuestionario IARC) — respuestas sugeridas
 
@@ -78,7 +79,7 @@ La cuenta se crea **a mano en el backend de producción** con datos ficticios (P
 
 ## 8. Coherencia con el aviso de privacidad (CA-04)
 
-La tabla de §1 reproduce la del aviso (correo, nombre, teléfono, contraseña como huella cifrada, ubicación aproximada, fotos, **foto enviada al proveedor de IA a petición (v1.1)**, mensajes y reservas, calificaciones, reportes, token de notificaciones, datos técnicos). La contraseña no se declara aparte: es credencial, no se almacena en claro. **Pendiente:** comprobar de nuevo contra el aviso cuando la revisión legal lo cierre.
+La tabla de §1 reproduce la del aviso (correo, nombre, teléfono, contraseña como huella cifrada, ubicación aproximada, fotos, **foto enviada al proveedor de IA a petición (v1.1)**, **objetos vistos para recomendar (v1.1)**, mensajes y reservas, calificaciones, reportes, token de notificaciones, datos técnicos). La contraseña no se declara aparte: es credencial, no se almacena en claro. **Pendiente:** comprobar de nuevo contra el aviso cuando la revisión legal lo cierre.
 
 ## 9. Inteligencia artificial en la v1.1 (spec 014, RF-06)
 
@@ -90,3 +91,15 @@ La tabla de §1 reproduce la del aviso (correo, nombre, teléfono, contraseña c
 | Voluntario | La publicación funciona igual sin usarla | Apagada o caída: no aparece el botón o muestra un error recuperable (CA-03) |
 
 **Pendiente humano (administración, Play Console):** actualizar «Seguridad de los datos» (fila de fotos compartidas con un proveedor de IA, §1) y que la política de privacidad enlazada sea la página actualizada, **antes de subir el AAB 1.1**. No se hizo desde aquí. La revisión legal del aviso sigue pendiente (L001-T011).
+
+## 10. Recomendaciones con ML en la v1.1 (spec 015, RF-06 · CA-05)
+
+| Tema | Qué dice el aviso de privacidad de la landing (actualizado 2026-11-22) | Qué hace la app (spec 015) |
+|---|---|---|
+| Qué se guarda | El objeto que viste (solo identificadores) y la fecha; las solicitudes que has hecho también cuentan | Al abrir el detalle de un objeto **ajeno** envía un evento `view` (`POST /recommendations/events`), una vez por apertura, en segundo plano y sin mostrar errores; no envía texto ni ubicación |
+| Cuánto tiempo | Hasta 90 días | El servidor borra los eventos a los 90 días (backend RF-09) |
+| Con quién se comparte | Con nadie: el modelo es propio | No hay proveedor externo; por eso la fila de §1 va como **no compartido** (Personalización) |
+| Borrado | Desde Perfil, «Borrar historial de recomendaciones»; vuelven los más populares | Fila con confirmación en Perfil (`DELETE /recommendations/history`); la fila de Explorar vuelve al arranque en frío (CA-03) |
+| Voluntario | La app funciona igual sin recomendaciones | Función apagada o con error: la fila no se muestra y Explorar funciona igual (CA-04) |
+
+**Pendiente humano (administración, Play Console):** agregar a «Seguridad de los datos» la fila de actividad en la app (§1) junto con la de IA (§9), y comprobar que la política de privacidad enlazada sea la página actualizada, **antes de subir el AAB 1.1**. No se hizo desde aquí. **Por confirmar** con quien llena el formulario si «Personalización» es la finalidad que Play Console le ofrece para este dato. La revisión legal del aviso sigue pendiente (L001-T011).
