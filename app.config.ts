@@ -9,7 +9,7 @@ const config: ExpoConfig = {
   name: 'Vaivén',
   slug: 'vaiven',
   scheme: 'vaiven',
-  version: '1.1.0',
+  version: '1.1.1',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',

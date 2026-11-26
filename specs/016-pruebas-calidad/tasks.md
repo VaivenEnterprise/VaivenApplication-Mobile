@@ -76,12 +76,14 @@
   - Agente: `spec-writer` + `revisor-constitucion` · Depende de: T003–T009
   - Aceptación: CA-09; conteo real por tipo copiado de `npm run test:report`; tabla de correspondencia con la auditoría (spec §3.3) con evidencia; veredicto **CONFORME**
   - Refs: RF-09, DoD
+  - Nota 2026-11-25 (Fase 4, **sin marcar**): `docs/calidad/pruebas.md` ya no es borrador: conteo real de `npm run test:report` (`docs/calidad/conteo.json`, 146 suites / 1 864 casos; unitarias 122/1 677, integración 14/93, seguridad 10/94; cobertura 99,65 % / 97,68 % / 100 % / 99,6 %), tabla §3.3 con evidencia por fila y veredicto `CONFORME con observaciones` del rol `revisor-constitucion` contra la v1.3.1. CA-09 conforme. Sigue sin cumplirse la aceptación completa porque T009 (CA-07) está **no ejecutado**.
 
 - [ ] **T011** Verificación final (local y en dispositivo)
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/016/` (capturas)
   - Agente: `probador-expo` · Depende de: T010 y todas las anteriores `[x]`
   - Aceptación: `npm run typecheck && npm run lint && npm test` y `npm run test:security` en verde; `npm run test:device` ejecutado una vez en el teléfono con el informe archivado (o anotado como no ejecutado con su motivo); recorrer los CA-01 a CA-09 y anotar el resultado. **La spec siguiente no empieza hasta que esta tarea pase.**
   - Refs: Art. XIV.4
+  - Nota 2026-11-25 (Fase 4, **sin marcar**): ejecutadas de nuevo `npm run typecheck && npm run lint && npm test` (146/146 suites, 1 864/1 864 pruebas, cobertura 99,65 %), `npm run test:security` (10/10, 94/94) y `npm run test:report` (mismo conteo, 0 no ejecutadas). Recorrido CA-01…CA-09 y veredicto anotados en `memoria.md` (D-225) y en `docs/calidad/pruebas.md` §8. **CA-07 no ejecutado**: sin teléfono, sin `adb`, sin Maestro y sin autorización para instalarlos; `npm run test:device` en teléfono no se corrió y no hay informe JUnit ni capturas. La spec siguiente no empieza hasta que T011 pase.
 
 | Total | 11 tareas |
 |---|---|
