@@ -57,12 +57,13 @@
   - Estado (2026-11-10): revisión de conformidad hecha (veredicto en `memoria.md`, sección «Spec 004»). Cerrada por indicación de la persona; el aviso a MO-A queda a cargo de ella.
   - Refs: DoD
 
-- [ ] **T010** Verificación en Expo Go contra staging
+- [x] **T010** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/004/` (capturas)
   - Agente: `probador-expo` · Depende de: T009 (y todas las anteriores `[x]`) y backend 004-T011 **desplegada**
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Estado (2026-11-10): **NO ejecutada.** Por decisión de la persona se difiere a la spec 005: se probará con el formulario real de publicar objeto (no se crea pantalla temporal). Checklist en `memoria.md`; evidencia en `docs/evidencia/004/`. Se marca `[x]` cuando se verifique en Expo Go.
   - Refs: Art. XIV.4
+  - Cerrada 2026-11-26 por indicación de la persona responsable, con **evidencia indirecta**: en la app 1.1.2 desde Google Play se ven objetos con fotos subidas (Mis objetos, Explorar, detalle) y el formulario de publicar con el selector de fotos 0/5 (capturas vistas en la sesión; no se guardaron en `docs/evidencia/004/`). **No se hizo** la verificación en Expo Go con el MCP de Expo; la subida a Cloudinary está cubierta por pruebas automatizadas.
 
 | Total | 10 tareas |
 |---|---|

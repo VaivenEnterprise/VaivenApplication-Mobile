@@ -86,3 +86,22 @@ El repositorio tiene `version: '1.0.0'` en `app.config.ts`: la próxima compilac
 | `docs/play/cumplimiento.md` §1 (fila de fotos compartidas con proveedor de IA) y §9 | **Hecho** | MO-B |
 | «Seguridad de los datos» en Play Console | **Pendiente**: declarar las fotos enviadas a un proveedor de IA (opcional, a petición) **antes de subir la v1.1**; no se hizo desde el repositorio | Administración (Play Console) |
 | AAB 1.1 a la prueba cerrada (~2 dic) y a producción | **Pendiente**: solo cuando la 1.0 esté aprobada; requiere `eas build` con aprobación humana (spec 014 T007) | Administración |
+<<<<<<< Updated upstream
+=======
+
+## Actualización 2026-11-25
+
+- **Compilaciones en EAS** (perfil `production`, AAB): 1.0.0 (4), 1.1.0 (5), 1.1.1 (6) y 1.1.1 (7). El `versionCode` subió solo.
+- **Hallazgo:** el AAB 1.1.1 se subió con `EXPO_PUBLIC_API_URL` **sin el puerto** (`https://vaiven-staging.westus2.cloudapp.azure.com`); la API real corre en `:8443`. Por eso la app no vio las cuentas ni los interruptores de IA y recomendaciones. **Corregido** en `eas.json` (perfiles `preview` y `production`).
+- **Versión que sigue:** `1.1.2` en `app.config.ts` (D-227). Se vuelve a construir con `eas build --platform android --profile production` y se sube a la prueba cerrada; el AAB 1.1.1 con la URL errónea no debe liberarse.
+- **Estado de tareas:** T001 (la app abre en un teléfono real, según la persona), T002, T003 (la lista «Vaiven Testers» tiene 26 usuarios; la persona informa de más de 20) y T007 marcadas hechas. Siguen abiertas T005 (faltan capturas reales en el repositorio, sin datos personales), T009 (día 14 ≈ 29 nov), T010 y T011.
+- **Antes de producción:** «Seguridad de datos» debe declarar las fotos enviadas al proveedor de IA y el historial de objetos vistos (recomendaciones).
+
+## Actualización 2026-11-26
+
+- **Versión 1.1.2 subida a Play** (acceso anticipado) por la persona responsable e instalada en un teléfono real desde Google Play.
+- **Comprobado con capturas de la persona** (no se guardan en el repositorio por contener datos personales): con la API en `:8443` aparecen sus objetos de «Mis objetos» y los avisos anteriores (17 y 21 nov); en Explorar sale **«Recomendado para ti»** (con la etiqueta «Popular en Vaivén», es decir, el respaldo por popularidad al no haber historial suficiente).
+- **Sin comprobar todavía:** el banner de sugerencias de la IA al publicar un objeto con foto.
+- **Pendiente:** capturas limpias para la ficha (T005), seguimiento hasta el día 14 (T009), solicitud de producción (T010) y revisión (T011).
+- **T005 marcada hecha (2026-11-26):** la ficha pública muestra el vídeo y al menos 5 capturas del teléfono con datos ficticios (según la persona, vistas en capturas de la sesión). Pendiente opcional: guardar copias en `assets/store/screenshots/` y renovarlas con las funciones de la 1.1 (recomendaciones e IA) antes de pedir producción.
+>>>>>>> Stashed changes
