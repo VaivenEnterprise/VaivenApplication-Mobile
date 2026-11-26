@@ -1,0 +1,9 @@
+# Inicia sesión con la cuenta de prueba (E2E_EMAIL / E2E_PASSWORD). Parte de la pantalla de acceso.
+appId: ${APP_ID}
+---
+- tapOn: 'tu@correo.com'
+- inputText: ${E2E_EMAIL}
+- tapOn: 'Tu contraseña'
+- inputText: ${E2E_PASSWORD}
+- hideKeyboard
+- tapOn: 'Iniciar sesión'

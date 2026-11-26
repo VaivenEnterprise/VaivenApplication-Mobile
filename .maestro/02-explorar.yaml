@@ -1,0 +1,12 @@
+# RF-07 · Explorar con búsqueda (spec 006). Sigue con la sesión abierta en 01.
+appId: ${APP_ID}
+---
+- tapOn: 'Explorar'
+- assertVisible: '¿Qué necesitas?'
+- tapOn: '¿Qué necesitas?'
+- inputText: 'taladro'
+- hideKeyboard
+# Con datos de staging aparecen resultados; sin ellos, el estado vacío. Ambos son válidos.
+- extendedWaitUntil:
+    visible: 'Resultados|Nada por aquí|Aún no hay objetos publicados'
+    timeout: 30000

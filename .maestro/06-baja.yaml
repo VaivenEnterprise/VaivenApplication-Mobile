@@ -1,0 +1,27 @@
+# RF-07 · Baja de la cuenta de prueba (spec 003, RF-08): contraseña incorrecta no la elimina;
+# la correcta sí, y después ya no se puede entrar.
+appId: ${APP_ID}
+---
+- runFlow: _shared/iniciar-sesion.yaml
+- extendedWaitUntil:
+    visible: 'Explorar'
+    timeout: 30000
+- tapOn: 'Perfil'
+- scrollUntilVisible:
+    element: 'Eliminar cuenta'
+- tapOn: 'Eliminar cuenta'
+- tapOn: 'Tu contraseña'
+- inputText: 'contraseña-incorrecta-1'
+- hideKeyboard
+- tapOn: 'Eliminar'
+- assertVisible: 'La contraseña no es correcta.'
+- tapOn: 'Tu contraseña'
+- eraseText: 40
+- inputText: ${E2E_PASSWORD}
+- hideKeyboard
+- tapOn: 'Eliminar'
+- extendedWaitUntil:
+    visible: 'Iniciar sesión'
+    timeout: 30000
+- runFlow: _shared/iniciar-sesion.yaml
+- assertVisible: 'El correo o la contraseña no son correctos.'

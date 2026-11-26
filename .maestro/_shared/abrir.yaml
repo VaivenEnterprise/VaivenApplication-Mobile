@@ -1,0 +1,13 @@
+# Abre la app. Con APK (APP_LINK vacío) lanza el paquete; con Expo Go abre el enlace de Metro.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      true: ${APP_LINK == ''}
+    commands:
+      - launchApp
+- runFlow:
+    when:
+      true: ${APP_LINK != ''}
+    commands:
+      - openLink: ${APP_LINK}

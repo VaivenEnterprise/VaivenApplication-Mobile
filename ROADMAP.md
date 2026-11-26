@@ -87,6 +87,7 @@ Prioridad: **P0** = sin esto no hay app · **P1** = esperado · **P2** = recorta
 | 013 | Publicación en Google Play (móvil) y producción (backend) | Ficha, cumplimiento, prueba cerrada, producción; backend de producción | MO-B / BE-B + administrador | P0 | 002 (inicio), 012 (cierre) | 2 nov–7 dic |
 | 014 | **IA (v1.1, después de la 1.0)** | Sugerir título y categoría a partir de una foto, siempre con revisión de quien publica (proveedor gratuito; interruptor `AI_ENABLED`) | BE-A / MO-A (+ MO-B cumplimiento) | P1 | 004, 005, 011, 013 | 23 nov–1 dic |
 | 015 | **ML: recomendaciones (v1.1)** | «Recomendado para ti»: recomendador híbrido propio (colaborativo objeto-objeto + contenido), evaluado con Hit@10/Recall@10/MRR contra popularidad; interruptor `RECO_ENABLED` | BE-B / MO-B | P1 | 005, 006, 007, 013 | 23 nov–1 dic |
+| 016 | **Pruebas de calidad y auditoría (móvil)** | Conteo de pruebas unitarias, de seguridad y de integración; matriz de pantallas × endpoints; suite de seguridad (OWASP Mobile); suite automatizada en dispositivo físico (PowerShell); informe | MO-B / MO-A | P0 | 001–015, 017 | 26 nov–1 dic |
 | L001 | Landing: base y páginas legales | Sitio estático, privacidad, términos, eliminación de cuenta, publicación gratuita | MO-B | P0 | — | 2–5 nov |
 | L002 | Landing: página principal | Información de la app, cómo funciona, FAQ, botón a Google Play | MO-B | P1 | L001 | 9–16 nov |
 
@@ -274,6 +275,7 @@ Incluye la tarea final de cierre de cada spec («Despliegue» en backend, «Veri
 | 013 | 9 | 11 |
 | 014 | 9 | 8 |
 | 015 | 11 | 8 |
-| **Total** | **191** | **183** |
+| 016 | 14 | 11 |
+| **Total** | **205** | **194** |
 
-Landing: L001 (12 tareas) y L002 (11 tareas), ver `specs/` del repositorio `vaiven-landing-page`. **Total general: 397 tareas.**
+Landing: L001 (12 tareas) y L002 (11 tareas), ver `specs/` del repositorio `vaiven-landing-page`. **Total general: 422 tareas.**

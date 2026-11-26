@@ -1,0 +1,20 @@
+# RF-07 · Solicitar un objeto de staging (spec 007). Necesita E2E_ITEM_TITLE (un objeto de
+# OTRA persona en staging, backend 016-T012). Sin él, el flujo se omite con un aviso.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      true: ${E2E_ITEM_TITLE != ''}
+    commands:
+      - tapOn: 'Explorar'
+      - tapOn: '¿Qué necesitas?'
+      - inputText: ${E2E_ITEM_TITLE}
+      - hideKeyboard
+      - tapOn: ${E2E_ITEM_TITLE}
+      - tapOn: 'Solicitar'
+      - tapOn: 'Mañana'
+      - tapOn: 'Entiendo las condiciones'
+      - tapOn: 'Enviar solicitud'
+      - extendedWaitUntil:
+          visible: 'Solicitada'
+          timeout: 30000
