@@ -30,11 +30,12 @@
   - Aceptación: nombre, descripción breve ≤ 80 y completa ≤ 4000, notas de versión del primer AAB, categoría, correo, sitio web; todo coherente con la landing y con las specs; sin promesas no cumplidas (pagos, seguros)
   - Refs: RF-04
 
-- [ ] **T005** [P] Recursos gráficos de la ficha
+- [x] **T005** [P] Recursos gráficos de la ficha
   - Archivos: `assets/store/icon-512.png`, `assets/store/feature-1024x500.png`, `assets/store/screenshots/*.png`
   - Agente: `dev-expo` (ícono y gráfico) / **persona** (capturas reales) · Depende de: 012-T005, una versión instalable (T008)
   - Aceptación: ícono 512×512; gráfico 1024×500; ≥ 4 capturas del teléfono sin datos personales; una versión provisional alcanza para empezar y se reemplaza antes de producción · Ícono actual provisional; dirección y recursos según spec §7
   - Refs: RF-03
+  - Marcada 2026-11-26 según la persona responsable y sus capturas de la ficha en Google Play (vídeo y al menos 5 capturas de teléfono publicadas: inicio de sesión, entrega y devolución, detalle de objeto y solicitud), con datos ficticios. Ícono y gráfico están en `assets/store/`. **Observaciones:** las copias de las capturas no están en `assets/store/screenshots/` (la carpeta está vacía) y son de una versión anterior; la spec permite una versión provisional que se reemplaza antes de producción, por lo que conviene actualizarlas con Explorar («Recomendado para ti») y la sugerencia de la IA.
 
 - [x] **T006** [P] Documento de cumplimiento
   - Archivos: `docs/play/cumplimiento.md`
@@ -55,11 +56,12 @@
   - Aceptación: AAB instalable aprobado en la pista cerrada; testers invitados y con enlace de aceptación; **día 1 de 14 anotado** (fecha real; si la cuenta o el AAB se retrasan, se anota la fecha real); versión y fecha en `memoria.md`
   - Refs: RF-07 · CA-02, CA-03
 
-- [ ] **T009** Actualizaciones por hito y seguimiento diario (**hasta el día 14**)
+- [x] **T009** Actualizaciones por hito y seguimiento diario (**hasta el día 14**)
   - Archivos: `docs/play/seguimiento.md` (tabla diaria: testers inscritos, versión, incidencias), `memoria.md` (solo anexar)
   - Agente: — (MO-B compila; admin sube) · Depende de: T008 y cada hito (H1 7 nov, H2 10 nov, H3 13 nov, H4 17 nov, H5 22 nov)
   - Aceptación: cada hito sube una versión con notas; **diario**: el número de testers inscritos sigue ≥ 12 (si baja, se reponen el mismo día); comentarios de testers recopilados
   - Refs: RF-07, RF-08 · CA-02, CA-03
+  - Cerrada por indicación de la persona responsable (2026-11-26), que informa que está completada y probada. En `seguimiento.md` constan 12 testers aceptados el 18 nov y 26 en la lista el 26 nov; el día 14 de la prueba cerrada cae ≈ 29 nov y no se comprobó en Play Console desde el repositorio.
 
 - [ ] **T010** Solicitud de producción y publicación (**23 nov en adelante**)
   - Archivos: `docs/play/solicitud-produccion.md`, `docs/play/lanzamiento.md`, `app.config.ts` (`version: 1.0.0`)

@@ -17,12 +17,14 @@
   - Agente: — (manual) · Depende de: —
   - Aceptación: cada persona con cuenta de Expo y Expo Go instalado; al menos 2 teléfonos Android identificados; SDK de Expo elegido (≥ 54) registrado
   - Refs: RF-02, RF-03
+  - **OMITIDA (2026-11-26)** por indicación de la persona responsable: no afectó el desarrollo del proyecto. Se deja sin marcar porque no se cumplió su aceptación.
 
 - [ ] **T003** `docs/entorno-local.md`
   - Archivos: `docs/entorno-local.md`
   - Agente: `spec-writer` · Depende de: T001
   - Aceptación: pasos de arranque, tabla de URLs por plataforma, `EXPO_UNSTABLE_MCP_SERVER=1` y reconexión, limitaciones de Expo Go; solución a 3 errores comunes
   - Refs: RF-04
+  - **OMITIDA (2026-11-26)** por indicación de la persona responsable: no afectó el desarrollo del proyecto. Se deja sin marcar porque no se cumplió su aceptación.
 
 - [ ] **T004** Repositorio en GitHub y MCP de GitHub (**persona** + `gestor-repo`) — **OMITIDA (9 nov): el repositorio ya existe**
   - Archivos: `.gitignore`, `memoria.md` (solo anexar)
@@ -35,6 +37,7 @@
   - Agente: `revisor-constitucion` · Depende de: T002, T003, T004
   - Aceptación: veredicto **CONFORME**; sin secretos; hito H0 (móvil) marcado
   - Refs: DoD
+  - **OMITIDA (2026-11-26)** por indicación de la persona responsable: no afectó el desarrollo del proyecto. Se deja sin marcar porque no se cumplió su aceptación.
 
 | Total | 5 tareas |
 |---|---|

@@ -22,7 +22,7 @@
 | **1.0.0** | Núcleo completo (specs 001–013): cuenta, objetos, búsqueda, solicitudes, chat, entrega y pagos, calificaciones, notificaciones, publicación | 217 | 217 |
 | **1.1.0** | IA para sugerir título y categoría (014) y recomendaciones con ML (015) | 34 | 251 |
 | 1.1.1 | Pruebas de calidad y auditoría (016) y DevSecOps (017) | 46 | 297 |
-| **1.1.2** | Corrección de la URL de la API (`:8443`) y reconstrucción para Play; cierre documental de la 013 | 4 | **301** |
+| **1.1.2** | Corrección de la URL de la API (`:8443`), reconstrucción para Play y cierre de la 016 (T009–T011) y de tareas pendientes | 14 | **311** |
 
 Las versiones 0.x de la prueba cerrada (p. ej. 0.2.0) son construcciones intermedias de la 1.0.0 y no suman aparte.
 
@@ -78,21 +78,16 @@ Las versiones 0.x de la prueba cerrada (p. ej. 0.2.0) son construcciones interme
 | `eas.json`: URL de la API con el puerto `:8443` en `preview` y `production` | 2 |
 | Cambio de versión a 1.1.2 en `app.config.ts` | 1 |
 | Spec 013: actualización de `tasks.md` y `seguimiento.md` (T002 y T007 cerradas) | 1 |
-| **Subtotal 1.1.2** | **4** |
+| 016-T009 ejecución en dispositivo (5), T010 informe (3) y T011 verificación (2), cerradas el 2026-11-26 | 10 |
+| **Subtotal 1.1.2** | **14** |
 
-## Puntos aún sin cerrar (no suman a la 1.1.1)
+## Puntos aún sin cerrar
 
-| Pendiente | Puntos |
-|---|---|
-| 016-T009 Ejecución en dispositivo físico | 5 |
-| 016-T010 Informe de pruebas y veredicto | 3 |
-| 016-T011 Verificación final | 2 |
-| 013 Cierre de la publicación en Play (solicitud de producción y respuesta de Google) | ya contado arriba como parcial |
-| **Total pendiente de la 016** | **10** |
+Ninguno de la 016. Quedan abiertas 013-T010 y T011 (solicitud de producción y revisión), que se cierran cuando la app esté en producción.
 
 ## Totales
 
-- **Puntos hasta la 1.1.2: 301** (297 hasta la 1.1.1)
+- **Puntos hasta la 1.1.2: 311** (297 hasta la 1.1.1)
 - De ellos, **del código de la app** que cambia usuarios: 1.0.0 + 1.1.0 = 251.
 - **Calidad y seguridad** (1.1.1, sin funciones nuevas para la persona usuaria): 46.
 

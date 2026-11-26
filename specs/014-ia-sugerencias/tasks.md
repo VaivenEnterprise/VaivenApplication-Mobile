@@ -39,12 +39,13 @@
   - Hecho (2026-11-20, Claude como `qa-mobile`): `flow.test.tsx` con el formulario real de 005 y la API simulada: 17 pruebas (CA-01 a CA-04, no pide nada solo, IA apagada/sin `features`/`/meta` caído, sin fotos, categoría inválida, cancelación sin resultado tardío, publicar con la IA caída).
 
 - ~~**T006** Cumplimiento: privacidad y Seguridad de datos (**MO-B**)~~ **Trasladada (2026-11-20, decisión de la persona responsable):** se ejecuta y se cierra en `vaiven-landing-page` con sus propias specs, no en esta. Aquí no cuenta como pendiente. (Se conserva la numeración para no renumerar T007 y T008.) El texto de privacidad y las filas de `docs/play/cumplimiento.md` que se adelantaron el 2026-11-20 quedan como referencia para esa spec y para la persona que llena «Seguridad de los datos» en Play Console antes de subir la v1.1.
-- [ ] **T007** Versión 1.1 y revisión
+- [x] **T007** Versión 1.1 y revisión
   - Archivos: `app.config.ts` (`version: 1.1.0`), `memoria.md` (solo anexar)
   - Agente: `revisor-constitucion` · Depende de: T005 (y de la privacidad en la landing, que ya no es tarea de esta spec)
   - Aceptación: AAB 1.1 subido a la prueba cerrada (~2 dic) y a producción cuando la 1.0 esté aprobada; **CONFORME**
   - Refs: DoD
   - **Parcial (2026-11-20, Claude como `revisor-constitucion`):** `app.config.ts` con `version: '1.1.0'` y revisión estática de conformidad en `memoria.md` (**CONFORME con observaciones**). **Actualización 2026-11-20:** la persona aprobó el `eas build`; desde la sesión no se pudo ejecutar (sin `eas-cli`, sin acceso a expo.dev ni sesión de Expo) y `eas.json` ya apunta a **producción** en `preview` y `production` (decisión de la persona). Los comandos están en `memoria.md`. **Falta (humano):** `eas build` del AAB 1.1, subirlo a la prueba cerrada (~2 dic) y a producción cuando la 1.0 esté aprobada; depende además de T006. **Sin marcar.**
+  - Cerrada por indicación de la persona responsable (2026-11-26), que informa que está completada y probada. La 1.1.2 (con IA y recomendaciones, API en `:8443`) se subió a Play el 2026-11-26. No consta evidencia propia de la sugerencia de la IA ni de la declaración en «Seguridad de datos»; el veredicto de la revisión sigue siendo `CONFORME con observaciones` (2026-11-20).
 
 - [x] **T008** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/014/` (capturas)

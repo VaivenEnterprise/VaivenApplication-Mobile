@@ -94,3 +94,11 @@ El repositorio tiene `version: '1.0.0'` en `app.config.ts`: la próxima compilac
 - **Versión que sigue:** `1.1.2` en `app.config.ts` (D-227). Se vuelve a construir con `eas build --platform android --profile production` y se sube a la prueba cerrada; el AAB 1.1.1 con la URL errónea no debe liberarse.
 - **Estado de tareas:** T001 (la app abre en un teléfono real, según la persona), T002, T003 (la lista «Vaiven Testers» tiene 26 usuarios; la persona informa de más de 20) y T007 marcadas hechas. Siguen abiertas T005 (faltan capturas reales en el repositorio, sin datos personales), T009 (día 14 ≈ 29 nov), T010 y T011.
 - **Antes de producción:** «Seguridad de datos» debe declarar las fotos enviadas al proveedor de IA y el historial de objetos vistos (recomendaciones).
+
+## Actualización 2026-11-26
+
+- **Versión 1.1.2 subida a Play** (acceso anticipado) por la persona responsable e instalada en un teléfono real desde Google Play.
+- **Comprobado con capturas de la persona** (no se guardan en el repositorio por contener datos personales): con la API en `:8443` aparecen sus objetos de «Mis objetos» y los avisos anteriores (17 y 21 nov); en Explorar sale **«Recomendado para ti»** (con la etiqueta «Popular en Vaivén», es decir, el respaldo por popularidad al no haber historial suficiente).
+- **Sin comprobar todavía:** el banner de sugerencias de la IA al publicar un objeto con foto.
+- **Pendiente:** capturas limpias para la ficha (T005), seguimiento hasta el día 14 (T009), solicitud de producción (T010) y revisión (T011).
+- **T005 marcada hecha (2026-11-26):** la ficha pública muestra el vídeo y al menos 5 capturas del teléfono con datos ficticios (según la persona, vistas en capturas de la sesión). Pendiente opcional: guardar copias en `assets/store/screenshots/` y renovarlas con las funciones de la 1.1 (recomendaciones e IA) antes de pedir producción.

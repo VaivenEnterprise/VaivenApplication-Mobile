@@ -4,10 +4,10 @@
 
 ## Condiciones para enviarla
 
-- [ ] Play Console muestra la prueba cerrada **completada: 12 testers durante 14 días** (el 18 nov llevaba 2 días; día 14 estimado ≈ 30 nov).
-- [ ] Ficha y declaraciones completas sin advertencias (T007).
+- [ ] Play Console muestra la prueba cerrada **completada: 12 testers durante 14 días** (el 18 nov llevaba 2 días; día 14 estimado ≈ 29 nov). El 26 nov la lista «Vaiven Testers» tenía 26 usuarios (según la persona responsable).
+- [ ] Ficha y declaraciones completas sin advertencias (T007 marcada hecha el 26 nov). **Antes de producción:** declarar en «Seguridad de datos» las fotos enviadas al proveedor de IA y el historial de objetos vistos (recomendaciones).
 - [ ] Páginas legales de la landing aprobadas por revisión humana (L001-T011) y enlazadas en la ficha.
-- [ ] Versión candidata `1.0.0` compilada con la URL de la API de producción (backend 013-T009) y `/readyz` verde.
+- [ ] Versión candidata **`1.1.2`** (ya subida a la prueba cerrada el 26 nov) compilada con la API en `https://vaiven-staging.westus2.cloudapp.azure.com:8443`, que la persona responsable usa como producción, y `/readyz` verde. La versión `1.0.0` de la spec quedó superada (D-226 y D-227).
 
 ## Respuestas (copiar y completar)
 

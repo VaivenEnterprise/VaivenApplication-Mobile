@@ -69,19 +69,21 @@
   - Aceptación: registro → pestañas → cerrar sesión → inicio; refresco concurrente; cobertura ≥ 80 % de `features/auth`
   - Refs: CA-01…CA-06 · RNF-02
 
-- [ ] **T012** Memoria y revisión
+- [x] **T012** Memoria y revisión
   - Archivos: `memoria.md` (solo anexar)
   - Agente: `revisor-constitucion` · Depende de: T011, T014
   - Aceptación: **CONFORME**; hito H1 (móvil) marcado; se avisa al equipo que las pestañas están listas
   - Estado (2026-11-10): revisión de conformidad hecha (veredicto en `memoria.md`, sección «Spec 003»); **queda abierta** hasta que la persona avise al equipo y marque H1 (H1 incluye también 004).
   - Refs: DoD
+  - Cerrada 2026-11-26 por indicación de la persona responsable: la revisión de conformidad ya estaba hecha (2026-11-10) y las pestañas están en uso en la app publicada en la prueba cerrada de Play. El marcado de H1 y el aviso al equipo se dan por hechos según la persona; no se comprobaron desde el repositorio.
 
-- [ ] **T013** Verificación en Expo Go contra staging
+- [x] **T013** Verificación en Expo Go contra staging
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/003/` (capturas)
   - Agente: `probador-expo` · Depende de: T012 (y todas las anteriores `[x]`) y backend 003-T014 **desplegada**
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Estado (2026-11-10): **pendiente, la hace una persona** en Expo Go contra el backend local; checklist en `memoria.md`; evidencia en `docs/evidencia/003/`.
   - Refs: Art. XIV.4
+  - Cerrada 2026-11-26 por indicación de la persona responsable, con **evidencia indirecta**: la app 1.1.2, instalada desde Google Play en un teléfono real, permite iniciar sesión y muestra el perfil, los objetos y los avisos de la cuenta (capturas vistas en la sesión; no se guardaron en `docs/evidencia/003/` por contener datos personales). **No se hizo** la verificación en Expo Go con el MCP de Expo ni se anotó una checklist por criterio; los CA de esta spec los cubren las pruebas automatizadas (146 suites en verde el 2026-11-25).
 
 - [x] **T014** Inicio funcional y botón de mensajes
   - Archivos: `src/features/home/{api.ts,schemas.ts,hooks.ts}`, `src/features/home/screens/HomeScreen.tsx`, `src/features/home/components/HomeItemTile.tsx`, `src/components/navigation/MessagesButton.tsx`, `src/app/(tabs)/inicio/{_layout,index}.tsx`, pruebas
