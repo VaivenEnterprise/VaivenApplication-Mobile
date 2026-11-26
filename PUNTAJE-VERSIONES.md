@@ -1,6 +1,6 @@
 # Puntaje de cambios por versión — Vaivén (app móvil)
 
-**Versión actual:** 1.1.1 · **Fecha:** 2026-11-25 · **Alcance:** toda la app móvil (este repositorio).
+**Versión actual:** 1.1.2 · **Fecha:** 2026-11-25 · **Alcance:** toda la app móvil (este repositorio).
 
 > **Esto es una estimación**, no una medición. Los puntos son de esfuerzo relativo (estilo _story points_), calculados a partir del número de tareas de cada spec en `specs/*/tasks.md` y de su complejidad. Sirven para comparar el tamaño de cada cambio y ver cuánto pesó cada versión, no para medir horas.
 
@@ -15,18 +15,14 @@
 | 13+ | Spec completa de tamaño medio |
 | 21–34 | Spec completa grande o de base (arquitectura) |
 
-## Cómo se llega a la 1.1.1
+## Cómo se llega a la 1.1.2
 
 | Versión | Qué agrega | Puntos de la versión | Acumulado |
 |---|---|---|---|
 | **1.0.0** | Núcleo completo (specs 001–013): cuenta, objetos, búsqueda, solicitudes, chat, entrega y pagos, calificaciones, notificaciones, publicación | 217 | 217 |
 | **1.1.0** | IA para sugerir título y categoría (014) y recomendaciones con ML (015) | 34 | 251 |
-<<<<<<< Updated upstream
-| **1.1.1** | Pruebas de calidad y auditoría (016) y DevSecOps (017) | 46 | **297** |
-=======
 | 1.1.1 | Pruebas de calidad y auditoría (016) y DevSecOps (017) | 46 | 297 |
 | **1.1.2** | Corrección de la URL de la API (`:8443`), reconstrucción para Play y cierre de la 016 (T009–T011) y de tareas pendientes | 14 | **311** |
->>>>>>> Stashed changes
 
 Las versiones 0.x de la prueba cerrada (p. ej. 0.2.0) son construcciones intermedias de la 1.0.0 y no suman aparte.
 
@@ -75,9 +71,6 @@ Las versiones 0.x de la prueba cerrada (p. ej. 0.2.0) son construcciones interme
 | — | Cambio de versión a 1.1.1 en `app.config.ts` | 1 |
 | | **Subtotal 1.1.1** | **46** |
 
-<<<<<<< Updated upstream
-## Puntos aún sin cerrar (no suman a la 1.1.1)
-=======
 ### Hacia la 1.1.2
 
 | Cambio | Puntos |
@@ -89,17 +82,12 @@ Las versiones 0.x de la prueba cerrada (p. ej. 0.2.0) son construcciones interme
 | **Subtotal 1.1.2** | **14** |
 
 ## Puntos aún sin cerrar
->>>>>>> Stashed changes
 
 Ninguno de la 016. Quedan abiertas 013-T010 y T011 (solicitud de producción y revisión), que se cierran cuando la app esté en producción.
 
 ## Totales
 
-<<<<<<< Updated upstream
-- **Puntos de la 1.1.1: 297**
-=======
 - **Puntos hasta la 1.1.2: 311** (297 hasta la 1.1.1)
->>>>>>> Stashed changes
 - De ellos, **del código de la app** que cambia usuarios: 1.0.0 + 1.1.0 = 251.
 - **Calidad y seguridad** (1.1.1, sin funciones nuevas para la persona usuaria): 46.
 

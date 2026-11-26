@@ -9,7 +9,9 @@ const config: ExpoConfig = {
   name: 'Vaivén',
   slug: 'vaiven',
   scheme: 'vaiven',
-  version: '1.1.1',
+  // Versión: 0.1.0 (spec 013-T001) → 1.0.0 → 1.1.0 (IA y ML) → 1.1.1 (D-226, pruebas 016) →
+  // 1.1.2 (D-227): reconstrucción con la URL de la API corregida (:8443) para volver a subir a Play.
+  version: '1.1.2',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',

@@ -3,23 +3,26 @@
 - **Dueños:** MO-B y el **administrador de la cuenta** (marcado «admin») · **Estado:** EN CURSO, **PENDIENTE DE CIERRE AL FINAL** (decisión del 2026-11-19: se sigue con la 014 mientras Google revisa la 1.0; hechas T004, T006 y T008; faltan T001, T002, T003, T005, T007, T009, T010 y T011; ver `docs/play/seguimiento.md`) · `[P]` = paralelizable
 - Las tareas «admin» no las hace un agente: son trámites en Play Console. Se listan para no olvidarlas y se registran en `memoria.md`.
 
-- [ ] **T001** Perfiles de EAS (APK `preview` y AAB `production`) y versión
+- [x] **T001** Perfiles de EAS (APK `preview` y AAB `production`) y versión
   - Archivos: `eas.json`, `app.config.ts`
   - Agente: `dev-expo` · Depende de: 002-T025, backend 013-T001 (esta tarea crea `eas.json`)
   - Aceptación: perfil `preview` genera **APK** (staging) que se instala y abre en un teléfono real; perfil `production` genera **AAB**; `autoIncrement`; `EXPO_PUBLIC_API_URL` de producción; `version: 0.1.0`; `targetSdkVersion` según el mínimo vigente de Google Play *(se verifica en la documentación de Play y de Expo antes de fijarlo)*; sin secretos
   - Refs: RF-01, RF-02 · P-01, P-03
+  - Nota 2026-11-25: se generaron AAB `production` (1.0.0 (4), 1.1.0 (5), 1.1.1 (6) y (7)) y APK `preview`, y `autoIncrement` subió el `versionCode` solo (4 → 7); Play aceptó el AAB 1.1.1. **Cerrada 2026-11-25:** la persona confirmó que la app instalada abre en un teléfono real (captura de pantalla del detalle de un objeto en su teléfono; no se guarda en el repositorio por contener datos personales). La URL de la API era staging **sin puerto**; corregida a `…azure.com:8443` el 2026-11-25 (staging es el servidor que se usa en producción, según la persona responsable). `version` ya no es `0.1.0`: es **1.1.2** (D-226 y D-227).
 
-- [ ] **T002** [P] Cuenta de desarrollador de Google Play (**admin**)
+- [x] **T002** [P] Cuenta de desarrollador de Google Play (**admin**)
   - Archivos: `docs/play/seguimiento.md` (registro de fechas)
   - Agente: — (manual) · Depende de: — · **ya comprada**; falta confirmar la verificación de identidad y teléfono
   - Aceptación: pago único hecho; identidad y teléfono verificados; app «Vaivén» creada (idioma es-MX, gratuita, app); fecha de creación de la cuenta anotada (define si aplica la prueba cerrada)
   - Refs: RF-07 · CA-01
+  - Marcada 2026-11-25 según la persona responsable (consta como «Hecha» en `docs/play/seguimiento.md`); no se comprobó en Play Console desde el repositorio.
 
-- [ ] **T003** [P] Reunir testers (**admin**)
+- [x] **T003** [P] Reunir testers (**admin**)
   - Archivos: `docs/play/testers.md` (instrucciones y mensaje de invitación; la lista de correos **no** va en git)
   - Agente: `spec-writer` (redacta instrucciones) · Depende de: — · **Fecha: antes del primer AAB**
   - Aceptación: ≥ 15 personas con cuenta de Google que aceptaron participar hasta ~el 30 de nov; instrucciones paso a paso (aceptar invitación, instalar, no salirse del programa, abrir la app al menos una vez por semana y enviar comentarios); lista guardada fuera del repositorio
   - Refs: RF-07 · CA-02
+  - Marcada 2026-11-25: la persona informa de más de 20 testers; la lista de correo «Vaiven Testers» de Play Console muestra **26 usuarios** (captura vista en la sesión; la lista de correos no va en git). Cumple el mínimo de 15 de la spec.
 
 - [x] **T004** [P] Textos de la ficha
   - Archivos: `docs/play/ficha.md`
@@ -40,11 +43,12 @@
   - Aceptación: respuestas listas para copiar: seguridad de datos (dato → recopilado/compartido → finalidad → opcional/obligatorio → cifrado en tránsito → borrado), clasificación de contenido, público 18+, anuncios no, permisos con justificación, URL de eliminación de cuenta, declaración de contenido de usuarios (reportes y filtro), acceso de revisión con cuenta de prueba; coincide con el aviso de privacidad (CA-04)
   - Refs: RF-05, RF-06, RF-11 · P-06, P-07
 
-- [ ] **T007** Completar ficha y declaraciones en Play Console (**admin**)
+- [x] **T007** Completar ficha y declaraciones en Play Console (**admin**)
   - Archivos: `docs/play/seguimiento.md` (registro)
   - Agente: — (manual) · Depende de: T004, T005, T006
   - Aceptación: ficha, seguridad de datos, clasificación, público, anuncios y acceso a la app completos sin advertencias; cuenta de revisión creada (P-05)
   - Refs: RF-05, RF-06
+  - Marcada 2026-11-25: la ficha y las declaraciones permitieron publicar la prueba cerrada (envíos 3 y 4, capturas en `docs/evidencia/013/`) y Play aceptó el AAB 1.1.1. Según la persona responsable; falta declarar en «Seguridad de datos» la IA y las recomendaciones antes de producción (ver `seguimiento.md`).
 
 - [x] **T008** Primer AAB a la prueba cerrada (**~9 nov**, ver calendario vigente del ROADMAP)
   - Archivos: `docs/play/seguimiento.md`, `memoria.md` (solo anexar)
@@ -64,6 +68,7 @@
   - Agente: `spec-writer` (respuestas) + **admin** (envío y publicación) · Depende de: T009, 012-T011, backend 013-T009
   - Aceptación: solicitud enviada **el 23 de nov** (día 14 cumplido el 22) con respuestas basadas en la evidencia real; publicación en producción cuando Google apruebe (estimada 30 nov–7 dic); ficha pública abierta e instalada en un teléfono real (CA-06); plan de reversión escrito (pausar despliegue, corregir, subir versión nueva); **se avisa a la landing** (L002-T010) con la URL pública
   - Refs: RF-09, RF-10 · CA-05, CA-06
+  - Nota 2026-11-25: la versión que irá a producción es la **1.1.2** (reconstrucción con la API en `:8443`), no la `1.0.0` que dice esta tarea; ajustar la solicitud (`solicitud-produccion.md`) y las declaraciones de datos en consecuencia.
 
 - [ ] **T011** Memoria y revisión
   - Archivos: `memoria.md` (solo anexar)

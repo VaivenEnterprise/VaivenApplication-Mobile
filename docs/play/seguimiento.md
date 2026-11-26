@@ -9,7 +9,7 @@ Registro de la prueba cerrada. Lo marcado «según la persona responsable» no s
 | Tarea | Estado | Fuente |
 |---|---|---|
 | T001 Perfiles de EAS | Parcial: `eas.json` con `preview` (APK) y `production` (AAB, `autoIncrement`); falta la URL de producción y probar el APK; ver observaciones | Revisado en el repositorio |
-| T003 Testers | Instrucciones y mensaje en `testers.md`; 12 testers aceptados (la spec pide ≥ 15) | Redactado; Play Console |
+| T003 Testers | Instrucciones y mensaje en `testers.md`; 12 testers aceptados el 2026-11-18, **26 en la lista el 2026-11-25** (la spec pide ≥ 15) | Redactado; Play Console |
 | T004 Textos de la ficha | Hecha: `ficha.md` | Redactado y revisado contra la app y la landing |
 | T005 Recursos gráficos | Parcial: `icon-512.png` y `feature-1024x500.png` generados en el repo; Play ya tiene capturas y vídeo publicados (envío 4) pero no se ve cuántas ni están en el repo | `assets/store/`, captura 05 |
 | T006 Cumplimiento | Hecha: `cumplimiento.md` (borrador sujeto a la revisión legal del aviso) | Redactado contra el código y el aviso |
@@ -86,8 +86,6 @@ El repositorio tiene `version: '1.0.0'` en `app.config.ts`: la próxima compilac
 | `docs/play/cumplimiento.md` §1 (fila de fotos compartidas con proveedor de IA) y §9 | **Hecho** | MO-B |
 | «Seguridad de los datos» en Play Console | **Pendiente**: declarar las fotos enviadas a un proveedor de IA (opcional, a petición) **antes de subir la v1.1**; no se hizo desde el repositorio | Administración (Play Console) |
 | AAB 1.1 a la prueba cerrada (~2 dic) y a producción | **Pendiente**: solo cuando la 1.0 esté aprobada; requiere `eas build` con aprobación humana (spec 014 T007) | Administración |
-<<<<<<< Updated upstream
-=======
 
 ## Actualización 2026-11-25
 
@@ -104,4 +102,3 @@ El repositorio tiene `version: '1.0.0'` en `app.config.ts`: la próxima compilac
 - **Sin comprobar todavía:** el banner de sugerencias de la IA al publicar un objeto con foto.
 - **Pendiente:** capturas limpias para la ficha (T005), seguimiento hasta el día 14 (T009), solicitud de producción (T010) y revisión (T011).
 - **T005 marcada hecha (2026-11-26):** la ficha pública muestra el vídeo y al menos 5 capturas del teléfono con datos ficticios (según la persona, vistas en capturas de la sesión). Pendiente opcional: guardar copias en `assets/store/screenshots/` y renovarlas con las funciones de la 1.1 (recomendaciones e IA) antes de pedir producción.
->>>>>>> Stashed changes
