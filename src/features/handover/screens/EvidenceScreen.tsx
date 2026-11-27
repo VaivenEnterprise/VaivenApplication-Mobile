@@ -20,6 +20,7 @@ import { isStageConflict } from '@/features/handover/errors';
 import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
 import { colors, radius, sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.handover.evidence;
 const FIRST_OF_TWO = 0.5;
@@ -99,6 +100,8 @@ function FormBody({ bookingId, stage, initial }: FormBodyProps) {
  * ve; si la etapa ya se confirmó no se puede cambiar (el servidor responde 409).
  */
 export function EvidenceScreen({ bookingId, stage }: EvidenceScreenProps) {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
   const query = useBooking(bookingId);
   const booking = query.data;

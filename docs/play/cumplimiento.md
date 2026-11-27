@@ -49,10 +49,14 @@ No se recopila: contactos, SMS, micrófono, historial de navegación fuera de la
 | Fotos (selector) | Elegir imágenes de los objetos | Al elegir fotos | «Vaivén accede a tus fotos para que elijas las imágenes de tus objetos.» |
 | Ubicación aproximada | Mostrar objetos cercanos | Al usar la búsqueda por cercanía | «Vaivén usa tu ubicación aproximada para mostrarte objetos cerca de ti.» |
 | Notificaciones | Avisos de reservas, mensajes y moderación | Tras iniciar sesión se muestra una pantalla previa que explica los avisos; el diálogo del sistema solo aparece si la persona decide activarlos (o desde el interruptor del centro de avisos) | Diálogo del sistema; se puede negar y la app sigue funcionando |
-| Micrófono / audio | **No se usa** (`recordAudioAndroid: false`, `microphonePermission: false`) | — | — |
-| Ubicación precisa | **No se usa** (bloqueada) | — | — |
+| Biometría (huella o rostro) | Confirmar que eres tú al volver a entrar tras el cierre por inactividad; **opcional** (spec 021-T015). No se guarda ningún dato biométrico: el sistema solo responde sí o no | Al volver a entrar, si la persona la activó | Texto del sistema (iOS: `NSFaceIDUsageDescription` en español) |
+| Micrófono / audio | **No se usa** (`recordAudioAndroid: false`; `microphonePermission: false` en cámara y selector de fotos, así que iOS no declara `NSMicrophoneUsageDescription`) | — | — |
+| Ubicación precisa | **No se usa** (bloqueada en Android) | — | — |
+| Ubicación «siempre» / en segundo plano | **No se usa** (iOS no declara `NSLocationAlways*`) | — | — |
 
-Sin permisos sensibles de segundo plano ni de llamadas ni SMS. **Archivos:** el manifiesto efectivo de Android que resuelve Expo todavía incluye `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` y `SYSTEM_ALERT_WINDOW` (auditoría de 2026-11-26) aunque la app no los declara ni los usa; la spec 021-T012 los bloquea y, al cerrarla, este párrafo vuelve a afirmar «sin archivos amplios» solo si `npx expo config --type introspect` lo confirma. Hasta entonces no se declara a Play lo contrario de lo que trae el manifiesto.
+Sin permisos sensibles de segundo plano ni de llamadas ni SMS. **Sin archivos amplios ni superposición de ventanas:** `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` y `SYSTEM_ALERT_WINDOW` (los traían dependencias al manifiesto efectivo, auditoría de 2026-11-26) están en `android.blockedPermissions` desde la spec 021-T012. **Sin copia de seguridad automática:** `android.allowBackup: false`.
+
+Manifiesto efectivo confirmado con `npx expo config --type introspect` el 2026-11-27 (spec 021-T012, CA-06). Permisos de Android que quedan: `INTERNET`, `VIBRATE`, `CAMERA`, `ACCESS_COARSE_LOCATION`, `USE_BIOMETRIC` y `USE_FINGERPRINT` (estos dos los trae `expo-local-authentication`). Marcados como eliminados (`tools:node="remove"`): `ACCESS_FINE_LOCATION`, `SYSTEM_ALERT_WINDOW`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` y `RECORD_AUDIO`. Si cambian las dependencias, se repite el comando y se actualiza este párrafo (las reglas S-08b, S-12g y S-12n de `src/__arch__/rules.security.test.ts` vigilan la configuración declarada).
 
 ## 5. Eliminación de cuenta
 

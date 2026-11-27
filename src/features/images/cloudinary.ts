@@ -42,6 +42,18 @@ export class UploadCancelledError extends Error {
 const cloudinaryResponse = z.object({ public_id: z.string().min(1) });
 const cloudinaryError = z.object({ error: z.object({ message: z.string() }) });
 
+// Spec 021-T013 (RF-12, B-4): la foto solo sale hacia la API de subida de Cloudinary por https
+// (`api.cloudinary.com` o su variante regional, p. ej. `api-eu.cloudinary.com`), sin credenciales en
+// la URL ni puerto propio. Se valida con una expresión anclada y no con `URL`: en React Native
+// `URL` no implementa todos sus campos y en Jest se usaría la de Node, que ocultaría la diferencia.
+const CLOUDINARY_UPLOAD_URL =
+  /^https:\/\/api(?:-[a-z]+)?\.cloudinary\.com\/v1_1\/[\w-]+(?:\/[\w-]+)*$/;
+
+/** `true` si la URL de la firma apunta a la API de subida de Cloudinary por https. */
+export function isAllowedUploadUrl(url: string): boolean {
+  return CLOUDINARY_UPLOAD_URL.test(url);
+}
+
 type UploadOptions = {
   /** Avance de 0 a 1. */
   onProgress?: (fraction: number) => void;
@@ -82,6 +94,11 @@ export function uploadToCloudinary(
   return new Promise<ImageRef>((resolve, reject) => {
     if (signal?.aborted) {
       reject(new UploadCancelledError());
+      return;
+    }
+    // Una firma con otro destino no se usa: no se abre ninguna conexión ni se envía el archivo.
+    if (!isAllowedUploadUrl(signature.uploadUrl)) {
+      reject(new ImageUploadError('signature', false));
       return;
     }
     const xhr = new XMLHttpRequest();

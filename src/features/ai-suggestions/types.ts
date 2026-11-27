@@ -12,10 +12,5 @@ export const listingSuggestionSchema = z.object({
 
 export type ListingSuggestion = z.infer<typeof listingSuggestionSchema>;
 
-/** Solo la parte de `GET /meta` que esta función necesita; si falta `features`, la IA está apagada. */
-export const aiFeaturesSchema = z.object({
-  features: z.object({ aiSuggestions: z.boolean().optional() }).optional(),
-});
-
 /** Estado de la sugerencia en pantalla: `limit` es el tope diario (429), `error` cualquier otro fallo. */
 export type SuggestionStatus = 'idle' | 'loading' | 'success' | 'error' | 'limit';

@@ -4,19 +4,21 @@ import { useSession } from '@/features/auth/useSession';
 import {
   clearRecommendationHistory,
   fetchRecommendations,
-  getRecommendationsEnabled,
   sendViewEvent,
 } from '@/features/recommendations/api';
 import { recommendationsKeys } from '@/features/recommendations/keys';
 import { RECOMMENDATIONS_STALE_MS, type Recommendation } from '@/features/recommendations/types';
+import { serverFeaturesQuery } from '@/lib/api/serverFeatures';
 
-/** `true` si `GET /meta` trae `features.recommendations = true`; mientras carga o si falla, `false`. */
+/**
+ * `true` si `GET /meta` trae `features.recommendations = true`; mientras carga o si falla, `false`.
+ * Comparte la consulta de `/meta` con la IA al publicar (spec 021-T014, B-6).
+ */
 export function useRecommendationsEnabled(): boolean {
   const { status } = useSession();
   const query = useQuery({
-    queryKey: recommendationsKeys.enabled,
-    queryFn: ({ signal }) => getRecommendationsEnabled(signal),
-    staleTime: RECOMMENDATIONS_STALE_MS,
+    ...serverFeaturesQuery,
+    select: (features) => features.recommendations,
     enabled: status === 'signedIn',
   });
   return query.data === true;

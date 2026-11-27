@@ -6,12 +6,13 @@ import { ApiError } from '@/lib/api/errors';
 
 const mockPush = jest.fn();
 const mockSignIn = jest.fn();
+let mockSignedOutReason: 'inactivity' | null = null;
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn(), canGoBack: () => true }),
 }));
 jest.mock('@/features/auth/useSession', () => ({
-  useSession: () => ({ signIn: mockSignIn }),
+  useSession: () => ({ signIn: mockSignIn, signedOutReason: mockSignedOutReason }),
 }));
 
 const t = es.auth.login;
@@ -24,6 +25,7 @@ async function fill(email: string, password: string) {
 const submit = () => fireEvent.press(screen.getByRole('button', { name: t.submit }));
 
 beforeEach(() => {
+  mockSignedOutReason = null;
   mockSignIn.mockReset();
   mockPush.mockReset();
 });
@@ -152,5 +154,19 @@ describe('LoginScreen: validación al salir del campo', () => {
     expect(mockSignIn).not.toHaveBeenCalled();
     await fireEvent.changeText(email, 'ana@example.com');
     await waitFor(() => expect(screen.queryByText(es.auth.validation.emailInvalid)).toBeNull());
+  });
+});
+
+// Spec 021-T015 (RF-14): tras el cierre por inactividad, el login explica por qué.
+describe('LoginScreen: cierre por inactividad (021-T015)', () => {
+  it('muestra el aviso cuando la sesión se cerró por inactividad', async () => {
+    mockSignedOutReason = 'inactivity';
+    await render(<LoginScreen />);
+    expect(screen.getByText(es.auth.inactivity.signedOut)).toBeTruthy();
+  });
+
+  it('sin cierre por inactividad no muestra el aviso', async () => {
+    await render(<LoginScreen />);
+    expect(screen.queryByText(es.auth.inactivity.signedOut)).toBeNull();
   });
 });

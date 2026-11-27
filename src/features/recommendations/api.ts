@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { request } from '@/lib/api/client';
 import {
   RECOMMENDATIONS_LIMIT,
-  recommendationFeaturesSchema,
   recommendationListSchema,
   type Recommendation,
 } from '@/features/recommendations/types';
@@ -10,11 +9,8 @@ import {
 // Rutas de recomendaciones (backend/api/paths/recommendations.yaml). Apagadas (`RECO_ENABLED=false`)
 // responden 503; por eso la app consulta `GET /meta` antes de pedir nada (RF-02).
 
-/** `GET /meta`: `true` solo si el servidor trae `features.recommendations = true` (RF-02). */
-export async function getRecommendationsEnabled(signal?: AbortSignal): Promise<boolean> {
-  const meta = await request('/meta', recommendationFeaturesSchema, { signal });
-  return meta.features?.recommendations === true;
-}
+// El interruptor (`GET /meta` → `features.recommendations`, RF-02) sale de la consulta compartida
+// `serverFeaturesQuery` de `@/lib/api/serverFeatures` (spec 021-T014, B-6).
 
 /** `GET /recommendations`: la lista en orden, sin más páginas (`nextCursor` siempre es null). */
 export async function fetchRecommendations(signal?: AbortSignal): Promise<Recommendation[]> {

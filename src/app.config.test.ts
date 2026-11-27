@@ -54,6 +54,34 @@ describe('app.config (RF-S1)', () => {
     expect(pluginOptions('expo-image-picker').microphonePermission).toBe(false);
   });
 
+  // Spec 021 · T012 (RF-11, CA-06): lo confirma `npx expo config --type introspect`.
+  it('desactiva la copia de seguridad y bloquea los permisos que la app no usa', () => {
+    expect(config.android?.allowBackup).toBe(false);
+    expect(config.android?.blockedPermissions).toEqual(
+      expect.arrayContaining([
+        'android.permission.SYSTEM_ALERT_WINDOW',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
+      ]),
+    );
+  });
+
+  it('en iOS no declara ubicación «siempre» ni micrófono', () => {
+    expect(pluginOptions('expo-location').locationAlwaysPermission).toBe(false);
+    expect(pluginOptions('expo-location').locationAlwaysAndWhenInUsePermission).toBe(false);
+    expect(pluginOptions('expo-camera').microphonePermission).toBe(false);
+    expect(pluginOptions('expo-image-picker').microphonePermission).toBe(false);
+  });
+
+  // Spec 021 · T015 y T016 (RF-14, RF-15).
+  it('explica Face ID en español y activa R8 en las compilaciones release', () => {
+    expect(pluginOptions('expo-local-authentication').faceIDPermission).toMatch(/^Vaivén /);
+    expect(pluginOptions('expo-build-properties').android).toMatchObject({
+      enableMinifyInReleaseBuilds: true,
+      enableShrinkResourcesInReleaseBuilds: true,
+    });
+  });
+
   it('no incluye secretos ni credenciales', () => {
     const text = JSON.stringify(config satisfies ExpoConfig).toLowerCase();
     for (const word of ['secret', 'token', 'password', 'apikey', 'api_key']) {

@@ -21,11 +21,14 @@ import {
 import { es } from '@/i18n/es-MX';
 import { ApiError, messageForCode } from '@/lib/api/errors';
 import { colors, motion, radius, sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.profile.edit;
 
 /** Editar perfil (spec 003 §7.9, RF-06): nombre y teléfono opcional con `PATCH /me`. */
 export function EditProfileScreen() {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
   const { user } = useSession();
   const update = useUpdateProfile();

@@ -8,6 +8,7 @@ import { NeighborhoodIllustration } from '@/components/illustrations/Neighborhoo
 import { PasswordField } from '@/components/PasswordField';
 import { TextField } from '@/components/TextField';
 import { AppText } from '@/components/ui/AppText';
+import { Banner } from '@/components/ui/Banner';
 import { BrandMark } from '@/components/ui/BrandMark';
 import { Button } from '@/components/ui/Button';
 import { Screen } from '@/components/ui/Screen';
@@ -18,13 +19,16 @@ import { useSession } from '@/features/auth/useSession';
 import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
 import { sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.auth.login;
 
 /** Inicio de sesión (spec 003 §7.1): correo, contraseña con ojo, botón y enlace a registro. */
 export function LoginScreen() {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
-  const { signIn } = useSession();
+  const { signIn, signedOutReason } = useSession();
   const { height } = useWindowDimensions();
   const [formError, setFormError] = useState<string | null>(null);
   const { control, handleSubmit, formState } = useForm<LoginInput>({
@@ -56,6 +60,9 @@ export function LoginScreen() {
         <Squiggle />
       </View>
 
+      {signedOutReason === 'inactivity' ? (
+        <Banner variant="info" message={es.auth.inactivity.signedOut} />
+      ) : null}
       <View style={styles.form}>
         <Controller
           control={control}

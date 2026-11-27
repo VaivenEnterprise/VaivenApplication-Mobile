@@ -21,6 +21,7 @@ import { ApiError, messageForCode } from '@/lib/api/errors';
 import { formatMonthYear } from '@/lib/format/date';
 import { routes } from '@/lib/routes';
 import { sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.profile;
 
@@ -33,6 +34,8 @@ type ProfileScreenProps = {
 
 /** Perfil propio (spec 003 §7.8): datos, filas de acción, cerrar sesión y eliminar cuenta. */
 export function ProfileScreen({ renderReputation, renderExtraRows }: ProfileScreenProps) {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
   const { signOut } = useSession();
   const { user } = useMe();

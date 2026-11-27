@@ -6,7 +6,7 @@ import {
 } from '@/features/images/cloudinary';
 
 const signature: UploadSignature = {
-  uploadUrl: 'https://api.cloudinary.example/v1_1/vaiven/image/upload',
+  uploadUrl: 'https://api.cloudinary.com/v1_1/vaiven/image/upload',
   apiKey: '123456789012345',
   timestamp: 1762480800,
   signature: 'abc123',

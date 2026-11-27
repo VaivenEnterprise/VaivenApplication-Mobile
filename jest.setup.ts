@@ -23,6 +23,19 @@ jest.mock('expo-notifications', () => ({
   clearLastNotificationResponse: jest.fn(),
 }));
 
+// Spec 021-T015: dobles inactivos de los módulos de protección de sesión. Por defecto el teléfono no
+// tiene biometría (la inactividad cierra la sesión, el caso más estricto) y bloquear capturas no
+// hace nada. Las pruebas S-14 los cambian con `jest.mocked(...)`.
+jest.mock('expo-screen-capture', () => ({
+  preventScreenCaptureAsync: jest.fn(async () => undefined),
+  allowScreenCaptureAsync: jest.fn(async () => undefined),
+}));
+jest.mock('expo-local-authentication', () => ({
+  hasHardwareAsync: jest.fn(async () => false),
+  isEnrolledAsync: jest.fn(async () => false),
+  authenticateAsync: jest.fn(async () => ({ success: false, error: 'not_available' })),
+}));
+
 // Spec 021-T008: React Query programa un temporizador de recolección (5 min por defecto) por cada
 // consulta de un `QueryClient`; esos temporizadores mantienen vivo el proceso de Jest («did not exit
 // one second after the test run»). En pruebas se desactiva la recolección por defecto

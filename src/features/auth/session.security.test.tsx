@@ -202,11 +202,14 @@ describe('S-04 · M3 · la sesión persiste al cerrar y volver a abrir la app', 
     expect(getAccessToken()).toBeNull();
   });
 
-  it('S-04d sin red conserva el token para el próximo arranque, sin dejar sesión abierta', async () => {
+  it('S-04d sin red conserva el token guardado, sin dejar sesión abierta ni token en memoria', async () => {
     jest.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Network request failed'));
     const { wrapper } = setup('refresh-1');
     const { result } = await renderHook(() => useSession(), { wrapper });
-    await waitFor(() => expect(result.current.status).toBe('signedOut'));
+    // Spec 021-T014 (B-5): espera «sin conexión» en lugar de mostrar el login.
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    expect(result.current.status).not.toBe('signedIn');
+    expect(result.current.user).toBeNull();
     expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-1');
     expect(getAccessToken()).toBeNull();
   });

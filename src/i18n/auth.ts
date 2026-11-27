@@ -59,6 +59,33 @@ export const authEs = {
     rateLimited: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
   },
   restoring: 'Restaurando tu sesión',
+  // Spec 021-T015 (RF-14): protección de sesión.
+  inactivity: {
+    // Una línea: `Banner` no parte el texto.
+    signedOut: 'Tu sesión se cerró por inactividad.',
+  },
+  lock: {
+    title: 'Sesión bloqueada',
+    description:
+      'Por seguridad bloqueamos Vaivén tras un rato sin uso. Confirma que eres tú para seguir.',
+    unlock: 'Desbloquear',
+    signOut: 'Cerrar sesión',
+    prompt: 'Confirma que eres tú para entrar a Vaivén',
+    cancel: 'Cancelar',
+    failed: 'No pudimos confirmar que eres tú. Reintenta.',
+  },
+  biometric: {
+    row: 'Desbloquear con huella o rostro',
+    on: 'Al volver tras un rato sin uso',
+    off: 'Desactivado',
+    prompt: 'Confirma que eres tú para activar el desbloqueo',
+    failed: 'No se activó. Intenta de nuevo.',
+  },
+  restoreOffline: {
+    title: 'Sin conexión',
+    description:
+      'No pudimos conectar con Vaivén. Tu sesión sigue guardada en este teléfono; reintenta cuando vuelva la conexión.',
+  },
   suspended: {
     title: 'Cuenta suspendida',
     untilPrefix: 'Hasta el',

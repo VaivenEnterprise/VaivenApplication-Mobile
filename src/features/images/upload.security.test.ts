@@ -1,6 +1,7 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import {
   ImageUploadError,
+  isAllowedUploadUrl,
   uploadToCloudinary,
   type UploadSignature,
 } from '@/features/images/cloudinary';
@@ -15,7 +16,7 @@ jest.mock('expo-image-manipulator', () => ({
 }));
 
 const signature: UploadSignature = {
-  uploadUrl: 'https://api.cloudinary.example/v1_1/vaiven/image/upload',
+  uploadUrl: 'https://api.cloudinary.com/v1_1/vaiven/image/upload',
   apiKey: '123456789012345',
   timestamp: 1762480800,
   signature: 'abc123',
@@ -126,5 +127,57 @@ describe('S-11 · M4 · subida firmada y rechazos del servicio de imágenes', ()
     const promise = uploadToCloudinary(signature, { uri: 'file://r.jpg' });
     FakeXHR.last.respond(200, { otro: 1 });
     await expect(promise).rejects.toMatchObject({ code: 'unexpected' });
+  });
+});
+
+// Spec 021 · T013 (RF-12, B-4): la foto solo sale hacia la API de subida de Cloudinary por https.
+describe('S-11 · M4 · destino de la subida (021-T013)', () => {
+  let creadas = 0;
+  beforeEach(() => {
+    creadas = 0;
+    class CountingXHR extends FakeXHR {
+      constructor() {
+        super();
+        creadas += 1;
+      }
+    }
+    globalThis.XMLHttpRequest = CountingXHR as unknown as typeof XMLHttpRequest;
+  });
+
+  it.each([
+    'https://api.cloudinary.com/v1_1/vaiven/image/upload',
+    'https://api-eu.cloudinary.com/v1_1/vaiven/image/upload',
+  ])('S-11g acepta la API de subida de Cloudinary: %s', (url) => {
+    expect(isAllowedUploadUrl(url)).toBe(true);
+  });
+
+  it.each([
+    ['http (sin TLS)', 'http://api.cloudinary.com/v1_1/vaiven/image/upload'],
+    ['otro dominio', 'https://evil.example/v1_1/vaiven/image/upload'],
+    ['dominio parecido', 'https://api.cloudinary.com.evil.example/v1_1/vaiven/image/upload'],
+    ['sufijo sin punto', 'https://apicloudinary.com/v1_1/vaiven/image/upload'],
+    ['subdominio no de subida', 'https://res.cloudinary.com/v1_1/vaiven/image/upload'],
+    ['credenciales en la URL', 'https://api.cloudinary.com@evil.example/v1_1/vaiven/image/upload'],
+    ['puerto propio', 'https://api.cloudinary.com:8443/v1_1/vaiven/image/upload'],
+    ['esquema raro', 'javascript:alert(1)'],
+    ['esquema de archivo', 'file:///data/upload'],
+    ['ruta fuera de la API', 'https://api.cloudinary.com/otra/ruta'],
+    [
+      'consulta añadida',
+      'https://api.cloudinary.com/v1_1/vaiven/image/upload?next=https://evil.example',
+    ],
+    ['vacía', ''],
+  ])('S-11h rechaza %s y no sube nada', async (_caso, uploadUrl) => {
+    expect(isAllowedUploadUrl(uploadUrl)).toBe(false);
+    const onProgress = jest.fn();
+    const error = await uploadToCloudinary(
+      { ...signature, uploadUrl },
+      { uri: 'file://r.jpg' },
+      { onProgress },
+    ).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ImageUploadError);
+    expect(error).toMatchObject({ code: 'signature', retryable: false });
+    expect(creadas).toBe(0);
+    expect(onProgress).not.toHaveBeenCalled();
   });
 });

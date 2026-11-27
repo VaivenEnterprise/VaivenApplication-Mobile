@@ -144,7 +144,7 @@ describe('S-12 · M8 · permisos y configuración de la app', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const config = require('../../app.config').default as {
     plugins: unknown[];
-    android: { blockedPermissions?: string[] };
+    android: { blockedPermissions?: string[]; allowBackup?: boolean };
     ios?: Record<string, unknown>;
   };
   const pluginNames = config.plugins.map((p) => (Array.isArray(p) ? p[0] : p));
@@ -154,11 +154,13 @@ describe('S-12 · M8 · permisos y configuración de la app', () => {
     return found?.[1] ?? {};
   };
 
-  it('S-12f solo los plugins de permisos declarados (cámara, ubicación, fotos, avisos)', () => {
+  it('S-12f solo los plugins declarados (permisos de cámara, ubicación, fotos, avisos, biometría; compilación)', () => {
     expect([...pluginNames].sort()).toEqual(
       [
+        'expo-build-properties',
         'expo-camera',
         'expo-image-picker',
+        'expo-local-authentication',
         'expo-location',
         'expo-notifications',
         'expo-router',
@@ -169,16 +171,37 @@ describe('S-12 · M8 · permisos y configuración de la app', () => {
 
   it('S-12g sin micrófono y sin ubicación en segundo plano', () => {
     expect(pluginOptions('expo-camera').recordAudioAndroid).toBe(false);
+    // Spec 021-T012: en iOS hay que pasar `false`; sin valor, los plugins agregan su texto por defecto.
+    expect(pluginOptions('expo-camera').microphonePermission).toBe(false);
     expect(pluginOptions('expo-image-picker').microphonePermission).toBe(false);
     const location = pluginOptions('expo-location');
     expect(location.isAndroidBackgroundLocationEnabled).toBeUndefined();
-    expect(location.locationAlwaysPermission).toBeUndefined();
-    expect(location.locationAlwaysAndWhenInUsePermission).toBeUndefined();
+    expect(location.isIosBackgroundLocationEnabled).toBeUndefined();
+    expect(location.locationAlwaysPermission).toBe(false);
+    expect(location.locationAlwaysAndWhenInUsePermission).toBe(false);
     expect(typeof location.locationWhenInUsePermission).toBe('string');
   });
 
-  it('S-08b Android bloquea la ubicación precisa (solo aproximada)', () => {
-    expect(config.android.blockedPermissions).toContain('android.permission.ACCESS_FINE_LOCATION');
+  it('S-08b Android bloquea la ubicación precisa y los permisos que la app no usa (021-T012)', () => {
+    expect([...(config.android.blockedPermissions ?? [])].sort()).toEqual(
+      [
+        'android.permission.ACCESS_FINE_LOCATION',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.SYSTEM_ALERT_WINDOW',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
+      ].sort(),
+    );
+  });
+
+  it('S-12n Android sin copia de seguridad automática (021-T012)', () => {
+    expect(config.android.allowBackup).toBe(false);
+  });
+
+  it('S-12o las compilaciones release de Android usan R8 y recortan recursos (021-T016)', () => {
+    expect(pluginOptions('expo-build-properties').android).toMatchObject({
+      enableMinifyInReleaseBuilds: true,
+      enableShrinkResourcesInReleaseBuilds: true,
+    });
   });
 
   it('S-12h cada permiso trae su texto explicativo en español', () => {
@@ -187,8 +210,10 @@ describe('S-12 · M8 · permisos y configuración de la app', () => {
       ['expo-location', 'locationWhenInUsePermission'],
       ['expo-image-picker', 'photosPermission'],
       ['expo-image-picker', 'cameraPermission'],
+      ['expo-local-authentication', 'faceIDPermission'],
     ] as const) {
       expect(String(pluginOptions(name)[key]).length).toBeGreaterThan(20);
+      expect(String(pluginOptions(name)[key])).toMatch(/^Vaivén /);
     }
   });
 });

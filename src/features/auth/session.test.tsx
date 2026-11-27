@@ -141,13 +141,85 @@ describe('restauración al arrancar (CA-02)', () => {
     expect(getAccessToken()).toBeNull();
   });
 
-  it('sin red conserva el token para el próximo arranque', async () => {
+  // Spec 021-T014 (RF-13, B-5): sin red no se muestra el login; la sesión guardada espera.
+  it('sin red conserva el token y espera sin conexión, sin mostrar el login', async () => {
     jest.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Network request failed'));
     const { wrapper } = setup('refresh-1');
     const { result } = await renderHook(() => useSession(), { wrapper });
-    await waitFor(() => expect(result.current.status).toBe('signedOut'));
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    expect(result.current.status).toBe('loading');
+    expect(result.current.user).toBeNull();
     expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-1');
     expect(result.current.suspension).toBeNull();
+  });
+
+  it('con el servidor caído (5xx) también espera sin conexión y conserva el token', async () => {
+    route('/auth/refresh', () => error(503, 'internal_error'));
+    const { wrapper } = setup('refresh-1');
+    const { result } = await renderHook(() => useSession(), { wrapper });
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    expect(result.current.status).toBe('loading');
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-1');
+  });
+
+  it('al reintentar con red restaura la sesión con el token guardado', async () => {
+    const offline = jest
+      .spyOn(globalThis, 'fetch')
+      .mockRejectedValueOnce(new TypeError('Network request failed'));
+    route('/auth/refresh', () => reply(200, { tokens: tokens(2) }));
+    route('/me', () => reply(200, user));
+    const { wrapper } = setup('refresh-1');
+    const { result } = await renderHook(() => useSession(), { wrapper });
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    expect(offline).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      result.current.retryRestore();
+    });
+    await waitFor(() => expect(result.current.status).toBe('signedIn'));
+    expect(result.current.restoreOffline).toBe(false);
+    expect(result.current.user?.displayName).toBe('Ana López');
+    expect(JSON.parse(callsTo('/auth/refresh')[0]?.init.body as string)).toEqual({
+      refreshToken: 'refresh-1',
+    });
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-2');
+  });
+
+  it('al reintentar, un 401 cierra la sesión y borra el token', async () => {
+    jest.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('Network request failed'));
+    route('/auth/refresh', () => error(401, 'unauthorized'));
+    const { wrapper } = setup('refresh-1');
+    const { result } = await renderHook(() => useSession(), { wrapper });
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    await act(async () => {
+      result.current.retryRestore();
+    });
+    await waitFor(() => expect(result.current.status).toBe('signedOut'));
+    expect(result.current.restoreOffline).toBe(false);
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBeNull();
+  });
+
+  it('dos reintentos seguidos renuevan una sola vez (no reutiliza el token)', async () => {
+    jest.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('Network request failed'));
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    route('/auth/refresh', async () => {
+      await gate;
+      return reply(200, { tokens: tokens(2) });
+    });
+    route('/me', () => reply(200, user));
+    const { wrapper } = setup('refresh-1');
+    const { result } = await renderHook(() => useSession(), { wrapper });
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    await act(async () => {
+      result.current.retryRestore();
+      result.current.retryRestore();
+    });
+    release();
+    await waitFor(() => expect(result.current.status).toBe('signedIn'));
+    expect(callsTo('/auth/refresh')).toHaveLength(1);
   });
 
   it('cuenta suspendida al restaurar: muestra la suspensión y borra el token', async () => {

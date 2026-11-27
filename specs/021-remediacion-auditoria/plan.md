@@ -47,6 +47,15 @@ src/features/ai-suggestions/                                 asistente, solo si 
 | P-16 | **La ubicación exacta no cambia sin decisión:** hoy es solo aproximada por Art. VIII.4 y por S-08a/S-08b/S-12g; T038 se desbloquea cuando la persona define el alcance, y si exige enmienda se propone por escrito (Art. XII). Las reglas de seguridad se actualizan con la decisión, nunca se borran | VIII, XII |
 | P-11 | **Evidencia sin datos personales:** capturas de una cuenta de demostración; nada con nombres, correos o fotos de otras personas | VIII |
 
+### Dependencias aprobadas (T011, 2026-11-27)
+Aprobadas por la persona responsable (P-08, Art. X.1). Las tres son módulos de Expo del SDK 58, funcionan en Expo Go (Art. XIV.2) y se instalaron con `npx expo install`; registro en `memoria.md` (D-244).
+
+| Paquete | Versión | Para qué | Por qué no basta lo que ya hay |
+|---|---|---|---|
+| `expo-screen-capture` | ~58.0.6 | Bloquear capturas y grabación de pantalla en las pantallas sensibles (T015, RF-14) | React Native no expone `FLAG_SECURE` ni el aviso de captura de iOS |
+| `expo-local-authentication` | ~58.0.3 | Biometría **opcional** para volver a entrar tras el cierre por inactividad (T015, RF-14) | No hay otra API de huella/rostro; no guarda nada: solo confirma presencia |
+| `expo-build-properties` | ~58.0.12 | Activar R8 (minificación y ofuscación) en la compilación nativa (T016, RF-15) | Solo es un *config plugin* de compilación; no entra en el JS de la app |
+
 ## 3. Pruebas
 Las nuevas reglas estáticas y de coherencia son Jest sobre texto en memoria (con casos negativos). El contrato usa `installFakeApi` y el `openapi.yaml` de solo lectura. El endurecimiento de `app.config.ts` se prueba con la configuración resuelta y se confirma con `npx expo config --type introspect`. La moderación y el endurecimiento de la subida tienen pruebas de pantalla y de cliente. El CI y el CD se prueban con sus scripts (`node --test`); el CD no se ejecuta. La suite de dispositivo se verifica en un teléfono real (T026).
 

@@ -23,6 +23,8 @@ const config: ExpoConfig = {
         cameraPermission:
           'Vaivén usa la cámara para escanear códigos QR y tomar fotos de tus objetos.',
         recordAudioAndroid: false,
+        // Spec 021-T012 (RF-11): `false` quita `NSMicrophoneUsageDescription` del Info.plist de iOS.
+        microphonePermission: false,
       },
     ],
     [
@@ -30,6 +32,10 @@ const config: ExpoConfig = {
       {
         locationWhenInUsePermission:
           'Vaivén usa tu ubicación aproximada para mostrarte objetos cerca de ti.',
+        // Spec 021-T012 (RF-11): sin ubicación «siempre» en iOS; `false` quita las claves
+        // `NSLocationAlways*` que el plugin agrega por defecto.
+        locationAlwaysPermission: false,
+        locationAlwaysAndWhenInUsePermission: false,
       },
     ],
     [
@@ -41,6 +47,27 @@ const config: ExpoConfig = {
       },
     ],
     'expo-notifications',
+    // Spec 021-T015 (RF-14): biometría opcional para volver a entrar tras el cierre por inactividad.
+    [
+      'expo-local-authentication',
+      {
+        faceIDPermission:
+          'Vaivén usa Face ID para confirmar que eres tú al volver a entrar, solo si lo activas.',
+      },
+    ],
+    // Spec 021-T016 (RF-15): R8 (minificación y ofuscación) y recorte de recursos en las
+    // compilaciones *release* de Android: el AAB `production` y también el APK `preview`, para que
+    // el de prueba valide lo mismo que va a Play. Solo afecta a la compilación nativa (EAS Build),
+    // no a Expo Go. Pinning, root y Play Integrity: excepción formal en `docs/calidad/seguridad-nivel.md`.
+    [
+      'expo-build-properties',
+      {
+        android: {
+          enableMinifyInReleaseBuilds: true,
+          enableShrinkResourcesInReleaseBuilds: true,
+        },
+      },
+    ],
     // Pantalla de inicio (spec 012 T005): fondo crema de la marca, el mismo del ícono adaptable.
     [
       'expo-splash-screen',
@@ -65,8 +92,16 @@ const config: ExpoConfig = {
   },
   android: {
     package: APP_ID,
-    // Solo ubicación aproximada: nunca se pide la precisa.
-    blockedPermissions: ['android.permission.ACCESS_FINE_LOCATION'],
+    // Spec 021-T012 (RF-11): sin copia de seguridad automática de los datos de la app.
+    allowBackup: false,
+    // Solo ubicación aproximada: nunca se pide la precisa. Los otros tres los traen dependencias
+    // al manifiesto efectivo aunque la app no los usa (auditoría 2026-11-26, M-5).
+    blockedPermissions: [
+      'android.permission.ACCESS_FINE_LOCATION',
+      'android.permission.SYSTEM_ALERT_WINDOW',
+      'android.permission.READ_EXTERNAL_STORAGE',
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+    ],
     adaptiveIcon: {
       backgroundColor: '#FAF6F0',
       foregroundImage: './assets/android-icon-foreground.png',

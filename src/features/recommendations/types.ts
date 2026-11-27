@@ -37,11 +37,6 @@ export const recommendationListSchema = z.object({
 /** Una recomendación: el objeto y el motivo por el que se muestra (`Recommendation { item, reason }`). */
 export type Recommendation = z.infer<typeof recommendationSchema>;
 
-/** Solo la parte de `GET /meta` que esta función necesita; si falta `features`, está apagada. */
-export const recommendationFeaturesSchema = z.object({
-  features: z.object({ recommendations: z.boolean().optional() }).optional(),
-});
-
 /** Cuántas recomendaciones se piden (el servidor admite de 1 a 20; por defecto 10). */
 export const RECOMMENDATIONS_LIMIT = 10;
 

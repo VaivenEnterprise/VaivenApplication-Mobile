@@ -112,6 +112,35 @@ describe('sesión de punta a punta', () => {
     expect(await screen.findByRole('tab', { name: es.tabs.home })).toBeTruthy();
     expect(api.calls.filter((call) => call.path === '/auth/refresh')).toHaveLength(1);
   });
+
+  // Spec 021-T014 (RF-13, B-5): sin red al arrancar, la sesión guardada espera; nunca el login.
+  it(
+    'con una sesión guardada y sin red, muestra «Sin conexión» (no el login) y entra al volver la red',
+    async () => {
+      const store = installMemorySecureStore({ [REFRESH_TOKEN_KEY]: 'refresh-1' });
+      let online = false;
+      installFakeApi({
+        ...baseApi,
+        'POST /auth/refresh': () => {
+          if (!online) throw new TypeError('Network request failed');
+          return ok({ tokens: fakeTokens(2) });
+        },
+      });
+      await renderRouter(APP_DIR);
+      expect(
+        await screen.findByRole('header', { name: es.auth.restoreOffline.title }),
+      ).toBeTruthy();
+      expect(screen.queryByLabelText(login.email)).toBeNull();
+      expect(store.get(REFRESH_TOKEN_KEY)).toBe('refresh-1');
+      expect(getAccessToken()).toBeNull();
+
+      online = true;
+      await fireEvent.press(screen.getByRole('button', { name: es.common.retry }));
+      expect(await screen.findByRole('tab', { name: es.tabs.home })).toBeTruthy();
+      expect(store.get(REFRESH_TOKEN_KEY)).toBe('refresh-2');
+    },
+    LONG_TEST_MS,
+  );
 });
 
 describe('refresco concurrente (P-03)', () => {

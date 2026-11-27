@@ -56,9 +56,10 @@ Generado con `node scripts/screens-report.mjs --out docs/calidad/pantallas.md` e
 | S-08 | M6 | `src/__arch__/rules.security.test.ts` |
 | S-09 | M4 | `src/features/auth/schemas.security.test.ts` |
 | S-10 | M4 | `src/lib/api/moderation.security.test.ts` |
-| S-11 | M4 | `src/features/images/upload.security.test.ts` |
-| S-12 | M2 · M8 | `src/__arch__/rules.security.test.ts` (incluye casos negativos en memoria, CA-04) |
+| S-11 | M4 | `src/features/images/upload.security.test.ts` (S-11g/h, spec 021-T013: la subida solo va a la API de Cloudinary por https; cualquier otro destino se rechaza sin abrir conexión) |
+| S-12 | M2 · M8 | `src/__arch__/rules.security.test.ts` (incluye casos negativos en memoria, CA-04; spec 021: S-12n sin copia de seguridad, S-12o R8, S-08b con los permisos bloqueados) |
 | S-13 | M3 · M4 | `src/features/notifications/push.security.test.ts`; el registro del token lo cubren además `usePushRegistration.test.tsx` y `NotificationsBootstrap.test.tsx` |
+| S-14 | M3 · M9 | `src/features/auth/sessionProtection.security.test.tsx` (spec 021-T015): capturas bloqueadas en pantallas sensibles (S-14a), inactividad de 15 min (S-14b, S-14c), bloqueo con biometría opcional (S-14d) y marca solo en el almacén seguro (S-14e). Excepción formal de pinning, root y Play Integrity en `seguridad-nivel.md` |
 
 **Otras pruebas con aserciones de seguridad** (conservadas, no movidas ni debilitadas): `session.test.tsx`, `notifications.integration.test.tsx`, `chat` y `items`. La columna OWASP es cobertura por categoría, **no una certificación**.
 

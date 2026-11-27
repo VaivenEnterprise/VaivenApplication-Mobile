@@ -1,21 +1,20 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSession } from '@/features/auth/useSession';
-import { createListingSuggestion, getAiSuggestionsEnabled } from '@/features/ai-suggestions/api';
-import { aiSuggestionsKeys } from '@/features/ai-suggestions/keys';
+import { createListingSuggestion } from '@/features/ai-suggestions/api';
 import type { ListingSuggestion, SuggestionStatus } from '@/features/ai-suggestions/types';
 import { ApiError } from '@/lib/api/errors';
+import { serverFeaturesQuery } from '@/lib/api/serverFeatures';
 
-/** El interruptor casi no cambia: se consulta una vez y se reutiliza unos minutos. */
-const ENABLED_STALE_MS = 5 * 60 * 1000;
-
-/** `true` si `GET /meta` trae `features.aiSuggestions = true`; mientras carga o si falla, `false`. */
+/**
+ * `true` si `GET /meta` trae `features.aiSuggestions = true`; mientras carga o si falla, `false`.
+ * Comparte la consulta de `/meta` con las recomendaciones (spec 021-T014, B-6).
+ */
 export function useAiSuggestionsEnabled(): boolean {
   const { status } = useSession();
   const query = useQuery({
-    queryKey: aiSuggestionsKeys.enabled,
-    queryFn: ({ signal }) => getAiSuggestionsEnabled(signal),
-    staleTime: ENABLED_STALE_MS,
+    ...serverFeaturesQuery,
+    select: (features) => features.aiSuggestions,
     enabled: status === 'signedIn',
   });
   return query.data === true;

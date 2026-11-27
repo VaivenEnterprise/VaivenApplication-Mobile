@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); fases 3 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; la compilación con R8 en EAS queda por verificar con autorización); fases 4 a 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -70,32 +70,38 @@
   - Nota 2026-11-27: `scripts/contract-lib.cjs` (validador OpenAPI 3.1 sin dependencias nuevas; usa `js-yaml`, ya presente en el lockfile como dependencia transitiva), `scripts/contract-check.mjs` (+ `.test.mjs`, 5 pruebas) y `src/__e2e__/contract.test.ts` (recorrido de `fakeApi` validado contra `../vaiven-backend/api/openapi.yaml`; se omite con aviso si el contrato no está junto al repositorio; `VAIVEN_OPENAPI` cambia la ruta). `npm run test:contract` solo hace `GET` públicos sin parámetros y sin credenciales; con la API caída falla con «la API no responde en …». Pendiente de la persona: correrlo contra el staging real. Los campos que el contrato exige y la app aún no consume quedan en una lista que solo puede encogerse (`HUECOS_CONOCIDOS`).
 
 ### Fase 3 — Endurecimiento de la app (compatible con Expo Go)
-- [ ] **T011** **(NEEDS CLARIFICATION)** Aprobar las dependencias de Expo y registrarlas
+- [x] **T011** **(NEEDS CLARIFICATION)** Aprobar las dependencias de Expo y registrarlas
+  - Cierre 2026-11-27 (D-244): la persona aprobó las tres; instaladas con `npx expo install` (SDK 58: `expo-screen-capture` ~58.0.6, `expo-local-authentication` ~58.0.3, `expo-build-properties` ~58.0.12); justificación en `plan.md` §2 «Dependencias aprobadas».
   - Archivos: `plan.md` (justificación), `memoria.md` (solo anexar), `package.json`
   - Agente: `spec-writer` + **persona** · Depende de: T005
   - Aceptación: aprobación de `expo-screen-capture`, `expo-local-authentication` (opcional) y `expo-build-properties`; cada una con su justificación y su registro; las que no se aprueben quedan fuera y T014/T015 se ajustan
   - Refs: RNF-03 · Art. X
-- [ ] **T012** Permisos y copia de seguridad
+- [x] **T012** Permisos y copia de seguridad
+  - Cierre 2026-11-27 (D-245): `allowBackup: false`, los tres permisos en `blockedPermissions`, `locationAlways*Permission: false` y `microphonePermission: false` en `expo-camera` (sin valor, los plugins agregan sus textos por defecto). `npx expo config --type introspect` lo confirma (CA-06); `cumplimiento.md` lista el manifiesto efectivo; S-12g ahora exige `false`, S-08b fija la lista y S-12n vigila el backup.
   - Archivos: `app.config.ts`, `src/app.config.test.ts`, `docs/play/cumplimiento.md`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
   - Aceptación: CA-06; `allowBackup: false`; `SYSTEM_ALERT_WINDOW`, `READ_EXTERNAL_STORAGE` y `WRITE_EXTERNAL_STORAGE` en `android.blockedPermissions`; sin `NSLocationAlways*` ni micrófono en iOS; `npx expo config --type introspect` lo confirma; `cumplimiento.md` coincide; la regla S-08/S-12 actualiza la lista declarada
   - Refs: RF-11 · M-5
-- [ ] **T013** [P] Subida de imágenes: solo https y solo Cloudinary
+- [x] **T013** [P] Subida de imágenes: solo https y solo Cloudinary
+  - Cierre 2026-11-27 (D-245): `isAllowedUploadUrl` (expresión anclada: `https://api[-región].cloudinary.com/v1_1/...`); el rechazo ocurre antes de crear el `XMLHttpRequest`. S-11g/S-11h con 12 casos negativos (http, otro dominio, dominio parecido, credenciales, puerto, `javascript:`, `file:`, consulta añadida…).
   - Archivos: `src/features/images/cloudinary.ts`, `src/features/images/upload.security.test.ts`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
   - Aceptación: `uploadUrl` se rechaza si no es `https` o no es del dominio de Cloudinary; prueba negativa (URL de otro dominio, `http`, esquema raro); nada se sube en ese caso
   - Refs: RF-12 · B-4
-- [ ] **T014** [P] Sesión sin red y una sola consulta a `/meta`
+- [x] **T014** [P] Sesión sin red y una sola consulta a `/meta`
+  - Cierre 2026-11-27 (D-245): sin red o con 5xx al arrancar, `status` sigue en `loading` con `restoreOffline` y `RestoringScreen` muestra «Sin conexión» con «Reintentar» (y reintenta al volver a primer plano); 401/403 sigue cerrando la sesión; reintentos sin solaparse. `/meta` en una consulta compartida (`src/lib/api/serverFeatures.ts`). Pruebas: `session.test.tsx`, S-04d, `RestoringScreen.test.tsx`, `session.integration.test.tsx` (árbol real) y `serverFeatures.test.tsx`.
   - Archivos: `src/features/auth/session.tsx`, `src/features/ai-suggestions/api.ts`, `src/features/recommendations/api.ts`, pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
   - Aceptación: con tokens guardados y sin red el arranque conserva la sesión (muestra el estado sin conexión, no el login) y un 401/403 sigue cerrándola; `/meta` se consulta una vez y comparte caché; pruebas de ambos
   - Refs: RF-13 · B-5, B-6
-- [ ] **T015** [P] Protección de sesión y pantallas sensibles
+- [x] **T015** [P] Protección de sesión y pantallas sensibles
+  - Cierre 2026-11-27 (D-245): `useSensitiveScreen()` en login, registro, bloqueo, perfil, editar perfil, evidencia y QR; inactividad de 15 min (`INACTIVITY_TIMEOUT_MS`, prop `inactivityTimeoutMs`) que cierra la sesión o, con biometría activada en Perfil, la bloquea; nada nuevo fuera de SecureStore. Pruebas S-14a…S-14e (`sessionProtection.security.test.tsx`), `BiometricUnlockRow.test.tsx` y aviso del login. `ux-audit` ejecutado.
   - Archivos: `src/features/auth/`, pantallas de perfil y de evidencia, `app.config.ts`, pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T011
   - Aceptación: bloqueo de capturas en pantallas sensibles, cierre de sesión por inactividad (tiempo configurable y probado) y, si se aprobó, biometría opcional para volver a entrar; sin guardar nada nuevo fuera de SecureStore; pruebas de seguridad nuevas (S-14…)
   - Refs: RF-14 · A-5
-- [ ] **T016** **(NEEDS CLARIFICATION)** Ofuscación y excepción formal de los controles nativos
+- [x] **T016** **(NEEDS CLARIFICATION)** Ofuscación y excepción formal de los controles nativos
+  - Cierre 2026-11-27 (D-246): R8 y recorte de recursos en las compilaciones release (`production` y `preview`), confirmado con `introspect`; excepción formal en `docs/calidad/seguridad-nivel.md`, aprobada por la persona; `constitution.md` sin cambios. **Pendiente**: compilar con EAS (servicio externo, con autorización) y probar el APK; subir `mapping.txt` a Play.
   - Archivos: `app.config.ts` (`expo-build-properties`), `docs/calidad/seguridad-nivel.md`, `memoria.md` (solo anexar)
   - Agente: `dev-expo` + `spec-writer` + `revisor-constitucion` · Depende de: T011
   - Aceptación: R8 activado en el perfil `production`; `seguridad-nivel.md` explica por qué pinning, detección de root y Play Integrity no se implementan (Art. XIV.2, sin pagos en la app), con el riesgo, el alcance y qué se haría con una enmienda; la persona responsable la aprueba o decide la enmienda; **no se cambia `constitution.md`**

@@ -23,6 +23,7 @@ import { useCountdown } from '@/features/handover/useCountdown';
 import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
 import { colors, radius, sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.handover.qr;
 /** Cada cuánto se pregunta si la otra persona ya escaneó (RF-12). */
@@ -138,6 +139,8 @@ function Show({ bookingId, stage, counterpart }: ShowProps) {
  * evidencia registrada no se genera nada: se pide registrarla primero.
  */
 export function QrScreen({ bookingId, stage }: QrScreenProps) {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
   const query = useBooking(bookingId);
   const booking = query.data;

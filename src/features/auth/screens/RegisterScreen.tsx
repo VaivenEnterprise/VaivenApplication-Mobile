@@ -22,6 +22,7 @@ import { es } from '@/i18n/es-MX';
 import { ApiError } from '@/lib/api/errors';
 import { routes } from '@/lib/routes';
 import { colors, radius, sizes, spacing } from '@/theme';
+import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
 const t = es.auth.register;
 
@@ -48,6 +49,8 @@ function LegalLink({ page, children }: { page: LegalPage; children: string }) {
 
 /** Registro (spec 003 §7.2): datos de la cuenta, mayoría de edad y aceptación de términos. */
 export function RegisterScreen() {
+  // Spec 021-T015 (RF-14, S-14a): pantalla sensible, sin capturas ni grabación.
+  useSensitiveScreen();
   const router = useRouter();
   const { signUp } = useSession();
   const [formError, setFormError] = useState<string | null>(null);
