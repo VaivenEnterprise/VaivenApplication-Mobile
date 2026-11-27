@@ -4,8 +4,11 @@ import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
+  ASISTENTE,
+  archivoDeImport,
   construirMatriz,
   extraerEndpoints,
+  extraerRegistros,
   normalizarRuta,
   prefijoUrl,
   renderizar,
@@ -84,5 +87,38 @@ test('resuelve ayudantes de ruta y primer argumento con comas', () => {
     'GET /bookings/{}/{}',
     'POST /bookings/{}/qr',
     'GET /bookings/{}',
+  ]);
+});
+
+test('extraerRegistros lee los slots.register de un index.ts', () => {
+  const texto =
+    'slots.register(\'chat\', OpenChatButton);\nslots.register("ratingsAndIncidents",  TrustSection );';
+  assert.deepEqual(extraerRegistros(texto), [
+    { slot: 'chat', componente: 'OpenChatButton' },
+    { slot: 'ratingsAndIncidents', componente: 'TrustSection' },
+  ]);
+  assert.deepEqual(extraerRegistros('const x = 1;'), []);
+});
+
+test('archivoDeImport resuelve el archivo del que se importa un componente', () => {
+  const raiz = mkdtempSync(join(tmpdir(), 'slots-'));
+  mkdirSync(join(raiz, 'src', 'features', 'chat'), { recursive: true });
+  writeFileSync(
+    join(raiz, 'src', 'features', 'chat', 'OpenChatButton.tsx'),
+    'export const OpenChatButton = 1;',
+  );
+  const desde = join(raiz, 'src', 'features', 'chat', 'index.ts');
+  const texto = "import { OpenChatButton } from './OpenChatButton';";
+  assert.equal(
+    archivoDeImport(texto, 'OpenChatButton', desde, raiz),
+    join(raiz, 'src', 'features', 'chat', 'OpenChatButton.tsx'),
+  );
+  assert.equal(archivoDeImport(texto, 'Otro', desde, raiz), null);
+});
+
+test('el asistente de proyectos del contrato queda listado con sus dos operaciones', () => {
+  assert.deepEqual(ASISTENTE, [
+    'POST /ai/assistant/messages',
+    'DELETE /ai/assistant/conversations/{}',
   ]);
 });

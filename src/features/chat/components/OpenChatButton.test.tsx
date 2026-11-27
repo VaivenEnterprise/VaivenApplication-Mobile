@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { OpenChatButton } from '@/features/chat/components/OpenChatButton';
 import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
@@ -34,6 +34,10 @@ describe('OpenChatButton', () => {
     const api = installFakeApi({ 'GET /conversations': () => ok({ items: [], nextCursor: null }) });
     await renderButton(null);
     await waitFor(() => expect(api.calls.length).toBeGreaterThan(0));
+    // Spec 021-T008: deja que la respuesta llegue dentro de `act` antes de montar el segundo botón.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    });
     expect(screen.queryByText(t.open)).toBeNull();
     await renderButton(undefined);
     expect(screen.queryByText(t.open)).toBeNull();

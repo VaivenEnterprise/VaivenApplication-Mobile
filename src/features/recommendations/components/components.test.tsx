@@ -8,6 +8,7 @@ import type { Recommendation } from '@/features/recommendations/types';
 import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
 import { failure, installFakeApi, ok, type FakeReply } from '@/test/fakeApi';
+import { reduceMotionSync } from '@/test/fakeA11y';
 
 jest.setTimeout(30_000);
 
@@ -49,7 +50,7 @@ function wrap(children: React.ReactNode) {
 beforeEach(() => {
   mockPush.mockReset();
   // El *skeleton* respeta «reducir movimiento»: así no anima durante la prueba.
-  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(reduceMotionSync(true));
 });
 afterEach(() => jest.restoreAllMocks());
 

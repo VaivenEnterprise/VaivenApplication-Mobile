@@ -39,6 +39,16 @@ export const failure = (status: number, code: string, details: unknown[] = []): 
 
 const API_PREFIX = 'http://api.test/api/v1';
 
+// Peticiones del `fetch` falso aún sin respuesta. Un handler que nunca responde (para probar
+// «cargando») sobre una consulta que no reenvía su `signal` quedaría pendiente para siempre con el
+// temporizador de 10 s de `apiFetch` vivo, y el worker de Jest no terminaría (spec 021-T008). Al
+// acabar cada prueba los aborta el `afterEach` de `jest.setup.ts` (después del `cleanup` de RNTL, que
+// ya desmontó la pantalla). Este módulo a veces se carga dentro de una prueba, donde no se pueden
+// declarar hooks; por eso el registro es global.
+const pendingRequests = ((globalThis as Record<string, unknown>).__fakeApiPending ??= new Set<
+  () => void
+>()) as Set<() => void>;
+
 /** Instala un `fetch` falso. Las claves de `handlers` son «MÉTODO /ruta» (sin query). */
 export function installFakeApi(handlers: Record<string, FakeHandler>): { calls: FakeRequest[] } {
   const calls: FakeRequest[] = [];
@@ -57,7 +67,25 @@ export function installFakeApi(handlers: Record<string, FakeHandler>): { calls: 
     };
     calls.push(request);
     const handler = handlers[`${method} ${path}`];
-    const reply = handler ? await handler(request) : failure(404, 'not_found');
+    // Como el `fetch` real, rechaza con `AbortError` al abortar la señal. Sin esto, un handler que
+    // nunca responde deja vivo el temporizador de 10 s de `apiFetch` (no llega a su `finally`) y el
+    // worker de Jest no termina («worker failed to exit gracefully», spec 021-T008).
+    const signal = init?.signal ?? undefined;
+    let abort: () => void = () => undefined;
+    const aborted = new Promise<never>((_, reject) => {
+      abort = () => reject(new DOMException('Aborted', 'AbortError'));
+      if (signal?.aborted) abort();
+      else signal?.addEventListener('abort', abort, { once: true });
+    });
+    aborted.catch(() => undefined);
+    // Lo que siga sin respuesta al terminar la prueba se aborta (ver `afterEach` abajo).
+    pendingRequests.add(abort);
+    let reply: FakeReply;
+    try {
+      reply = handler ? await Promise.race([handler(request), aborted]) : failure(404, 'not_found');
+    } finally {
+      pendingRequests.delete(abort);
+    }
     return {
       ok: reply.status >= 200 && reply.status < 300,
       status: reply.status,

@@ -8,7 +8,7 @@ Revisión manual hecha el 2026-11-25 al leer las pruebas que el script no atribu
 
 **Columna «Seguridad»**
 
-Las pruebas de seguridad son **transversales** (cliente de API, sesión, configuración, imágenes, push y reglas estáticas), no una por pantalla; por eso ninguna `*.security.test.*` importa una pantalla. «Sin prueba» en esa columna significa «sin suite de seguridad propia de la pantalla», justificado así:
+Las pruebas de seguridad son **transversales** (cliente de API, sesión, configuración, imágenes, push y reglas estáticas) y, desde 021-T009, las cinco pantallas con entradas sensibles (inicio de sesión, registro, editar perfil, chat e incidencias) tienen además suite propia (`*.security.test.tsx`). «Sin prueba» en esa columna significa «sin suite de seguridad propia de la pantalla», justificado así:
 
 | Pantallas | Controles que las cubren por capa |
 |---|---|
@@ -24,10 +24,10 @@ Las pruebas de seguridad son **transversales** (cliente de API, sesión, configu
 
 - **Unitarias → T003:** ninguna pantalla con endpoints se quedó sin unitaria. `RestoringScreen` y `SuspendedScreen` ya tienen prueba propia, aunque no consumen endpoints; `HomeScreen`, las tres de incidencias y `EditItemScreen` se apoyan en archivos compartidos con bloques propios.
 - **Integración → T006:** el único hueco detectado por importación es `RegisterScreen`, cubierto por navegación en `session.integration.test.tsx`. Incidencias, inicio y proyecto usan integraciones compartidas (`trust`, `session` y `search`); perfil tiene `profile.integration.test.tsx` propia.
-- **Seguridad → T005:** las 24 pantallas con endpoints sin suite `*.security.test.*` propia quedan cubiertas por capa con S-01…S-13 según la tabla anterior; «sin prueba» no significa «sin control».
+- **Seguridad → T005 y T009:** las pantallas con endpoints sin suite `*.security.test.*` propia quedan cubiertas por capa con S-01…S-13 según la tabla anterior; «sin prueba» no significa «sin control».
 
 **No medido en esta matriz:** la suite de dispositivo (`.maestro/`) y la verificación manual en Expo Go.
 
-**Alcance de la matriz (spec 021-T004)**
+**Alcance de la matriz (spec 021-T004, ampliado en 021-T009)**
 
-La matriz inventaría los endpoints de las rutas de cada pantalla (`request(...)` literal en su feature). **No** incluye los endpoints que consumen los *slots* (puntos de extensión que otras features montan dentro de una pantalla) ni `/ai/assistant/*` (el asistente de proyectos del contrato no se consume en la app). Por eso «sin hueco» significa «sin hueco entre lo inventariado», no cobertura total del contrato. La spec 021-T009 amplía la matriz con los *slots* y el asistente, y 021-T031 inventaría las 69 operaciones de `openapi.yaml` en `docs/calidad/contrato-endpoints.md`.
+La matriz incluye los endpoints que llegan por *slots* (marcados *(slot)*): los registrados con `slots.register(...)` en el detalle de la reserva y los que la ruta conecta con props `render…`. Los endpoints `/ai/assistant/*` (asistente de proyectos) figuran en su sección y se marcan «no consumido» mientras ninguna pantalla los use.

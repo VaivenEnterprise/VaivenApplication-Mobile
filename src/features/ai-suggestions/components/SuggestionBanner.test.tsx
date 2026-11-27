@@ -3,12 +3,13 @@ import { AccessibilityInfo } from 'react-native';
 import { SuggestionBanner } from '@/features/ai-suggestions/components/SuggestionBanner';
 import type { SuggestionStatus } from '@/features/ai-suggestions/types';
 import { es } from '@/i18n/es-MX';
+import { reduceMotionSync } from '@/test/fakeA11y';
 
 const t = es.aiSuggestions;
 
 // El esqueleto de carga anima en bucle; con «reducir movimiento» queda quieto y la prueba no espera.
 beforeEach(() => {
-  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(reduceMotionSync(true));
 });
 afterEach(() => jest.restoreAllMocks());
 const SUGGESTION = { title: 'Taladro inalámbrico 18 V', category: 'herramientas_electricas' };

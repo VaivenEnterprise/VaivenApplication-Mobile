@@ -6,7 +6,7 @@
 //   --salida <ruta>                              dónde guardar el conteo (por defecto docs/calidad/conteo.json)
 // Nunca informa lo que no corrió: si una suite no se pudo ejecutar, termina con código 1.
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -80,11 +80,46 @@ export function veredicto(resumen) {
   return resumen.noEjecutadas.length === 0 && resumen.total.fallaron === 0;
 }
 
+/** Archivos de código de la app (sin pruebas ni `.d.ts`) bajo `src/`: los que podrían medirse. */
+export function archivosDeCodigo(raiz, leerDir = (d) => readdirSync(d, { withFileTypes: true })) {
+  const salida = [];
+  const recorrer = (dir) => {
+    for (const e of leerDir(dir)) {
+      const ruta = join(dir, e.name);
+      if (e.isDirectory()) recorrer(ruta);
+      else if (
+        /\.(ts|tsx)$/.test(e.name) &&
+        !/\.test\.[jt]sx?$/.test(e.name) &&
+        !e.name.endsWith('.d.ts')
+      )
+        salida.push(relative(raiz, ruta).replace(/\\/g, '/'));
+    }
+  };
+  recorrer(join(raiz, 'src'));
+  return salida;
+}
+
+/** Cuántos archivos mide la cobertura de cuántos existen (spec 021-T007, CA-05). */
+export function archivosMedidos(summary, existentes, raiz = '') {
+  const medidos = Object.keys(summary)
+    .filter((k) => k !== 'total')
+    .map((k) => (raiz ? relative(raiz, k) : k).replace(/\\/g, '/'));
+  const existe = new Set(existentes);
+  const dentro = medidos.filter((m) => existe.has(m));
+  return {
+    medidos: dentro.length,
+    existentes: existentes.length,
+    sinCodigo: medidos.length - dentro.length,
+  };
+}
+
 function coberturaDe(raiz) {
   const f = join(raiz, 'coverage', 'coverage-summary.json');
   if (!existsSync(f)) return undefined;
-  const t = JSON.parse(readFileSync(f, 'utf8')).total;
-  return `sentencias ${t.statements.pct} %, ramas ${t.branches.pct} %, funciones ${t.functions.pct} %, líneas ${t.lines.pct} %`;
+  const summary = JSON.parse(readFileSync(f, 'utf8'));
+  const t = summary.total;
+  const a = archivosMedidos(summary, archivosDeCodigo(raiz), raiz);
+  return `sentencias ${t.statements.pct} %, ramas ${t.branches.pct} %, funciones ${t.functions.pct} %, líneas ${t.lines.pct} % — archivos medidos: ${a.medidos} de ${a.existentes} (${((a.medidos / a.existentes) * 100).toFixed(1)} %)`;
 }
 
 function main(argv) {

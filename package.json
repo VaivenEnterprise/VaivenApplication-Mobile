@@ -13,7 +13,8 @@
     "test": "jest --coverage",
     "test:report": "node scripts/test-report.mjs",
     "test:security": "jest --testPathPatterns=\\.security\\.test\\. --coverage=false",
-    "test:scripts": "node --test scripts/test-report.test.mjs scripts/screens-report.test.mjs scripts/device-tests.test.mjs",
+    "test:scripts": "node --test scripts/test-report.test.mjs scripts/screens-report.test.mjs scripts/device-tests.test.mjs scripts/contract-check.test.mjs",
+    "test:contract": "node scripts/contract-check.mjs",
     "test:device": "node scripts/device-tests.mjs",
     "check": "npm run typecheck && npm run lint && npm test"
   },

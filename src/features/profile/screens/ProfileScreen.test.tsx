@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { ProfileScreen } from '@/features/profile/screens/ProfileScreen';
 import { es } from '@/i18n/es-MX';
@@ -27,13 +27,20 @@ jest.mock('@/features/auth/useSession', () => ({
 
 const t = es.profile;
 
-function renderProfile(props: Parameters<typeof ProfileScreen>[0] = {}) {
+const clients: QueryClient[] = [];
+
+// Spec 021-T008: espera a que termine la consulta de la cuenta antes de seguir, para que la
+// notificación diferida de React Query no llegue fuera de `act(...)` cuando la prueba ya terminó.
+async function renderProfile(props: Parameters<typeof ProfileScreen>[0] = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(
+  clients.push(client);
+  const result = await render(
     <QueryClientProvider client={client}>
       <ProfileScreen {...props} />
     </QueryClientProvider>,
   );
+  await waitFor(() => expect(client.isFetching()).toBe(0));
+  return result;
 }
 
 const meApi = { 'GET /me': () => ok(fakeUser) };
@@ -45,7 +52,12 @@ beforeEach(() => {
   mockSetUser.mockReset();
 });
 
-afterEach(() => {
+afterEach(async () => {
+  // Vacía las notificaciones diferidas de React Query dentro de `act` antes de limpiar.
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+  clients.splice(0).forEach((c) => c.clear());
   jest.restoreAllMocks();
 });
 

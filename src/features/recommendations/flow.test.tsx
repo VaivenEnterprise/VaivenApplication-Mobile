@@ -10,6 +10,7 @@ import { es } from '@/i18n/es-MX';
 import { routes } from '@/lib/routes';
 import { failure, fakeUser, installFakeApi, ok, type FakeReply } from '@/test/fakeApi';
 import { fakeCategories, fakeItem } from '@/test/fakeItems';
+import { reduceMotionSync } from '@/test/fakeA11y';
 
 // Prueba del flujo de punta a punta (T006): Explorar, el detalle y el Perfil reales con los *slots*
 // de recomendaciones conectados y la API simulada. Cubre CA-01 a CA-04.
@@ -104,7 +105,7 @@ beforeEach(() => {
     canAskAgain: true,
     status: 'denied',
   } as never);
-  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(reduceMotionSync(true));
 });
 afterEach(() => jest.restoreAllMocks());
 

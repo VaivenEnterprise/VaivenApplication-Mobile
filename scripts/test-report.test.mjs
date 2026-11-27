@@ -1,6 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { clasificar, resumir, formatear, veredicto } from './test-report.mjs';
+import {
+  archivosDeCodigo,
+  archivosMedidos,
+  clasificar,
+  formatear,
+  resumir,
+  veredicto,
+} from './test-report.mjs';
+import { fileURLToPath } from 'node:url';
 
 test('clasifica por nombre de archivo', () => {
   assert.equal(clasificar('src/lib/api/client.test.ts'), 'unitarias');
@@ -77,4 +85,49 @@ test('un caso fallido hace fallar el veredicto', () => {
     ],
   };
   assert.equal(veredicto(resumir(j, '/r')), false);
+});
+
+test('archivosDeCodigo lista el código de src sin pruebas ni .d.ts', () => {
+  const arbol = {
+    src: [
+      { name: 'a.ts', isDirectory: () => false },
+      { name: 'a.test.ts', isDirectory: () => false },
+      { name: 'tipos.d.ts', isDirectory: () => false },
+      { name: 'features', isDirectory: () => true },
+    ],
+    'src/features': [
+      { name: 'hooks.ts', isDirectory: () => false },
+      { name: 'Pantalla.tsx', isDirectory: () => false },
+      { name: 'Pantalla.test.tsx', isDirectory: () => false },
+      { name: 'README.md', isDirectory: () => false },
+    ],
+  };
+  const leerDir = (d) => arbol[d.replace(/\\/g, '/').replace(/^\/r\//, '')];
+  assert.deepEqual(archivosDeCodigo('/r', leerDir).sort(), [
+    'src/a.ts',
+    'src/features/Pantalla.tsx',
+    'src/features/hooks.ts',
+  ]);
+});
+
+test('archivosMedidos cuenta cuántos archivos mide la cobertura de cuántos existen', () => {
+  const existentes = ['src/a.ts', 'src/features/hooks.ts', 'src/features/Pantalla.tsx'];
+  const summary = {
+    total: {},
+    '/r/src/a.ts': {},
+    '/r/src/features/hooks.ts': {},
+    '/r/src/fuera.ts': {},
+  };
+  assert.deepEqual(archivosMedidos(summary, existentes, '/r'), {
+    medidos: 2,
+    existentes: 3,
+    sinCodigo: 1,
+  });
+});
+
+test('el repositorio real tiene cientos de archivos de código y los hooks están entre ellos', () => {
+  const raiz = fileURLToPath(new URL('..', import.meta.url));
+  const archivos = archivosDeCodigo(raiz);
+  assert.ok(archivos.length > 200);
+  assert.ok(archivos.includes('src/features/auth/session.tsx'));
 });

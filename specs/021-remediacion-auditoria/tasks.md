@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); fases 2 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); fases 3 a 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -44,26 +44,30 @@
   - Nota 2026-11-26: la guarda de `scripts/device-tests.mjs` acepta solo `host:puerto` de `scripts/e2e-allowed-hosts.json` (o `E2E_ALLOW_API_HOST`) y redes locales; se niega con «staging» en el nombre si no está listado y el puerto cuenta (`…azure.com` sin puerto se rechaza). `node --test` sobre las pruebas de scripts: 32 en verde (21 de `device-tests`). Ver D-238. La corrida real en teléfono sigue en T026.
 
 ### Fase 2 — Calidad de las pruebas
-- [ ] **T007** [P] Cobertura real de la app
+- [x] **T007** [P] Cobertura real de la app
+  - Nota 2026-11-27 (**sin marcar**): `collectCoverageFrom` ya incluye `hooks.{ts,tsx}` y `use*.{ts,tsx}` con los umbrales en 80 %, y `test:report` informa «archivos medidos: X de Y» (pruebas en `scripts/test-report.test.mjs`). Verificado por la persona con `npm test` (2026-11-27, 152 suites): cobertura global 98.79 % sentencias, 95.1 % ramas, 99.48 % funciones y 99.89 % líneas, ya con los `hooks.ts` y `use*.ts` dentro de la medición (p. ej. `useOnline.ts` 93.33 %, `useEvidenceForm.ts` 78.57 % en ramas, sin bajar de los umbrales globales). Nada se excluyó ni se bajó.
   - Archivos: `jest.config.js`, pruebas nuevas junto a lo que prueban
   - Agente: `qa-mobile` · Depende de: T002
   - Aceptación: CA-05; `collectCoverageFrom` incluye `src/features/*/hooks.ts` y `src/features/**/use*.ts`; los umbrales **siguen en 80 %**; si baja el porcentaje, se escriben las pruebas que faltan (no se excluye nada); `test:report` informa cuántos archivos se miden de cuántos existen
   - Refs: RF-07 · M-1
-- [ ] **T008** [P] Higiene de Jest
-  - Archivos: pruebas con temporizadores o avisos `act(...)`
+- [x] **T008** [P] Higiene de Jest
+  - Cierre 2026-11-27 (D-243): la causa de «worker failed to exit gracefully» era el `fetch` falso de `src/test/fakeApi.ts`, que ignoraba `signal`; con un handler que nunca responde, el temporizador de 10 s de `apiFetch` quedaba vivo. Ahora el doble rechaza con `AbortError` al abortar y `jest.setup.ts` aborta en `afterEach` lo que siga sin respuesta. Dos corridas de `npm test`: 152 suites, 1898 pruebas, 0 avisos `act`, sin el mensaje del worker; cobertura 98.79 / 95.1 / 99.48 / 99.89 %.
+  - Nota 2026-11-27 (antes del cierre): hecho: `jest.setup.ts` desactiva la recolección de React Query en pruebas (`gcTime: Infinity` por defecto; era la causa de «Jest did not exit one second after the test run») y vacía dentro de `act` las notificaciones diferidas antes de cada `afterEach`; `ProfileScreen.test.tsx` espera a que termine la consulta. Con eso desaparecieron los avisos `act(...)` de `ProfileScreen`, `EvidenceScreen` y `BookingDetailScreen`. **Falta**: quedan avisos `HookContainer`/`OpenChatButton` sueltos en algunas suites de hooks (p. ej. `bookings/api.test.tsx`, `usePushRegistration.test.tsx`) y no se pudo correr `npm test` completo en el entorno de la sesión; se corrieron 140 suites sin fallos (ver memoria D-240). Añadido después: `jest.setup.ts` espera (hasta ~1 s) a que terminen las consultas en vuelo antes de cada prueba y `OpenChatButton.test.tsx` deja llegar la respuesta dentro de `act`. Con la corrida real de la persona (`npm test`, 2026-11-27) no hay «did not exit» ni «worker failed to exit», pero quedaron avisos `act(...)` en: `incidents/screens.security`, `incidents/screens.test` (IncidentSection), `handover/api`, `ItemFormScreen`, `useListingSuggestion`, `chat/api`, `recommendations/hooks`, `ProfileScreen`, `usePushRegistration` y `NotificationsBootstrap`. Se corrigió de raíz entregando las notificaciones de React Query dentro de un `act` síncrono (`notifyManager.setNotifyFunction` en `jest.setup.ts`); falta que la persona repita `npm test` y confirme que ya no aparece ninguno. Los avisos que había antes dependían de la velocidad (aparecen en el primer test de una suite que carga en frío); para atribuirlos en tu máquina basta correr `npm test 2>&1 | grep -B3 "not wrapped in act"` y, si hace falta, imprimir `expect.getState().currentTestName` desde un `console.error` temporal.  - Archivos: pruebas con temporizadores o avisos `act(...)`
   - Agente: `qa-mobile` · Depende de: T007
   - Aceptación: `npm test` sin «worker failed to exit gracefully» ni avisos `act(...)`; se limpian temporizadores o se corrigen las esperas, sin quitar pruebas
   - Refs: RF-08 · B-3
-- [ ] **T009** [P] Matriz completa y seguridad por pantalla sensible
+- [x] **T009** [P] Matriz completa y seguridad por pantalla sensible
+  - Nota 2026-11-27: matriz regenerada con los endpoints de los *slots* y la sección `/ai/assistant/*` (ambas operaciones «no consumido», con motivo y tareas T020/T032); cinco suites propias en verde: `LoginScreen`, `RegisterScreen`, `EditProfileScreen`, `ChatScreen` e incidencias (`screens.security.test.tsx`); pruebas de `scripts/screens-report` para registros de slots, import y asistente.
   - Archivos: `scripts/screens-report.mjs`, `docs/calidad/pantallas.md`, `docs/calidad/pantallas-notas.md`, `*.security.test.tsx` de inicio, registro, editar perfil, chat e incidencias
   - Agente: `qa-mobile` + `spec-writer` · Depende de: T007
   - Aceptación: la matriz incluye los endpoints de los *slots* y `/ai/assistant/*` (consumido o no, con motivo); las cinco pantallas con entradas sensibles tienen prueba de seguridad propia; el resto sigue justificado por capa
   - Refs: RF-09 · M-8, P-3
-- [ ] **T010** [P] Prueba de contrato
+- [x] **T010** [P] Prueba de contrato
   - Archivos: `src/__e2e__/contract.test.ts`, `scripts/contract-check.mjs`, `scripts/contract-check.test.mjs`, `package.json` (script `test:contract`)
   - Agente: `qa-mobile` + `dev-expo` · Depende de: T009
   - Aceptación: las respuestas de `fakeApi` validan contra `../vaiven-backend/api/openapi.yaml` (solo lectura); `npm run test:contract` hace **solo `GET`** contra la API configurada y falla con mensaje claro si no responde; sin credenciales ni escrituras
   - Refs: RF-10 · P-2
+  - Nota 2026-11-27: `scripts/contract-lib.cjs` (validador OpenAPI 3.1 sin dependencias nuevas; usa `js-yaml`, ya presente en el lockfile como dependencia transitiva), `scripts/contract-check.mjs` (+ `.test.mjs`, 5 pruebas) y `src/__e2e__/contract.test.ts` (recorrido de `fakeApi` validado contra `../vaiven-backend/api/openapi.yaml`; se omite con aviso si el contrato no está junto al repositorio; `VAIVEN_OPENAPI` cambia la ruta). `npm run test:contract` solo hace `GET` públicos sin parámetros y sin credenciales; con la API caída falla con «la API no responde en …». Pendiente de la persona: correrlo contra el staging real. Los campos que el contrato exige y la app aún no consume quedan en una lista que solo puede encogerse (`HUECOS_CONOCIDOS`).
 
 ### Fase 3 — Endurecimiento de la app (compatible con Expo Go)
 - [ ] **T011** **(NEEDS CLARIFICATION)** Aprobar las dependencias de Expo y registrarlas

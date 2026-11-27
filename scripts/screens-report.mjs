@@ -219,6 +219,27 @@ export function rutasContrato(textoYaml) {
   return set;
 }
 
+/** Operaciones del asistente de proyectos del contrato: se declaran aunque la app no las consuma (021-T009). */
+export const ASISTENTE = ['POST /ai/assistant/messages', 'DELETE /ai/assistant/conversations/{}'];
+
+/** `slots.register('chat', Componente)` → [{ slot: 'chat', componente: 'Componente' }]. */
+export function extraerRegistros(texto) {
+  const out = [];
+  const re = /\bslots\.register\(\s*['"](\w+)['"]\s*,\s*(\w+)\s*\)/g;
+  let m;
+  while ((m = re.exec(texto)) !== null) out.push({ slot: m[1], componente: m[2] });
+  return out;
+}
+
+/** Ruta del archivo del que `texto` (en `desde`) importa `nombre`. */
+export function archivoDeImport(texto, nombre, desde, raiz) {
+  const re = new RegExp(
+    `import\\s*(?:type\\s*)?\\{[^}]*\\b${nombre}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+  );
+  const spec = re.exec(texto)?.[1];
+  return spec ? resolverImport(spec, desde, raiz) : null;
+}
+
 export function construirMatriz(raiz, contratoTexto) {
   const src = join(raiz, 'src');
   const cache = new Map();
@@ -246,6 +267,22 @@ export function construirMatriz(raiz, contratoTexto) {
     for (const i of imps) for (const f of cierre(i, raiz, cache)) vistos.add(f);
     return vistos;
   }
+  // Componentes que otras features registran en los *slots* de una pantalla (`slots.register`).
+  const registrados = [];
+  for (const idx of listar(join(src, 'features'), (p) =>
+    /\/features\/[^/]+\/index\.ts$/.test(p.replace(/\\/g, '/')),
+  )) {
+    const texto = readFileSync(idx, 'utf8');
+    for (const { slot, componente } of extraerRegistros(texto)) {
+      const archivo = archivoDeImport(texto, componente, idx, raiz);
+      if (archivo) registrados.push({ slot, componente, archivo });
+    }
+  }
+  const endpointsDe = (archivos) => {
+    const s = new Set();
+    for (const g of archivos) for (const e of extraerEndpoints(readFileSync(g, 'utf8'))) s.add(e);
+    return s;
+  };
   const contrato = contratoTexto ? rutasContrato(contratoTexto) : null;
   const rel = (p) => relative(raiz, p).replace(/\\/g, '/');
   const filas = pantallas.sort().map((f) => {
@@ -265,6 +302,26 @@ export function construirMatriz(raiz, contratoTexto) {
       })
       .map(rel);
     const prefijos = susRutas.map(prefijoUrl).filter(Boolean);
+    // Endpoints que llegan por *slots*: lo que otras features registran en la pantalla y lo que la
+    // ruta que la monta le conecta (cota superior, como el resto de la matriz).
+    const viaSlots = new Set();
+    const textoPantalla = readFileSync(f, 'utf8');
+    if (/\bslots\.registered\(/.test(textoPantalla)) {
+      for (const r of registrados)
+        for (const e of endpointsDe(cierrePantalla(r.archivo, raiz, new Map()))) viaSlots.add(e);
+    }
+    for (const r of susRutas) {
+      const abs = join(raiz, r);
+      const textoRuta = readFileSync(abs, 'utf8');
+      // Solo las rutas que conectan *slots* por propiedades `render…` (renderActions, etc.).
+      if (!/\brender\w+\s*=/.test(textoRuta)) continue;
+      for (const spec of importsDe(textoRuta)) {
+        const imp = resolverImport(spec, abs, raiz);
+        if (!imp || imp === f || ES_PRUEBA.test(imp) || featureDe(rel(imp)) === null) continue;
+        for (const e of endpointsDe(cierrePantalla(imp, raiz, new Map()))) viaSlots.add(e);
+      }
+    }
+    for (const e of endpoints) viaSlots.delete(e);
     for (const t of pruebas) {
       if (
         t.cierre.has(f) ||
@@ -281,6 +338,7 @@ export function construirMatriz(raiz, contratoTexto) {
       pantalla: rel(f),
       rutas: susRutas,
       endpoints: [...endpoints].sort(),
+      viaSlots: [...viaSlots].sort(),
       pruebas: porTipo,
     };
   });
@@ -297,8 +355,14 @@ export function construirMatriz(raiz, contratoTexto) {
       }
     }
   }
+  const consumidos = new Set(filas.flatMap((f) => [...f.endpoints, ...f.viaSlots]));
+  for (const g of listar(src, (p) => noPrueba(p) && !p.replace(/\\/g, '/').includes('/test/')))
+    for (const e of extraerEndpoints(readFileSync(g, 'utf8'))) consumidos.add(e);
+  const asistente = ASISTENTE.map((op) => ({ operacion: op, consumida: consumidos.has(op) }));
   return {
     filas,
+    asistente,
+    slotsRegistrados: registrados.map((r) => `${r.slot} ← ${r.componente}`).sort(),
     rutas: rutasFilas,
     contratoComprobado: contrato !== null,
     fueraDelContrato: faltan,
@@ -328,7 +392,11 @@ export function renderizar(m, fecha) {
     const rutas = f.rutas.length
       ? f.rutas.map((r) => `\`${r.replace(/^src\/app\//, '')}\``).join(', ')
       : '—';
-    const eps = f.endpoints.length ? f.endpoints.map((e) => `\`${e}\``).join('<br>') : '—';
+    const todos = [
+      ...f.endpoints.map((e) => `\`${e}\``),
+      ...f.viaSlots.map((e) => `\`${e}\` *(slot)*`),
+    ];
+    const eps = todos.length ? todos.join('<br>') : '—';
     L.push(
       `| \`${basename(f.pantalla)}\` | ${rutas} | ${eps} | ${celda(f.pruebas.unitarias)} | ${celda(f.pruebas['integración'])} | ${celda(f.pruebas.seguridad)} |`,
     );
@@ -338,7 +406,7 @@ export function renderizar(m, fecha) {
     L.push(
       `| \`${r.ruta.replace(/^src\/app\//, '')}\` | ${r.pantalla ? `\`${basename(r.pantalla)}\`` : '— (sin pantalla propia)'} |`,
     );
-  const con = m.filas.filter((f) => f.endpoints.length > 0);
+  const con = m.filas.filter((f) => f.endpoints.length > 0 || f.viaSlots.length > 0);
   const huecos = (tipo) =>
     con.filter((f) => f.pruebas[tipo].length === 0).map((f) => basename(f.pantalla, '.tsx'));
   L.push('', '## Huecos (pantallas con endpoints)', '');
@@ -354,6 +422,23 @@ export function renderizar(m, fecha) {
   L.push(
     `- **Sin endpoints y sin prueba unitaria:** ${sinEndpoints.length === 0 ? 'ninguna' : sinEndpoints.join(', ')}`,
   );
+  L.push('', '## Slots y asistente de proyectos (spec 021-T009)', '');
+  L.push(
+    'Los endpoints marcados *(slot)* llegan por los puntos de extensión: lo que otras features registran con `slots.register(...)` en el detalle de la reserva y lo que la ruta que monta la pantalla le conecta (`renderActions`, `renderOwnerExtras`, `renderFormExtras`…). Es una cota superior.',
+    '',
+  );
+  if (m.slotsRegistrados.length > 0) {
+    L.push('Registros de *slots*:', '');
+    for (const r of m.slotsRegistrados) L.push(`- \`${r}\``);
+    L.push('');
+  }
+  L.push('Asistente de proyectos (`/ai/assistant/*`):', '');
+  for (const a of m.asistente)
+    L.push(
+      a.consumida
+        ? `- \`${a.operacion}\`: **consumido** por la app.`
+        : `- \`${a.operacion}\`: **no consumido**; está en el contrato pero la app no lo llama. Decisión pendiente (spec 021, T020 y T032): implementarlo o declararlo fuera de alcance de la 014.`,
+    );
   L.push('', '## Contraste con el contrato del backend', '');
   if (!m.contratoComprobado)
     L.push('No ejecutado: no se encontró `../vaiven-backend/api/openapi.yaml`.');

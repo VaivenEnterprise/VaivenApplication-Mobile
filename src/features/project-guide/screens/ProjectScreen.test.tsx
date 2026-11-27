@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import * as Location from 'expo-location';
 import { ProjectScreen } from '@/features/project-guide/screens/ProjectScreen';
 import { es } from '@/i18n/es-MX';
@@ -34,15 +34,30 @@ const permissionOf = (granted: boolean, canAskAgain = true) =>
   ({ granted, canAskAgain, status: granted ? 'granted' : 'denied' }) as never;
 const ORIGIN = { lat: 19.4326, lng: -99.1332 };
 
+/** Promesa que entrega su valor de inmediato: el estado cambia dentro del `act` abierto al montar. */
+const now =
+  <T,>(value: T) =>
+  () =>
+    ({
+      then: (done: (v: T) => unknown) => {
+        done(value);
+        return Promise.resolve();
+      },
+    }) as unknown as Promise<T>;
+
 function grantLocation() {
-  jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue(permissionOf(true));
-  jest.mocked(Location.requestForegroundPermissionsAsync).mockResolvedValue(permissionOf(true));
-  jest.mocked(Location.getCurrentPositionAsync).mockResolvedValue({
-    coords: { latitude: ORIGIN.lat, longitude: ORIGIN.lng },
-  } as never);
+  jest.mocked(Location.getForegroundPermissionsAsync).mockImplementation(now(permissionOf(true)));
+  jest
+    .mocked(Location.requestForegroundPermissionsAsync)
+    .mockImplementation(now(permissionOf(true)));
+  jest
+    .mocked(Location.getCurrentPositionAsync)
+    .mockImplementation(now({ coords: { latitude: ORIGIN.lat, longitude: ORIGIN.lng } } as never));
 }
 function denyLocation() {
-  jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue(permissionOf(false, false));
+  jest
+    .mocked(Location.getForegroundPermissionsAsync)
+    .mockImplementation(now(permissionOf(false, false)));
 }
 
 const hit = (id: string, over: Record<string, unknown> = {}) => ({
@@ -83,13 +98,28 @@ beforeEach(() => {
 });
 afterEach(() => jest.restoreAllMocks());
 
-function renderScreen(id = 'colgar-un-cuadro') {
+/** Pulsa y deja terminar lo que el gesto encadena (permiso, posición) dentro de `act`. */
+async function press(element: Parameters<typeof fireEvent.press>[0]) {
+  await act(async () => {
+    await fireEvent.press(element);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
+async function renderScreen(id = 'colgar-un-cuadro') {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(
+  const view = await render(
     <QueryClientProvider client={client}>
       <ProjectScreen id={id} />
     </QueryClientProvider>,
   );
+  // Permiso → efecto → posición: cada eslabón se deja terminar dentro de `act`.
+  for (let i = 0; i < 8; i += 1) {
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 15));
+    });
+  }
+  return view;
 }
 
 describe('ProjectScreen · herramientas y mapa', () => {
@@ -154,7 +184,7 @@ describe('ProjectScreen · herramientas y mapa', () => {
     });
     await renderScreen();
     expect(await screen.findByText(t.nobody)).toBeTruthy();
-    await fireEvent.press(screen.getByLabelText(`${t.widenA11y}: Nivel`));
+    await press(screen.getByLabelText(`${t.widenA11y}: Nivel`));
     expect(await screen.findByText('Dueño n9 · ~6.1 km')).toBeTruthy();
     const widened = api.calls.filter((c) => new URLSearchParams(c.query).get('radiusKm') === '10');
     expect(widened).toHaveLength(1);
@@ -172,7 +202,7 @@ describe('ProjectScreen · herramientas y mapa', () => {
       'GET /me/bookings': noBookings,
     });
     await renderScreen();
-    await fireEvent.press(await screen.findByLabelText(`${t.widenA11y}: Nivel`));
+    await press(await screen.findByLabelText(`${t.widenA11y}: Nivel`));
     await waitFor(() => expect(screen.queryByLabelText(`${t.widenA11y}: Nivel`)).toBeNull());
     expect(await screen.findByText(t.nobody)).toBeTruthy();
   });
@@ -193,7 +223,7 @@ describe('ProjectScreen · herramientas y mapa', () => {
     });
     await renderScreen();
     expect(await screen.findByText('Dueño t1 · ~300 m')).toBeTruthy();
-    await fireEvent.press(await screen.findByText(t.retry));
+    await press(await screen.findByText(t.retry));
     expect(await screen.findByText('Dueño n1 · ~800 m')).toBeTruthy();
   });
 
@@ -215,7 +245,7 @@ describe('ProjectScreen · fila y pin sincronizados (CA-10)', () => {
     grantLocation();
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByLabelText('Herramienta 2: Nivel, ~800 m'));
+    await press(await screen.findByLabelText('Herramienta 2: Nivel, ~800 m'));
     expect(
       screen.getByLabelText('Herramienta 2: Nivel, ~800 m').props.accessibilityState.selected,
     ).toBe(true);
@@ -233,7 +263,7 @@ describe('ProjectScreen · fila y pin sincronizados (CA-10)', () => {
     grantLocation();
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
+    await press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
     expect(
       screen.getByLabelText('Herramienta 1: Taladro, ~300 m').props.accessibilityState.selected,
     ).toBe(true);
@@ -244,11 +274,11 @@ describe('ProjectScreen · fila y pin sincronizados (CA-10)', () => {
     grantLocation();
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
-    await fireEvent.press(within(screen.getByTestId('bottom-sheet')).getByText(t.request));
+    await press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
+    await press(within(screen.getByTestId('bottom-sheet')).getByText(t.request));
     expect(mockPush).toHaveBeenCalledWith(routes.request('t1'));
-    await fireEvent.press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
-    await fireEvent.press(within(screen.getByTestId('bottom-sheet')).getByText(t.viewItem));
+    await press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
+    await press(within(screen.getByTestId('bottom-sheet')).getByText(t.viewItem));
     expect(mockPush).toHaveBeenCalledWith(routes.item('t1'));
   });
 });
@@ -263,14 +293,14 @@ describe('ProjectScreen · paso a paso (CA-11)', () => {
     expect(finish()).toBe(true);
     expect(screen.getByText(`0 ${t.stepOf} 3`)).toBeTruthy();
     const steps = es.projects.items['colgar-un-cuadro'].steps;
-    await fireEvent.press(screen.getByLabelText(`${t.markDone}: ${steps[0].title}`));
-    await fireEvent.press(screen.getByLabelText(`${t.markDone}: ${steps[1].title}`));
+    await press(screen.getByLabelText(`${t.markDone}: ${steps[0].title}`));
+    await press(screen.getByLabelText(`${t.markDone}: ${steps[1].title}`));
     expect(finish()).toBe(true);
     expect(screen.getByText(`2 ${t.stepOf} 3`)).toBeTruthy();
-    await fireEvent.press(screen.getByLabelText(`${t.markDone}: ${steps[2].title}`));
+    await press(screen.getByLabelText(`${t.markDone}: ${steps[2].title}`));
     expect(finish()).toBeFalsy();
     // Desmarcar vuelve a deshabilitarlo.
-    await fireEvent.press(screen.getByLabelText(`${t.unmarkDone}: ${steps[1].title}`));
+    await press(screen.getByLabelText(`${t.unmarkDone}: ${steps[1].title}`));
     expect(finish()).toBe(true);
     expect(
       screen.getByLabelText(`${es.bookings.guide.progressLabel}`).props.accessibilityValue.now,
@@ -285,7 +315,7 @@ describe('ProjectScreen · paso a paso (CA-11)', () => {
     expect(await screen.findByText(steps[0].text)).toBeTruthy();
     expect(screen.getByText(`${t.tip}: ${steps[0].tip}`)).toBeTruthy();
     expect(screen.queryByText(steps[1].text)).toBeNull();
-    await fireEvent.press(screen.getByLabelText(`${t.markDone}: ${steps[0].title}`));
+    await press(screen.getByLabelText(`${t.markDone}: ${steps[0].title}`));
     expect(screen.getByText(t.done)).toBeTruthy();
     expect(screen.queryByText(steps[0].text)).toBeNull();
     expect(screen.getByText(steps[1].text)).toBeTruthy();
@@ -297,13 +327,13 @@ describe('ProjectScreen · paso a paso (CA-11)', () => {
     await renderScreen();
     await screen.findByText('Dueño t1 · ~300 m');
     for (const step of es.projects.items['colgar-un-cuadro'].steps) {
-      await fireEvent.press(screen.getByLabelText(`${t.markDone}: ${step.title}`));
+      await press(screen.getByLabelText(`${t.markDone}: ${step.title}`));
     }
-    await fireEvent.press(screen.getByLabelText(t.finish));
+    await press(screen.getByLabelText(t.finish));
     const sheet = within(screen.getByTestId('bottom-sheet'));
     expect(sheet.getByText(t.doneTitle)).toBeTruthy();
     expect(sheet.getByText(t.doneBody)).toBeTruthy();
-    await fireEvent.press(sheet.getByText(t.returnTools));
+    await press(sheet.getByText(t.returnTools));
     expect(mockPush).toHaveBeenCalledWith(routes.activity);
   });
 });
@@ -334,10 +364,10 @@ describe('ProjectScreen · sin ubicación (CA-12)', () => {
     denyLocation();
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
+    await press(await screen.findByLabelText(`${t.getItA11y} Taladro`));
     const sheet = within(screen.getByTestId('bottom-sheet'));
     expect(sheet.getByText('Del Carmen')).toBeTruthy();
-    await fireEvent.press(sheet.getByText(t.request));
+    await press(sheet.getByText(t.request));
     expect(mockPush).toHaveBeenCalledWith(routes.request('t1'));
   });
 
@@ -351,7 +381,7 @@ describe('ProjectScreen · sin ubicación (CA-12)', () => {
     } as never);
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByText(t.locationAction));
+    await press(await screen.findByText(t.locationAction));
     expect(await screen.findByLabelText('Herramienta 1: Taladro, ~300 m')).toBeTruthy();
     expect(screen.queryByText(t.locationTitle)).toBeNull();
   });
@@ -365,7 +395,7 @@ describe('ProjectScreen · sin ubicación (CA-12)', () => {
       .mockResolvedValue(permissionOf(false, false));
     installFakeApi({ 'GET /items': itemsHandler(), 'GET /me/bookings': noBookings });
     await renderScreen();
-    await fireEvent.press(await screen.findByText(t.locationAction));
+    await press(await screen.findByText(t.locationAction));
     await waitFor(() => expect(Location.requestForegroundPermissionsAsync).toHaveBeenCalled());
     expect(screen.getByText(t.locationTitle)).toBeTruthy();
     expect(screen.queryByTestId('neighborhood-map')).toBeNull();
@@ -415,9 +445,9 @@ describe('ProjectScreen · encabezado y proyecto desconocido', () => {
     expect(screen.getByText(`3 ${t.stepsCount}`)).toBeTruthy();
     expect(screen.getByText('Fácil')).toBeTruthy();
     expect(screen.getByText('3 herramientas')).toBeTruthy();
-    await fireEvent.press(screen.getByLabelText(es.tabs.profile));
+    await press(screen.getByLabelText(es.tabs.profile));
     expect(mockPush).toHaveBeenCalledWith(routes.profile);
-    await fireEvent.press(screen.getByLabelText(t.back));
+    await press(screen.getByLabelText(t.back));
     expect(mockBack).toHaveBeenCalled();
   });
 
@@ -425,7 +455,7 @@ describe('ProjectScreen · encabezado y proyecto desconocido', () => {
     installFakeApi({});
     await renderScreen('no-existe');
     expect(await screen.findByText(t.notFoundTitle)).toBeTruthy();
-    await fireEvent.press(screen.getByText(t.notFoundAction));
+    await press(screen.getByText(t.notFoundAction));
     expect(mockBack).toHaveBeenCalled();
   });
 });

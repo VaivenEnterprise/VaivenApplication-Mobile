@@ -7,6 +7,7 @@ import { ItemFormScreen } from '@/features/items/screens/ItemFormScreen';
 import { es } from '@/i18n/es-MX';
 import { failure, installFakeApi, ok, type FakeReply } from '@/test/fakeApi';
 import { fakeCategories, fakeItem } from '@/test/fakeItems';
+import { reduceMotionSync } from '@/test/fakeA11y';
 
 // Prueba del flujo de punta a punta (T005): el formulario real de publicar (005) con el *slot* de
 // IA conectado y la API simulada. Cubre CA-01 a CA-04 y que el formulario siga funcionando sin IA.
@@ -95,7 +96,7 @@ beforeEach(() => {
   mockBack.mockReset();
   mockUploader = photos(COVER, 'p2');
   clearDraft();
-  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(reduceMotionSync(true));
 });
 afterEach(() => jest.restoreAllMocks());
 
