@@ -4,7 +4,7 @@
 //   npm run test:device -- --modo expo-go --link exp://192.168.1.20:8081
 //   (desde PowerShell: .\scripts\device-tests.ps1 -Modo apk)
 // Requiere: `adb` y Maestro (https://maestro.mobile.dev, CLI externa, no entra al paquete de la app).
-// Sin dispositivo, sin herramienta o contra una API que no parezca de pruebas, FALLA con un mensaje
+// Sin dispositivo, sin herramienta o contra una API fuera de la lista explícita de hosts, FALLA con un mensaje
 // claro y NO escribe ningún resultado. Nunca imprime la contraseña de la cuenta de prueba.
 import { spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
@@ -29,25 +29,85 @@ export function parseAdbDevices(salida) {
     });
 }
 
-const PRIVADA = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/;
-const MARCA_PRUEBAS = /(^|[.-])(staging|stg|dev|test|qa|sandbox|preview)([.-]|$)/i;
+const LOCAL = /^(localhost|\[::1\]|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/;
 
-/** La suite solo corre contra APIs de pruebas: red local o un host marcado como staging/dev/test. */
-export function evaluarApi(url, permitido = '') {
-  let host;
+/** Archivo versionado con la lista explícita de hosts permitidos (spec 021-T006, P-04). */
+export const ARCHIVO_HOSTS = join('scripts', 'e2e-allowed-hosts.json');
+
+/** `host:puerto` de una URL o de una entrada de la lista; sin puerto vale el de https (443). */
+export function hostPuerto(entrada) {
+  const texto = String(entrada).trim();
+  if (texto === '') return null;
   try {
-    host = new URL(url).hostname;
+    const u = new URL(/^[a-z]+:\/\//i.test(texto) ? texto : `https://${texto}`);
+    const puerto = u.port || (u.protocol === 'http:' ? '80' : '443');
+    return `${u.hostname.toLowerCase()}:${puerto}`;
+  } catch {
+    return null;
+  }
+}
+
+/** Une el archivo versionado y `E2E_ALLOW_API_HOST` (varios, separados por coma). */
+export function cargarHostsPermitidos({
+  env,
+  raiz,
+  leer = (p) => readFileSync(p, 'utf8'),
+  existe = existsSync,
+}) {
+  const hosts = [];
+  const f = join(raiz, ARCHIVO_HOSTS);
+  if (existe(f)) {
+    let lista;
+    try {
+      lista = JSON.parse(leer(f)).hosts;
+    } catch {
+      throw new EntornoError(`${ARCHIVO_HOSTS} no es un JSON válido con la clave «hosts».`);
+    }
+    if (!Array.isArray(lista))
+      throw new EntornoError(`${ARCHIVO_HOSTS} debe traer «hosts» como lista de «host:puerto».`);
+    for (const h of lista) {
+      const n = hostPuerto(h);
+      if (n) hosts.push({ host: n, origen: ARCHIVO_HOSTS });
+    }
+  }
+  for (const h of String(env.E2E_ALLOW_API_HOST ?? '').split(',')) {
+    const n = hostPuerto(h);
+    if (n) hosts.push({ host: n, origen: 'E2E_ALLOW_API_HOST' });
+  }
+  return hosts;
+}
+
+/**
+ * La suite crea y elimina una cuenta: solo corre contra una red local o contra un host
+ * (host:puerto) de la lista explícita. El nombre no decide: «staging» en el host no basta.
+ */
+export function evaluarApi(url, permitidos = []) {
+  let u;
+  try {
+    u = new URL(url);
   } catch {
     return { ok: false, motivo: `la URL de la API no es válida: «${url}»` };
   }
-  if (permitido !== '' && host === permitido)
-    return { ok: true, host, motivo: 'host permitido de forma explícita (E2E_ALLOW_API_HOST)' };
-  if (PRIVADA.test(host)) return { ok: true, host, motivo: 'red local' };
-  if (MARCA_PRUEBAS.test(host)) return { ok: true, host, motivo: 'host de pruebas' };
+  const host = u.hostname;
+  const clave = hostPuerto(url);
+  if (LOCAL.test(host.toLowerCase()))
+    return { ok: true, host, clave, motivo: 'red local (loopback, emulador o red privada)' };
+  const lista = permitidos.map((p) =>
+    typeof p === 'string' ? { host: hostPuerto(p), origen: 'lista' } : p,
+  );
+  const hallado = lista.find((p) => p.host === clave);
+  if (hallado)
+    return {
+      ok: true,
+      host,
+      clave,
+      motivo: `«${clave}» figura en la lista explícita de hosts permitidos (${hallado.origen})`,
+    };
   return {
     ok: false,
     host,
-    motivo: `«${host}» no parece un entorno de pruebas; la suite crea y elimina una cuenta y no corre contra producción`,
+    clave,
+    motivo: `«${clave}» no figura en la lista explícita de hosts permitidos (${ARCHIVO_HOSTS} o E2E_ALLOW_API_HOST); el nombre no basta, ni siquiera si dice «staging». La suite crea y elimina una cuenta y no corre contra un host que nadie haya aprobado`,
   };
 }
 
@@ -138,9 +198,15 @@ export function main(argv, deps = {}) {
       raiz,
       ...(deps.leer ? { leer: deps.leer, existe: deps.existe } : {}),
     });
-    const juicio = evaluarApi(api.url, env.E2E_ALLOW_API_HOST ?? '');
+    const permitidos = cargarHostsPermitidos({
+      env,
+      raiz,
+      ...(deps.leer ? { leer: deps.leer, existe: deps.existe } : {}),
+    });
+    const juicio = evaluarApi(api.url, permitidos);
     log(`API que usará la app: ${api.url} (fuente: ${api.fuente})`);
     if (!juicio.ok) throw new EntornoError(`Me niego a correr: ${juicio.motivo}.`);
+    log(`API aceptada: ${juicio.motivo}.`);
 
     // 2) adb y dispositivo físico.
     const adb = run('adb', ['devices', '-l']);
@@ -213,7 +279,7 @@ export function main(argv, deps = {}) {
           modo: opts.modo,
           dispositivo: { serial: objetivo.serial, modelo, fisico: !objetivo.emulador },
           maestro: version,
-          api: { host: juicio.host, fuente: api.fuente },
+          api: { host: juicio.clave, fuente: api.fuente, aceptadaPor: juicio.motivo },
           comando:
             'maestro --device <serial> test .maestro --format junit -e APP_ID -e APP_LINK -e E2E_EMAIL -e E2E_PASSWORD (valores omitidos)',
           informe: informe.replace(raiz, '').replace(/\\/g, '/').replace(/^\//, ''),

@@ -1,6 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluarApi, main, parseAdbDevices, urlDeApi } from './device-tests.mjs';
+import { fileURLToPath } from 'node:url';
+import {
+  cargarHostsPermitidos,
+  evaluarApi,
+  hostPuerto,
+  main,
+  parseAdbDevices,
+  urlDeApi,
+} from './device-tests.mjs';
+
+const HOST_OK = 'vaiven-staging.westus2.cloudapp.azure.com:8443';
+const LISTA = [{ host: HOST_OK, origen: 'scripts/e2e-allowed-hosts.json' }];
 
 const ADB_UNO =
   'List of devices attached\nR58M123ABC           device usb:1-1 product:x model:SM_A525M\n\n';
@@ -17,15 +28,105 @@ test('parsea adb devices y distingue emuladores y no autorizados', () => {
   assert.equal(parseAdbDevices(ADB_NO_AUTORIZADO)[0].estado, 'unauthorized');
 });
 
-test('solo acepta APIs de pruebas', () => {
-  assert.equal(evaluarApi('https://vaiven-staging.westus2.cloudapp.azure.com').ok, true);
-  assert.equal(evaluarApi('http://10.0.2.2:8080').ok, true);
-  assert.equal(evaluarApi('http://192.168.1.20:8080').ok, true);
-  assert.equal(evaluarApi('https://api.dev.vaiven.mx').ok, true);
-  assert.equal(evaluarApi('https://api.vaiven.mx').ok, false);
-  assert.equal(evaluarApi('https://developer.example.com').ok, false);
-  assert.equal(evaluarApi('https://api.vaiven.mx', 'api.vaiven.mx').ok, true);
-  assert.equal(evaluarApi('no es url').ok, false);
+test('hostPuerto normaliza host y puerto (sin puerto vale 443)', () => {
+  assert.equal(hostPuerto('https://Vaiven.Example.com'), 'vaiven.example.com:443');
+  assert.equal(hostPuerto('https://vaiven.example.com:8443/api'), 'vaiven.example.com:8443');
+  assert.equal(hostPuerto('vaiven.example.com:8443'), 'vaiven.example.com:8443');
+  assert.equal(hostPuerto('http://x.example.com'), 'x.example.com:80');
+  assert.equal(hostPuerto(''), null);
+});
+
+test('acepta un host de la lista explícita y explica por qué (CA-04)', () => {
+  const r = evaluarApi(`https://${HOST_OK}`, LISTA);
+  assert.equal(r.ok, true);
+  assert.match(r.motivo, /lista explícita/);
+  assert.match(r.motivo, /e2e-allowed-hosts\.json/);
+});
+
+test('se niega a un host no listado aunque diga «staging» (CA-04)', () => {
+  for (const url of [
+    'https://vaiven-staging.westus2.cloudapp.azure.com',
+    'https://vaiven-staging.westus2.cloudapp.azure.com:443',
+    'https://vaiven-staging.westus2.cloudapp.azure.com:9443',
+    'https://staging.otro.example.com:8443',
+    'https://api.dev.vaiven.mx',
+    'https://api.vaiven.mx',
+    'https://developer.example.com',
+  ]) {
+    const r = evaluarApi(url, LISTA);
+    assert.equal(r.ok, false, url);
+    assert.match(r.motivo, /no figura en la lista explícita/);
+  }
+  assert.equal(evaluarApi('https://api.dev.vaiven.mx').ok, false);
+});
+
+test('el puerto cuenta: el mismo nombre con otro puerto no está permitido', () => {
+  assert.equal(
+    evaluarApi('https://vaiven-staging.westus2.cloudapp.azure.com:8443', LISTA).ok,
+    true,
+  );
+  assert.equal(evaluarApi('https://vaiven-staging.westus2.cloudapp.azure.com', LISTA).ok, false);
+});
+
+test('acepta hosts locales (loopback, emulador y red privada)', () => {
+  for (const url of [
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+    'http://10.0.2.2:8080',
+    'http://192.168.1.20:8080',
+    'http://172.16.0.5:8080',
+  ]) {
+    const r = evaluarApi(url, []);
+    assert.equal(r.ok, true, url);
+    assert.match(r.motivo, /red local/);
+  }
+  assert.equal(evaluarApi('http://172.32.0.5:8080', []).ok, false);
+  assert.equal(evaluarApi('http://11.0.0.1:8080', []).ok, false);
+});
+
+test('una URL inválida se rechaza', () => {
+  assert.equal(evaluarApi('no es url', LISTA).ok, false);
+});
+
+test('la lista sale del archivo versionado y de E2E_ALLOW_API_HOST (varios, con coma)', () => {
+  const archivo = JSON.stringify({ hosts: [HOST_OK] });
+  const base = { raiz: '/r', leer: () => archivo, existe: () => true };
+  assert.deepEqual(
+    cargarHostsPermitidos({ ...base, env: {} }).map((h) => h.host),
+    [HOST_OK],
+  );
+  const con = cargarHostsPermitidos({
+    ...base,
+    env: { E2E_ALLOW_API_HOST: 'a.example.com:8443, b.example.com' },
+  });
+  assert.deepEqual(
+    con.map((h) => [h.host, h.origen]),
+    [
+      [HOST_OK, 'scripts/e2e-allowed-hosts.json'],
+      ['a.example.com:8443', 'E2E_ALLOW_API_HOST'],
+      ['b.example.com:443', 'E2E_ALLOW_API_HOST'],
+    ],
+  );
+  assert.equal(cargarHostsPermitidos({ raiz: '/r', env: {}, existe: () => false }).length, 0);
+  assert.throws(
+    () => cargarHostsPermitidos({ ...base, leer: () => 'no json', env: {} }),
+    /JSON válido/,
+  );
+  assert.throws(
+    () => cargarHostsPermitidos({ ...base, leer: () => '{"hosts":1}', env: {} }),
+    /lista/,
+  );
+});
+
+test('el archivo versionado del repositorio lista solo el host decidido en entornos.md', () => {
+  const real = cargarHostsPermitidos({
+    env: {},
+    raiz: fileURLToPath(new URL('..', import.meta.url)),
+  });
+  assert.deepEqual(
+    real.map((h) => h.host),
+    [HOST_OK],
+  );
 });
 
 test('la URL sale de eas.json (apk) o de .env (Expo Go) y E2E_API_URL manda', () => {
@@ -52,12 +153,13 @@ function escenario({
   const llamadas = [];
   const salidas = { out: [], err: [] };
   const eas = JSON.stringify({
-    build: { preview: { env: { EXPO_PUBLIC_API_URL: 'https://x-staging.example.com' } } },
+    build: { preview: { env: { EXPO_PUBLIC_API_URL: `https://${HOST_OK}` } } },
   });
+  const hosts = JSON.stringify({ hosts: [HOST_OK] });
   const codigo = main(['--modo', 'apk'], {
     raiz: '/r',
     env,
-    leer: () => eas,
+    leer: (p) => (p.endsWith('e2e-allowed-hosts.json') ? hosts : eas),
     existe: () => true,
     log: (m) => salidas.out.push(m),
     err: (m) => salidas.err.push(m),
@@ -105,13 +207,13 @@ test('sin Maestro falla con mensaje claro y no escribe resultados (CA-08)', () =
   assert.equal(r.escritos.length, 0);
 });
 
-test('se niega a correr contra una API que no parece de pruebas', () => {
+test('se niega a correr contra una API fuera de la lista explícita', () => {
   const r = escenario({
     adb: { status: 0, stdout: ADB_UNO },
     env: { E2E_API_URL: 'https://api.vaiven.mx' },
   });
   assert.equal(r.codigo, 2);
-  assert.match(r.err.join('\n'), /no corre contra producción/);
+  assert.match(r.err.join('\n'), /no figura en la lista explícita/);
   assert.equal(r.escritos.length, 0);
   assert.ok(!r.llamadas.some(([c]) => c === 'maestro'));
 });
@@ -152,4 +254,35 @@ test('el modo expo-go exige el enlace de Metro', () => {
   });
   assert.equal(codigo, 2);
   assert.match(salidas.join('\n'), /--link/);
+});
+
+test('se niega con «staging» en el nombre si el host no está en la lista', () => {
+  const r = escenario({
+    adb: { status: 0, stdout: ADB_UNO },
+    env: { E2E_API_URL: 'https://otro-staging.example.com:8443' },
+  });
+  assert.equal(r.codigo, 2);
+  assert.match(r.err.join('\n'), /no figura en la lista explícita/);
+  assert.equal(r.escritos.length, 0);
+  assert.ok(!r.llamadas.some(([c]) => c === 'maestro'));
+});
+
+test('imprime la URL activa y por qué la acepta (CA-04)', () => {
+  const r = escenario({ adb: { status: 0, stdout: ADB_UNO } });
+  const salida = r.out.join('\n');
+  assert.match(salida, new RegExp(`API que usará la app: https://${HOST_OK}`));
+  assert.match(salida, /API aceptada: .*lista explícita de hosts permitidos/);
+  assert.match(JSON.parse(r.escritos[0][1]).api.aceptadaPor, /lista explícita/);
+});
+
+test('un host agregado por E2E_ALLOW_API_HOST se acepta y lo dice', () => {
+  const r = escenario({
+    adb: { status: 0, stdout: ADB_UNO },
+    env: {
+      E2E_API_URL: 'https://nuevo.example.com:8443',
+      E2E_ALLOW_API_HOST: 'nuevo.example.com:8443',
+    },
+  });
+  assert.equal(r.codigo, 0);
+  assert.match(r.out.join('\n'), /E2E_ALLOW_API_HOST/);
 });

@@ -1,0 +1,4 @@
+{
+  "comentario": "Lista explícita de hosts de API contra los que puede correr scripts/device-tests.mjs (spec 021-T006, docs/calidad/entornos.md). Formato host:puerto (sin puerto = 443). Cada cambio lo revisa una persona. El nombre «staging» no basta.",
+  "hosts": ["vaiven-staging.westus2.cloudapp.azure.com:8443"]
+}

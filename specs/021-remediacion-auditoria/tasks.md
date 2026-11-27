@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); fases 1 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); fases 2 a 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -30,16 +30,18 @@
   - Nota 2026-11-26: las siete discrepancias y el diseño de `signOut` (S-03) quedaron corregidos en el texto o explicados; no se tocó código ni `constitution.md` (`expo-mcp` queda como D-132). Ver D-235.
 
 ### Fase 1 — Entornos
-- [ ] **T005** **(NEEDS CLARIFICATION)** Decisión de entornos (producción, pruebas y datos)
+- [x] **T005** **(NEEDS CLARIFICATION)** Decisión de entornos (producción, pruebas y datos)
   - Archivos: `docs/calidad/entornos.md`, `memoria.md` (solo anexar)
   - Agente: `spec-writer` + **persona** · Depende de: T003
   - Aceptación: una decisión aprobada por la persona responsable: qué host es producción y cuál de pruebas, qué datos pueden tocar las pruebas destructivas y qué cuentas se usan; **si solo hay un servidor, se escribe así** y las pruebas destructivas usan solo cuentas creadas y eliminadas en la corrida; sin crear infraestructura sin autorización
   - Refs: RF-05 · A-3
-- [ ] **T006** Guarda de host por lista explícita
+  - Nota 2026-11-26: la persona responsable aprobó en la sesión la opción «un solo servidor»: `https://vaiven-staging.westus2.cloudapp.azure.com:8443` es producción y a la vez el único de pruebas; las pruebas destructivas usan solo cuentas creadas y eliminadas en la corrida. Documentado en `docs/calidad/entornos.md`; sin crear infraestructura. Ver D-237.
+- [x] **T006** Guarda de host por lista explícita
   - Archivos: `scripts/device-tests.mjs`, `scripts/device-tests.test.mjs`, `docs/calidad/dispositivo.md`, `.env.example`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T005
   - Aceptación: CA-04; la guarda acepta solo hosts de una lista explícita (variable o archivo versionado) y se niega con cualquier otro, incluso con «staging» en el nombre; pruebas con hosts permitidos, no listados y locales; el script imprime la URL activa y por qué la acepta
   - Refs: RF-06 · A-3
+  - Nota 2026-11-26: la guarda de `scripts/device-tests.mjs` acepta solo `host:puerto` de `scripts/e2e-allowed-hosts.json` (o `E2E_ALLOW_API_HOST`) y redes locales; se niega con «staging» en el nombre si no está listado y el puerto cuenta (`…azure.com` sin puerto se rechaza). `node --test` sobre las pruebas de scripts: 32 en verde (21 de `device-tests`). Ver D-238. La corrida real en teléfono sigue en T026.
 
 ### Fase 2 — Calidad de las pruebas
 - [ ] **T007** [P] Cobertura real de la app

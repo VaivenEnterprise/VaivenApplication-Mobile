@@ -26,7 +26,7 @@ Terminal del IDE:
 npm run test:device -- --modo apk
 ```
 
-Variables de entorno opcionales: `E2E_EMAIL` y `E2E_PASSWORD` (si faltan se generan para esta corrida; nunca se imprimen ni se guardan), `E2E_ITEM_TITLE` (título de un objeto de **otra** persona en staging; sin él se omite el flujo 03), `E2E_API_URL` (anula la URL leída de `eas.json` o `.env`), `E2E_ALLOW_API_HOST` (permite explícitamente un host que no parezca de pruebas).
+Variables de entorno opcionales: `E2E_EMAIL` y `E2E_PASSWORD` (si faltan se generan para esta corrida; nunca se imprimen ni se guardan), `E2E_ITEM_TITLE` (título de un objeto de **otra** persona en staging; sin él se omite el flujo 03), `E2E_API_URL` (anula la URL leída de `eas.json` o `.env`), `E2E_ALLOW_API_HOST` (añade a la lista de hosts permitidos uno o varios `host:puerto` separados por coma; solo para esa corrida, y no sustituye aprobar el host en `docs/calidad/entornos.md`).
 
 ## Comprobaciones previas (T009 — preparadas, no ejecutadas)
 
@@ -42,7 +42,7 @@ $env:E2E_API_URL    = 'https://vaiven-staging.westus2.cloudapp.azure.com:8443'
 .\scripts\device-tests.ps1 -Modo apk # o -Modo expo-go -Link exp://<IP-del-PC>:8081
 ```
 
-Los valores `E2E_*` nunca se versionan. Si `E2E_EMAIL`/`E2E_PASSWORD` faltan, el script genera una cuenta efímera y el flujo `06-baja.yaml` la elimina; comprobar al final que ya no se puede entrar con ella. **Nunca contra producción:** el host sin puerto que traen `eas.json` (`preview` y `production`) responde `/api/v1/meta` con `environment: production` y sin `features`; el de `:8443` responde `environment: staging` con `aiSuggestions`, `projectAssistant` y `recommendations` activas. Como el script decide por el **host** y no por `/meta`, hay que fijar `E2E_API_URL` a `:8443` o usar Expo Go con el `.env` actual.
+Los valores `E2E_*` nunca se versionan. Si `E2E_EMAIL`/`E2E_PASSWORD` faltan, el script genera una cuenta efímera y el flujo `06-baja.yaml` la elimina; comprobar al final que ya no se puede entrar con ella. **Entornos (spec 021-T005, `docs/calidad/entornos.md`):** hay un solo servidor, `https://vaiven-staging.westus2.cloudapp.azure.com:8443`, y se trata como producción; el script solo corre contra él (o contra una red local) porque figura en `scripts/e2e-allowed-hosts.json`, y solo con la cuenta efímera que la propia corrida crea y elimina. El mismo nombre **sin puerto** (`:443`) no está en la lista y el script se niega. El flujo 03 pide un objeto de otra persona: no se corre contra el servidor único hasta que T025/T026 definan un objeto de demostración propio.
 
 **Estado real (2026-11-25):** `adb` y `maestro` no están instalados en la máquina de la sesión; `npm run test:device` falló con código 2, mensaje claro y sin escribir resultados. No se confirmó la existencia de datos de demostración: el backend 016-T012 sigue abierto y su `seed` está bloqueado. Al terminar la corrida real se archiva `docs/calidad/dispositivo/informe-<fecha>.xml` junto con el comando y la fecha.
 
@@ -50,7 +50,7 @@ Los valores `E2E_*` nunca se versionan. Si `E2E_EMAIL`/`E2E_PASSWORD` faltan, el
 
 | Condición | Resultado |
 |---|---|
-| La API no es local ni un host marcado `staging/stg/dev/test/qa/sandbox/preview` | Se niega (código 2), muestra la URL y no corre. |
+| La API no es local ni un `host:puerto` de la **lista explícita** (`scripts/e2e-allowed-hosts.json` o `E2E_ALLOW_API_HOST`); el nombre no cuenta, aunque diga «staging», y el puerto sí | Se niega (código 2), muestra la URL y no corre. Si la acepta, imprime la URL activa y por qué (`API aceptada: …`) y lo guarda en `ultima-ejecucion.json` |
 | No hay `adb` | Falla con instrucciones (código 2). |
 | No hay dispositivo, o solo hay emuladores | Falla con instrucciones (código 2). |
 | No hay Maestro | Falla con instrucciones (código 2). |
