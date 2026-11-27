@@ -223,3 +223,107 @@ describe('S-12 · M2/M8 · repositorio sin secretos', () => {
     expect(Object.keys(pkg.dependencies).filter((d) => /async-storage/.test(d))).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// Spec 021 · T001 · S-12l y S-12m (integridad de la entrega): ningún archivo versionado trae
+// marcadores de conflicto de git y `memoria.md` no repite IDs de decisión. Los marcadores se
+// arman con `repeat` para que este archivo no los contenga literalmente.
+// ---------------------------------------------------------------------------------------------
+
+const MARK_OURS = '<'.repeat(7);
+const MARK_THEIRS = '>'.repeat(7);
+
+/** Líneas (1-based) que abren o cierran un bloque de conflicto de git. */
+export const conflictMarkerLines = (text: string): number[] =>
+  text
+    .split(/\r?\n/)
+    .map((line, i) => (line.startsWith(MARK_OURS) || line.startsWith(MARK_THEIRS) ? i + 1 : 0))
+    .filter((n) => n > 0);
+
+const TEXT_FILE =
+  /\.(md|ts|tsx|js|mjs|cjs|json|ya?ml|txt|ps1|sh|env|example|gitignore)$|(^|\/)\.[\w.-]+$/;
+const SKIP_DIRS = new Set([
+  'node_modules',
+  '.git',
+  'coverage',
+  '.expo',
+  'dist',
+  'build',
+  'android',
+  'ios',
+]);
+
+function walkRepo(dir: string): string[] {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return SKIP_DIRS.has(entry.name) ? [] : walkRepo(full);
+    const rel = path.relative(ROOT, full).replace(/\\/g, '/');
+    // Los logs de ejecución no se versionan ni son documentos de la entrega.
+    return TEXT_FILE.test(rel) && !rel.endsWith('.log') && rel !== 'package-lock.json'
+      ? [full]
+      : [];
+  });
+}
+
+/** IDs de decisión definidos en `memoria.md` (filas de la tabla y entradas con **D-NNN**). */
+export const decisionIds = (text: string): string[] =>
+  text.split(/\r?\n/).flatMap((line) => {
+    const m =
+      /^\|\s*(D-\d{3}[a-z]?)\s*\|/.exec(line) ??
+      /^-\s+(?:\[[^\]]+\]\s+)?\*\*(?:\[[^\]]+\]\s+)?(D-\d{3}[a-z]?)\b/.exec(line);
+    return m ? [m[1] as string] : [];
+  });
+
+export const duplicates = (ids: string[]): string[] => [
+  ...new Set(ids.filter((id, i) => ids.indexOf(id) !== i)),
+];
+
+describe('S-12l · integridad de la entrega · sin marcadores de conflicto', () => {
+  it('S-12l ningún archivo versionado contiene marcadores de conflicto de git', () => {
+    const files = walkRepo(ROOT);
+    expect(files.length).toBeGreaterThan(100);
+    const found = files.flatMap((f) =>
+      conflictMarkerLines(fs.readFileSync(f, 'utf8')).map(
+        (n) => `${path.relative(ROOT, f).replace(/\\/g, '/')}:${n}`,
+      ),
+    );
+    expect(found).toEqual([]);
+  });
+
+  it('S-12l caso negativo: detecta apertura y cierre de un conflicto (LF y CRLF)', () => {
+    const conflicto = [
+      `${MARK_OURS} Updated upstream`,
+      'a',
+      '=======',
+      'b',
+      `${MARK_THEIRS} Stashed changes`,
+    ];
+    expect(conflictMarkerLines(conflicto.join('\n'))).toEqual([1, 5]);
+    expect(conflictMarkerLines(conflicto.join('\r\n'))).toEqual([1, 5]);
+  });
+
+  it('S-12l no confunde una cita en línea ni un subrayado de Markdown con un conflicto', () => {
+    const limpio = `Texto con \`${MARK_OURS}\` entre comillas\n\nTítulo\n=======\n| ${MARK_THEIRS} |`;
+    expect(conflictMarkerLines(limpio)).toEqual([]);
+  });
+});
+
+describe('S-12m · integridad de la entrega · memoria.md sin IDs de decisión repetidos', () => {
+  it('S-12m cada ID D-NNN se define una sola vez', () => {
+    const ids = decisionIds(fs.readFileSync(path.join(ROOT, 'memoria.md'), 'utf8'));
+    expect(ids.length).toBeGreaterThan(100);
+    expect(duplicates(ids)).toEqual([]);
+  });
+
+  it('S-12m caso negativo: detecta un ID repetido en tabla y en entradas', () => {
+    const memoria = [
+      '| D-001 | 2026-10-26 | algo | motivo | Art. I |',
+      '- [DISEÑO] **D-206** primera',
+      '- **[DISEÑO] D-206 — segunda**',
+      '- [DISEÑO] **D-206b** variante distinta',
+      '| D-001 | 2026-10-27 | otra | motivo | Art. I |',
+    ].join('\r\n');
+    expect(decisionIds(memoria)).toEqual(['D-001', 'D-206', 'D-206', 'D-206b', 'D-001']);
+    expect(duplicates(decisionIds(memoria)).sort()).toEqual(['D-001', 'D-206']);
+  });
+});

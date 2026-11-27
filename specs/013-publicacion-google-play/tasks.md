@@ -1,6 +1,6 @@
 # Tareas 013 — Publicación en Google Play (móvil)
 
-- **Dueños:** MO-B y el **administrador de la cuenta** (marcado «admin») · **Estado:** EN CURSO, **PENDIENTE DE CIERRE AL FINAL** (decisión del 2026-11-19: se sigue con la 014 mientras Google revisa la 1.0; hechas T004, T006 y T008; faltan T001, T002, T003, T005, T007, T009, T010 y T011; ver `docs/play/seguimiento.md`) · `[P]` = paralelizable
+- **Dueños:** MO-B y el **administrador de la cuenta** (marcado «admin») · **Estado:** EN CURSO, **PENDIENTE DE CIERRE AL FINAL** (decisión del 2026-11-19: se sigue con la 014 mientras Google revisa la 1.0; T001–T009 cerradas (varias por indicación de la persona, ver `docs/calidad/evidencia-cierres.md`); abiertas T010 y T011; ver `docs/play/seguimiento.md`) · `[P]` = paralelizable
 - Las tareas «admin» no las hace un agente: son trámites en Play Console. Se listan para no olvidarlas y se registran en `memoria.md`.
 
 - [x] **T001** Perfiles de EAS (APK `preview` y AAB `production`) y versión

@@ -1,6 +1,6 @@
 # Tareas 003 — Cuenta, autenticación y navegación (móvil)
 
-- **Dueño:** MO-A · **Estado:** sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-A · **Estado:** T001–T014 cerradas (T012 y T013 por indicación de la persona, 2026-11-26; T013 sin evidencia archivada, ver `docs/calidad/evidencia-cierres.md`) · `[P]` = paralelizable
 - **Prioridad:** T001–T009 son el camino crítico del equipo móvil; terminarlas el 7 nov.
 
 - [x] **T001** Instalar formularios y esquemas

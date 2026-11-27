@@ -1,6 +1,6 @@
 # Tareas 016 — Pruebas de calidad y auditoría de evaluación (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** T001–T011 cerradas (2026-11-26; T009–T011 por indicación de la persona, sin informe de dispositivo archivado) · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** T001–T008, T010 y T011 cerradas (T010 y T011 por indicación de la persona, 2026-11-26); **T009 reabierta** (spec 021-T003) hasta tener el informe de dispositivo (021-T026); ver `docs/calidad/evidencia-cierres.md` · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I) y la 015 y la 017 estén cerradas. Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde.
 
 ### Fase 1 — Medir (sin cambiar la app)
@@ -62,13 +62,14 @@
   - Nota 2026-11-25: CA-08 verificado con ejecuciones reales y pruebas de las guardas. Los flujos Maestro y el `.ps1` **no se ejecutaron** en un teléfono (T009).
   - Nota Fase 3 (2026-11-25, reverificación sin cambios de código): `npm run test:scripts` **22/22 en verde** y `npm run test:device` ejecutado de verdad en este equipo sin dispositivo: imprimió la URL activa (`https://vaiven-staging.westus2.cloudapp.azure.com`, fuente `eas.json (preview)`), falló con «No encuentro `adb`…», código de salida **2** y **0 archivos** en `docs/calidad/dispositivo/`. `adb` y `maestro` no están instalados. Sin instalar nada ni tocar el teléfono.
 
-- [x] **T009** Ejecución en el dispositivo físico
+- [ ] **T009** Ejecución en el dispositivo físico
   - Archivos: `docs/calidad/dispositivo/` (informe JUnit y registro), `memoria.md` (solo anexar)
   - Agente: `probador-expo` + **persona** (teléfono por USB, `E2E_*`) · Depende de: T008 y backend 016-T012 (datos en staging)
   - Aceptación: CA-07; la corrida real en verde con su fecha y comando; la cuenta de prueba eliminada al final
   - Refs: RF-07, RF-08
   - Nota 2026-11-25 (Fase 3, preparación; **sigue sin marcar**): checklist en `docs/calidad/dispositivo.md` §«Comprobaciones previas». Estado real: `adb devices -l` y `maestro --version` responden «no se reconoce…» en la máquina de la sesión; no hay teléfono ni autorización para instalar las herramientas o ejecutar los flujos, así que **no se corrió** `.\scripts\device-tests.ps1`. **Bloqueos:** (1) backend 016-T012 sigue `[ ]` con el bloqueo conocido del `seed` (archivo de credenciales que `vm-admin.sh` no monta), por lo que no se pudo confirmar la existencia de datos de demostración ni un `E2E_ITEM_TITLE` de otra persona; (2) `eas.json` apunta en `preview` y `production` a `https://vaiven-staging.westus2.cloudapp.azure.com` (443), cuyo `/api/v1/meta` responde `environment: production` y sin `features`, mientras `:8443` responde `environment: staging` con las tres funciones activas. El script decide por el **host**, no por `/meta`: para T009 hay que fijar `E2E_API_URL=https://vaiven-staging.westus2.cloudapp.azure.com:8443` (o usar `--modo expo-go`, que lee `.env`). Queda pendiente la confirmación de la persona.
   - Cerrada por indicación de la persona responsable (2026-11-26), que informa que está completada y probada. **No consta** en el repositorio un informe JUnit ni `ultima-ejecucion.json` en `docs/calidad/dispositivo/` (la carpeta está vacía) ni una corrida registrada de `scripts/device-tests.ps1`; si existe, conviene archivar el informe ahí para dejar evidencia de CA-07.
+  - **Reabierta (Spec 021-T003 (2026-11-26)):** sin informe JUnit ni `ultima-ejecucion.json` en `docs/calidad/dispositivo/` (vacía) no se puede dar por cumplida la aceptación («corrida real en verde con su fecha y comando»). La vuelve a cerrar 021-T026 con la evidencia. Ver `docs/calidad/evidencia-cierres.md`.
 
 ### Fase 4 — Informar y cerrar
 
@@ -79,6 +80,7 @@
   - Refs: RF-09, DoD
   - Nota 2026-11-25 (Fase 4, **sin marcar**): `docs/calidad/pruebas.md` ya no es borrador: conteo real de `npm run test:report` (`docs/calidad/conteo.json`, 146 suites / 1 864 casos; unitarias 122/1 677, integración 14/93, seguridad 10/94; cobertura 99,65 % / 97,68 % / 100 % / 99,6 %), tabla §3.3 con evidencia por fila y veredicto `CONFORME con observaciones` del rol `revisor-constitucion` contra la v1.3.1. CA-09 conforme. Sigue sin cumplirse la aceptación completa porque T009 (CA-07) está **no ejecutado**.
   - Cerrada por indicación de la persona responsable (2026-11-26), que informa que está completada y probada. Informe en `docs/calidad/pruebas.md` con conteo real (146 suites, 1 864 casos), tabla §3.3 y veredicto `CONFORME con observaciones` (no «CONFORME» a secas, como pedía la aceptación).
+  - Nota 2026-11-26 (Spec 021-T003 (2026-11-26)): depende de T009 (reabierta); el veredicto se revisa en 021-T028/T029. Ver `docs/calidad/evidencia-cierres.md`.
 
 - [x] **T011** Verificación final (local y en dispositivo)
   - Archivos: `memoria.md` (solo anexar), `docs/evidencia/016/` (capturas)
@@ -87,6 +89,7 @@
   - Refs: Art. XIV.4
   - Nota 2026-11-25 (Fase 4, **sin marcar**): ejecutadas de nuevo `npm run typecheck && npm run lint && npm test` (146/146 suites, 1 864/1 864 pruebas, cobertura 99,65 %), `npm run test:security` (10/10, 94/94) y `npm run test:report` (mismo conteo, 0 no ejecutadas). Recorrido CA-01…CA-09 y veredicto anotados en `memoria.md` (D-225) y en `docs/calidad/pruebas.md` §8. **CA-07 no ejecutado**: sin teléfono, sin `adb`, sin Maestro y sin autorización para instalarlos; `npm run test:device` en teléfono no se corrió y no hay informe JUnit ni capturas. La spec siguiente no empieza hasta que T011 pase.
   - Cerrada por indicación de la persona responsable (2026-11-26), que informa que está completada y probada. `typecheck`, `lint`, `npm test` y `test:security` quedaron en verde el 2026-11-25 (D-225); CA-07 se da por cumplido según la persona, sin informe de dispositivo archivado.
+  - Nota 2026-11-26 (Spec 021-T003 (2026-11-26)): sigue cerrada por indicación, pero su CA-07 depende de T009, que está reabierta; se rehace con 021-T026. Ver `docs/calidad/evidencia-cierres.md`.
 
 | Total | 11 tareas |
 |---|---|

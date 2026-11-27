@@ -1,6 +1,6 @@
 # Tareas 005 — Objetos (móvil)
 
-- **Dueño:** MO-A · **Estado:** T001–T011 hechas y verificadas en copia de trabajo; T012 cerrada (veredicto CONFORME con reservas); T013 pendiente (evidencia en Expo Go) · `[P]` = paralelizable
+- **Dueño:** MO-A · **Estado:** T001–T011 hechas y verificadas en copia de trabajo; T012 cerrada (veredicto CONFORME con reservas); T013 marcada `[x]` sin cierre registrado en `memoria.md` (solo evidencia parcial de 2026-11-10); ver `docs/calidad/evidencia-cierres.md` · `[P]` = paralelizable
 - **Línea de corte:** T001–T008 son P0 (publicar, listar, detalle). T009–T010 (editar/pausar/sugerencia) son P1.
 
 - [x] **T001** [P] Tipos, claves, textos y constantes de política
@@ -80,6 +80,7 @@
   - Agente: `probador-expo` · Depende de: T012 (y todas las anteriores `[x]`) y backend 005-T010 **desplegada**
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
+  - Nota 2026-11-26 (Spec 021-T003 (2026-11-26)): marcada `[x]`, pero `memoria.md` solo registra evidencia parcial (2026-11-10) y no el cierre; `docs/evidencia/005/` no existe. **Sin evidencia archivada**; la persona debe confirmar el cierre o reabrirla. Ver `docs/calidad/evidencia-cierres.md`.
 
 | Total | 13 tareas |
 |---|---|

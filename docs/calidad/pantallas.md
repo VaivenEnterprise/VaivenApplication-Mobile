@@ -109,3 +109,7 @@ Las pruebas de seguridad son **transversales** (cliente de API, sesión, configu
 - **Seguridad → T005:** las 24 pantallas con endpoints sin suite `*.security.test.*` propia quedan cubiertas por capa con S-01…S-13 según la tabla anterior; «sin prueba» no significa «sin control».
 
 **No medido en esta matriz:** la suite de dispositivo (`.maestro/`) y la verificación manual en Expo Go.
+
+**Alcance de la matriz (spec 021-T004)**
+
+La matriz inventaría los endpoints de las rutas de cada pantalla (`request(...)` literal en su feature). **No** incluye los endpoints que consumen los *slots* (puntos de extensión que otras features montan dentro de una pantalla) ni `/ai/assistant/*` (el asistente de proyectos del contrato no se consume en la app). Por eso «sin hueco» significa «sin hueco entre lo inventariado», no cobertura total del contrato. La spec 021-T009 amplía la matriz con los *slots* y el asistente, y 021-T031 inventaría las 69 operaciones de `openapi.yaml` en `docs/calidad/contrato-endpoints.md`.

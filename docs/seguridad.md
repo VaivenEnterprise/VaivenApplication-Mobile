@@ -7,7 +7,7 @@ Revisión hecha leyendo y buscando en el código del repositorio `vaiven-fronten
 | 1 | Secretos en el código | Búsqueda de claves (`sk_live`, `AKIA…`, llaves privadas, `password = '…'`) en `.ts/.tsx/.js/.json`, sin pruebas | Sin hallazgos; las únicas coincidencias son etiquetas de texto «Contraseña» en `src/i18n` |
 | 2 | Archivos sensibles versionados | `git ls-files` filtrando `.pem .key .p12 .jks google-services .env` | Ninguno; solo `.env.example` (plantilla sin valores reales) |
 | 3 | Variables públicas | `.env.example` solo define `EXPO_PUBLIC_*` (URL, entorno, sitio legal); su encabezado prohíbe secretos | Conforme |
-| 4 | Tokens solo en SecureStore | Búsqueda de `expo-secure-store`, `AsyncStorage`, `localStorage` fuera de pruebas | Solo `src/lib/storage/secureStorage.ts` usa `expo-secure-store`; `AsyncStorage` aparece únicamente en un comentario que lo prohíbe |
+| 4 | Secretos de sesión solo en SecureStore | Búsqueda de `expo-secure-store`, `AsyncStorage`, `localStorage` fuera de pruebas | Solo `src/lib/storage/secureStorage.ts` usa `expo-secure-store`, y solo guarda el **refresh token** (`vaiven.refreshToken`); el access token vive únicamente en memoria (`authInterceptor.ts`). `AsyncStorage` aparece únicamente en un comentario que lo prohíbe |
 | 5 | Sin PII ni tokens en logs | Búsqueda de `console.*` con `token/password/email` en `src` | Sin hallazgos; el único `console.error` (`AppErrorBoundary`) registra solo el nombre del error |
 | 6 | Permisos mínimos | `app.config.ts` | Cámara (QR y fotos), fotos (selector), ubicación **aproximada** (Android bloquea `ACCESS_FINE_LOCATION`), notificaciones; micrófono desactivado; cada permiso con texto en es-MX |
 | 7 | Todo el tráfico por `request` | Arquitectura (Art. II): un único cliente con esquemas de zod | Conforme; el E2E valida cuerpos contra el contrato |
@@ -16,3 +16,7 @@ Revisión hecha leyendo y buscando en el código del repositorio `vaiven-fronten
 | 10 | Comprobaciones contra staging (tokens expirados, 401, cierre de sesión) | Requieren backend desplegado | **Pendiente** (T006/T012, manual) |
 
 Resultado: sin hallazgos bloqueantes en el repositorio. La firma de la revisión (`revisor-constitucion`) queda sujeta a cerrar los puntos 9 y 10.
+
+## Decisiones de diseño que la revisión no trata como hallazgo
+
+- **Cierre de sesión (S-03).** `signOut` da de baja el token de push, borra la sesión local (tokens y caché de consultas) y **después** llama a `POST /auth/logout` con el refresh token; si esa llamada falla, el error se ignora a propósito (`session.tsx`, `auth/api.ts`). Motivo: la persona debe quedar fuera del dispositivo aunque no haya red o el servidor falle; un cierre que dependiera de la respuesta del servidor dejaría la sesión abierta justo cuando no se puede confirmar. Riesgo aceptado: si el servidor no recibe la llamada, el refresh token no se revoca en el servidor hasta que éste lo venza; el dispositivo ya no lo conserva y el access token vence solo. La prueba `session.security.test.tsx` (S-03) fija este comportamiento. Si se quisiera revocar siempre, haría falta una cola de reintento, que esta spec no incluye (spec 021, B-7).

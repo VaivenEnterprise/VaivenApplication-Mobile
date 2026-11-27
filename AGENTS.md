@@ -64,8 +64,8 @@ Invocación: `@dev-expo implementa la tarea T006 de specs/002-arquitectura-base/
 
 ## 5b. MCP y verificación (Art. XIV)
 
-- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Trabajo humano mínimo:** registrarse en Expo, autenticar el MCP, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode. **Solo `probador-expo` lo usa.**
-- No hay servidor que desplegar: cada spec se prueba en Expo Go contra staging. La app **sí se compila** con EAS Build (APK `preview` y AAB `production`) en la spec 013, y los comandos `eas build` se ejecutan con aprobación humana. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
+- El MCP `expo` (remoto, OAuth) está en `opencode.json`; se autentica con `opencode mcp auth expo`. **Trabajo humano mínimo:** registrarse en Expo, autenticar el MCP, instalar Expo Go y aprobar acciones; el resto lo hace `probador-expo` desde OpenCode. **Solo `probador-expo` lo usa.** `opencode.json` declara solo `expo` y `github`; las capacidades locales `expo-mcp` que menciona el Art. XIV.3 no están declaradas (D-132; la propuesta de enmienda está en `docs/propuesta-enmienda-xiv-local.md`; no se modifica la constitución).
+- No hay servidor que desplegar: cada spec se prueba en Expo Go contra staging (**en la práctica**, por D-132 las verificaciones de 002 a 015 se hicieron a mano o con Claude, y el MCP `expo` y `probador-expo` son opcionales; ver `docs/calidad/evidencia-cierres.md`). La app **sí se compila** con EAS Build (APK `preview` y AAB `production`) en la spec 013, y los comandos `eas build` se ejecutan con aprobación humana. Cada spec termina con su tarea «Verificación en Expo Go» (`@probador-expo`), que exige la spec de backend equivalente ya desplegada. No empieces la siguiente spec hasta que pase.
 
 ## 6. Comandos
 
@@ -114,7 +114,7 @@ Specs `001` a `015` en `specs/`, en el orden y con los dueños de `ROADMAP.md`. 
 
 ## UI/UX skills
 
-Estética, accesibilidad, prohibiciones, voz e íconos de este proyecto viven en `.ux-profile.md`.
+Estética, accesibilidad, prohibiciones, voz e íconos de este proyecto viven en `.ux-profile.md`. Las skills de UI/UX que se nombran abajo (`page-patterns`, `viewports`, `forms`, `surfaces`, `loaders`, `empty-states`, `copy`, `motion`, `ux-audit`, `setup-ui-ux-skills`) **no están en `.opencode/skills/`** (ahí solo hay las cinco de la sección 5): son skills externas del plugin de UX del equipo y, si la herramienta no las tiene instaladas, se aplica `.ux-profile.md` a mano.
 Antes de tocar UI o microcopy, léelo y luego la skill del dominio (page-patterns, viewports, forms, surfaces, loaders, empty-states, copy, motion).
 Antes de crear una pantalla nueva, nombra su patrón con `page-patterns`; no escribas el marcado antes.
 Las pantallas deben verse bien en un teléfono chico (360×640) y en uno grande, sin desbordes.

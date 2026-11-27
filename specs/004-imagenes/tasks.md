@@ -1,6 +1,6 @@
 # Tareas 004 — Imágenes (móvil)
 
-- **Dueño:** MO-B · **Estado:** T001–T009 hechas (2026-11-10); T010 diferida a la spec 005 por decisión de la persona · `[P]` = paralelizable
+- **Dueño:** MO-B · **Estado:** T001–T009 hechas (2026-11-10); T010 cerrada el 2026-11-26 por indicación de la persona, con evidencia indirecta (ver `docs/calidad/evidencia-cierres.md`) · `[P]` = paralelizable
 
 - [x] **T001** [P] Tipos y textos
   - Archivos: `src/features/images/{types.ts, keys.ts}`, `src/i18n/images.ts`, `src/i18n/index.ts` (una línea)

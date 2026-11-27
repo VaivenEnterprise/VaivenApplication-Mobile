@@ -7,7 +7,7 @@ Solicitud del responsable: integrar CI, seguridad y validacion de ramas y PRs en
 - Cambios en tipo/SPEC-01-T001 (feat, feature, fix, bugfix, hotfix, chore, ci, docs, refactor, test, perf, security, release, build o revert) hacia develop.
 - Publicaciones de develop hacia main; urgencias en hotfix/SPEC-01-T001 hacia main y despues sincronizacion de main hacia develop.
 - Titulos libres; completar Resumen, Validación y Seguridad en el PR.
-- Revisores solicitados: @JesusTrz y @JosephYanez27. JesusTrz tiene escritura; JosephYanez27 solo lectura al preparar esta configuracion y su aprobacion aun no cuenta como obligatoria. Un administrador debe concederle escritura antes de agregarlo a CODEOWNERS.
+- Revisores obligatorios: @JesusTrz y @JosephYanez27, ambos en `.github/CODEOWNERS` (`* @JesusTrz @JosephYanez27`) y con `require_code_owner_review: true` en `.github/rulesets/protected-branches.json`. Al preparar esta configuracion (2026-11-02) JosephYanez27 tenia solo lectura y su aprobacion no contaba; la persona responsable informa que ya se le concedio escritura. **No se puede comprobar desde el repositorio**: los permisos de la cuenta se confirman en GitHub (Settings > Collaborators).
 - Una aprobacion de un code owner distinto al autor, aprobacion del ultimo cambio, conversaciones resueltas y rama actualizada. Cambios nuevos invalidan aprobaciones anteriores.
 
 ## Controles

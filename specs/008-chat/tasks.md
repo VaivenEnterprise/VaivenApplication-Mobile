@@ -1,6 +1,6 @@
 # Tareas 008 — Chat (móvil)
 
-- **Dueño:** MO-B · **Estado:** T001–T010 completas en código y pruebas (2026-11-12); T010 cerrada (CONFORME con reservas; marcar H3 y avisar a los equipos lo hace la persona); T011 (Expo Go) abierta · `[P]` = paralelizable
+- **Dueño:** MO-B · **Estado:** T001–T010 completas en código y pruebas (2026-11-12); T010 cerrada (CONFORME con reservas; marcar H3 y avisar a los equipos lo hace la persona); T011 (Expo Go) marcada `[x]` sin cierre registrado en `memoria.md`; ver `docs/calidad/evidencia-cierres.md` · `[P]` = paralelizable
 
 - [x] **T001** [P] Tipos, claves, textos e identificador de cliente
   - Archivos: `src/features/chat/{types.ts, keys.ts, clientId.ts, clientId.test.ts}`, `src/i18n/chat.ts`, `src/i18n/index.ts` (una línea)
@@ -67,6 +67,7 @@
   - Agente: `probador-expo` · Depende de: T010 (y todas las anteriores `[x]`) y backend 008-T010 **desplegada**
   - Aceptación: `npm run typecheck && npm run lint && npm test` en verde; con `EXPO_PUBLIC_API_URL` de staging y `EXPO_UNSTABLE_MCP_SERVER=1`, la app abre en Expo Go y se recorren los criterios de aceptación (CA-xx) de esta spec, con capturas tomadas por el MCP `expo`; lo que Expo Go no permita probar (p. ej. push remoto en Android) se anota en `memoria.md` como no verificable. **La spec siguiente no empieza hasta que esta tarea pase.** · **MCP de Expo opcional (decisión 9 nov):** se verifica a mano o con Claude en Expo Go contra el **backend local**; el staging queda para cuando exista
   - Refs: Art. XIV.4
+  - Nota 2026-11-26 (Spec 021-T003 (2026-11-26)): marcada `[x]`, pero `memoria.md` la dejó «abierta» y no registra su cierre; `docs/evidencia/008/` no existe. **Sin evidencia archivada**; la persona debe confirmar el cierre o reabrirla. Ver `docs/calidad/evidencia-cierres.md`.
 
 | Total | 11 tareas |
 |---|---|

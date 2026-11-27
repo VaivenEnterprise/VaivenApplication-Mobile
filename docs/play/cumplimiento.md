@@ -48,11 +48,11 @@ No se recopila: contactos, SMS, micrófono, historial de navegación fuera de la
 | Cámara | Escanear el QR de entrega y devolución, y tomar fotos de objetos | Al usarla | «Vaivén usa la cámara para escanear códigos QR y tomar fotos de tus objetos.» |
 | Fotos (selector) | Elegir imágenes de los objetos | Al elegir fotos | «Vaivén accede a tus fotos para que elijas las imágenes de tus objetos.» |
 | Ubicación aproximada | Mostrar objetos cercanos | Al usar la búsqueda por cercanía | «Vaivén usa tu ubicación aproximada para mostrarte objetos cerca de ti.» |
-| Notificaciones | Avisos de reservas, mensajes y moderación | Tras iniciar sesión | Diálogo del sistema; se puede negar y la app sigue funcionando |
+| Notificaciones | Avisos de reservas, mensajes y moderación | Tras iniciar sesión se muestra una pantalla previa que explica los avisos; el diálogo del sistema solo aparece si la persona decide activarlos (o desde el interruptor del centro de avisos) | Diálogo del sistema; se puede negar y la app sigue funcionando |
 | Micrófono / audio | **No se usa** (`recordAudioAndroid: false`, `microphonePermission: false`) | — | — |
 | Ubicación precisa | **No se usa** (bloqueada) | — | — |
 
-Sin permisos sensibles de segundo plano ni de llamadas, SMS o archivos amplios.
+Sin permisos sensibles de segundo plano ni de llamadas ni SMS. **Archivos:** el manifiesto efectivo de Android que resuelve Expo todavía incluye `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` y `SYSTEM_ALERT_WINDOW` (auditoría de 2026-11-26) aunque la app no los declara ni los usa; la spec 021-T012 los bloquea y, al cerrarla, este párrafo vuelve a afirmar «sin archivos amplios» solo si `npx expo config --type introspect` lo confirma. Hasta entonces no se declara a Play lo contrario de lo que trae el manifiesto.
 
 ## 5. Eliminación de cuenta
 

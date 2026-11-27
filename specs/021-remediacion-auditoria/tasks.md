@@ -1,0 +1,220 @@
+# Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
+
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); fases 1 a 7 sin ejecutar · `[P]` = paralelizable
+- Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
+
+### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
+- [ ] **T001** Cerrar el merge y vigilar los marcadores de conflicto
+  - Archivos: `memoria.md`, `PUNTAJE-VERSIONES.md`, `docs/play/seguimiento.md`, `src/__arch__/rules.security.test.ts`
+  - Agente: `gestor-repo` (revisa) + `qa-mobile` · Depende de: —
+  - Aceptación: CA-01; el merge con `develop` está commiteado por la persona y `git grep` no halla marcadores; `memoria.md` sin IDs repetidos; **regla S-12 nueva** que falla si un archivo versionado trae `<<<<<<<` o `>>>>>>>` (con caso negativo en memoria); `stash@{0}` revisado y descartado por la persona
+  - Refs: RF-01 · A-1
+  - Nota 2026-11-26 (**sin marcar**): hecho en el repositorio: el árbol de trabajo no tiene marcadores de conflicto (`git grep` sin coincidencias), `memoria.md` sin IDs repetidos (`D-206` duplicado → `D-206c`) y reglas **S-12l** y **S-12m** con caso negativo en `src/__arch__/rules.security.test.ts` (en verde). **Faltan dos pasos de la persona:** commitear el merge con `develop` (en `HEAD` los marcadores siguen en `memoria.md`, `PUNTAJE-VERSIONES.md` y `docs/play/seguimiento.md`) y revisar y descartar `stash@{0}`. Se marca al hacerlos. Ver D-233 en `memoria.md`.
+- [x] **T002** Una versión y una URL de API en todos lados
+  - Archivos: `app.config.ts`, `package.json`, `eas.json`, `.env.example`, `src/app.config.test.ts`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T001
+  - Aceptación: CA-02; `version` igual en `app.config.ts` y `package.json`; `eas.json` (`preview` y `production`) y la documentación con la misma URL de API; una prueba falla si difieren
+  - Refs: RF-02 · A-2
+  - Nota 2026-11-26: `package.json` y `package-lock.json` pasan a `1.1.2` (= `app.config.ts`); `eas.json` (`preview` y `production`) y la documentación usan `…:8443`; `src/app.config.test.ts` compara versión y URL y trae caso negativo (en verde). `npx expo config --type introspect` no se ejecutó (no aplica a esta tarea). Ver D-233.
+- [x] **T003** Tabla de cierres y conciliación `tasks.md` ↔ `memoria.md`
+  - Archivos: `docs/calidad/evidencia-cierres.md`, `specs/013-publicacion-google-play/tasks.md`, `specs/016-pruebas-calidad/tasks.md`, `memoria.md` (solo anexar)
+  - Agente: `spec-writer` + `revisor-constitucion` · Depende de: T001
+  - Aceptación: CA-03; cada tarea cerrada «por indicación» (016-T009, D-228, D-229, 003-T013, 004-T010, 014-T007…) con su evidencia enlazada o marcada «sin evidencia»; **016-T009 se reabre** hasta T026; ninguna contradicción entre `tasks.md` y `memoria.md`
+  - Refs: RF-03 · M-2, M-3
+  - Nota 2026-11-26: `docs/calidad/evidencia-cierres.md` creada; 016-T009 **reabierta** hasta 021-T026; encabezados de estado de 003, 004, 005, 008, 013, 014 y 016 corregidos. **Pendiente de la persona:** confirmar el cierre de 005-T013 y 008-T011 (`[x]` sin cierre registrado en `memoria.md`) o reabrirlas. Ver D-234.
+- [x] **T004** Discrepancias documentación ↔ código
+  - Archivos: `docs/seguridad.md`, `docs/devsecops.md`, `docs/play/cumplimiento.md`, `docs/calidad/pantallas.md`, `AGENTS.md`, `memoria.md` (solo anexar)
+  - Agente: `spec-writer` · Depende de: T001
+  - Aceptación: las siete discrepancias de la auditoría corregidas en el texto o registradas como decisión: `expo-mcp` vs `opencode.json` (D-132), «tokens» en SecureStore (solo el refresh), revisor de `docs/devsecops.md`, aviso de notificaciones, «sin archivos amplios» (se resuelve con T012), cobertura de la matriz, Skills UX citadas que no están en el repo; el diseño de logout que ignora el fallo HTTP queda explicado (S-03)
+  - Refs: RF-04 · D-1, B-7
+  - Nota 2026-11-26: las siete discrepancias y el diseño de `signOut` (S-03) quedaron corregidos en el texto o explicados; no se tocó código ni `constitution.md` (`expo-mcp` queda como D-132). Ver D-235.
+
+### Fase 1 — Entornos
+- [ ] **T005** **(NEEDS CLARIFICATION)** Decisión de entornos (producción, pruebas y datos)
+  - Archivos: `docs/calidad/entornos.md`, `memoria.md` (solo anexar)
+  - Agente: `spec-writer` + **persona** · Depende de: T003
+  - Aceptación: una decisión aprobada por la persona responsable: qué host es producción y cuál de pruebas, qué datos pueden tocar las pruebas destructivas y qué cuentas se usan; **si solo hay un servidor, se escribe así** y las pruebas destructivas usan solo cuentas creadas y eliminadas en la corrida; sin crear infraestructura sin autorización
+  - Refs: RF-05 · A-3
+- [ ] **T006** Guarda de host por lista explícita
+  - Archivos: `scripts/device-tests.mjs`, `scripts/device-tests.test.mjs`, `docs/calidad/dispositivo.md`, `.env.example`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T005
+  - Aceptación: CA-04; la guarda acepta solo hosts de una lista explícita (variable o archivo versionado) y se niega con cualquier otro, incluso con «staging» en el nombre; pruebas con hosts permitidos, no listados y locales; el script imprime la URL activa y por qué la acepta
+  - Refs: RF-06 · A-3
+
+### Fase 2 — Calidad de las pruebas
+- [ ] **T007** [P] Cobertura real de la app
+  - Archivos: `jest.config.js`, pruebas nuevas junto a lo que prueban
+  - Agente: `qa-mobile` · Depende de: T002
+  - Aceptación: CA-05; `collectCoverageFrom` incluye `src/features/*/hooks.ts` y `src/features/**/use*.ts`; los umbrales **siguen en 80 %**; si baja el porcentaje, se escriben las pruebas que faltan (no se excluye nada); `test:report` informa cuántos archivos se miden de cuántos existen
+  - Refs: RF-07 · M-1
+- [ ] **T008** [P] Higiene de Jest
+  - Archivos: pruebas con temporizadores o avisos `act(...)`
+  - Agente: `qa-mobile` · Depende de: T007
+  - Aceptación: `npm test` sin «worker failed to exit gracefully» ni avisos `act(...)`; se limpian temporizadores o se corrigen las esperas, sin quitar pruebas
+  - Refs: RF-08 · B-3
+- [ ] **T009** [P] Matriz completa y seguridad por pantalla sensible
+  - Archivos: `scripts/screens-report.mjs`, `docs/calidad/pantallas.md`, `docs/calidad/pantallas-notas.md`, `*.security.test.tsx` de inicio, registro, editar perfil, chat e incidencias
+  - Agente: `qa-mobile` + `spec-writer` · Depende de: T007
+  - Aceptación: la matriz incluye los endpoints de los *slots* y `/ai/assistant/*` (consumido o no, con motivo); las cinco pantallas con entradas sensibles tienen prueba de seguridad propia; el resto sigue justificado por capa
+  - Refs: RF-09 · M-8, P-3
+- [ ] **T010** [P] Prueba de contrato
+  - Archivos: `src/__e2e__/contract.test.ts`, `scripts/contract-check.mjs`, `scripts/contract-check.test.mjs`, `package.json` (script `test:contract`)
+  - Agente: `qa-mobile` + `dev-expo` · Depende de: T009
+  - Aceptación: las respuestas de `fakeApi` validan contra `../vaiven-backend/api/openapi.yaml` (solo lectura); `npm run test:contract` hace **solo `GET`** contra la API configurada y falla con mensaje claro si no responde; sin credenciales ni escrituras
+  - Refs: RF-10 · P-2
+
+### Fase 3 — Endurecimiento de la app (compatible con Expo Go)
+- [ ] **T011** **(NEEDS CLARIFICATION)** Aprobar las dependencias de Expo y registrarlas
+  - Archivos: `plan.md` (justificación), `memoria.md` (solo anexar), `package.json`
+  - Agente: `spec-writer` + **persona** · Depende de: T005
+  - Aceptación: aprobación de `expo-screen-capture`, `expo-local-authentication` (opcional) y `expo-build-properties`; cada una con su justificación y su registro; las que no se aprueben quedan fuera y T014/T015 se ajustan
+  - Refs: RNF-03 · Art. X
+- [ ] **T012** Permisos y copia de seguridad
+  - Archivos: `app.config.ts`, `src/app.config.test.ts`, `docs/play/cumplimiento.md`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
+  - Aceptación: CA-06; `allowBackup: false`; `SYSTEM_ALERT_WINDOW`, `READ_EXTERNAL_STORAGE` y `WRITE_EXTERNAL_STORAGE` en `android.blockedPermissions`; sin `NSLocationAlways*` ni micrófono en iOS; `npx expo config --type introspect` lo confirma; `cumplimiento.md` coincide; la regla S-08/S-12 actualiza la lista declarada
+  - Refs: RF-11 · M-5
+- [ ] **T013** [P] Subida de imágenes: solo https y solo Cloudinary
+  - Archivos: `src/features/images/cloudinary.ts`, `src/features/images/upload.security.test.ts`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
+  - Aceptación: `uploadUrl` se rechaza si no es `https` o no es del dominio de Cloudinary; prueba negativa (URL de otro dominio, `http`, esquema raro); nada se sube en ese caso
+  - Refs: RF-12 · B-4
+- [ ] **T014** [P] Sesión sin red y una sola consulta a `/meta`
+  - Archivos: `src/features/auth/session.tsx`, `src/features/ai-suggestions/api.ts`, `src/features/recommendations/api.ts`, pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
+  - Aceptación: con tokens guardados y sin red el arranque conserva la sesión (muestra el estado sin conexión, no el login) y un 401/403 sigue cerrándola; `/meta` se consulta una vez y comparte caché; pruebas de ambos
+  - Refs: RF-13 · B-5, B-6
+- [ ] **T015** [P] Protección de sesión y pantallas sensibles
+  - Archivos: `src/features/auth/`, pantallas de perfil y de evidencia, `app.config.ts`, pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T011
+  - Aceptación: bloqueo de capturas en pantallas sensibles, cierre de sesión por inactividad (tiempo configurable y probado) y, si se aprobó, biometría opcional para volver a entrar; sin guardar nada nuevo fuera de SecureStore; pruebas de seguridad nuevas (S-14…)
+  - Refs: RF-14 · A-5
+- [ ] **T016** **(NEEDS CLARIFICATION)** Ofuscación y excepción formal de los controles nativos
+  - Archivos: `app.config.ts` (`expo-build-properties`), `docs/calidad/seguridad-nivel.md`, `memoria.md` (solo anexar)
+  - Agente: `dev-expo` + `spec-writer` + `revisor-constitucion` · Depende de: T011
+  - Aceptación: R8 activado en el perfil `production`; `seguridad-nivel.md` explica por qué pinning, detección de root y Play Integrity no se implementan (Art. XIV.2, sin pagos en la app), con el riesgo, el alcance y qué se haría con una enmienda; la persona responsable la aprueba o decide la enmienda; **no se cambia `constitution.md`**
+  - Refs: RF-15 · A-5
+
+### Fase 4 — Backend y push (la app muestra lo que decide el servidor)
+> T031–T038 (contrato del backend y defectos reportados F-1 a F-3) siguen la numeración después de T030 pero **pertenecen a esta fase**; no cambian el orden de T001–T030.
+- [ ] **T017** Moderación de imágenes: lado móvil
+  - Archivos: `src/lib/api/moderation.ts`, `src/features/images/`, `src/features/items/`, `src/features/profile/`, pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: backend 018 (moderación de imágenes) y T013
+  - Aceptación: CA-07; el rechazo de imagen del servidor se muestra con motivo y salida, no deja la foto en el formulario y no sube nada más; vale para objetos, perfil y evidencia; pruebas con la API simulada; **la clasificación la hace el servidor** (si el backend aún no la tiene, la tarea queda «preparada» y se anota)
+  - Refs: RF-16 · A-4
+- [ ] **T018** [P] Moderación de texto ampliada: lado móvil
+  - Archivos: pantallas y `api.ts` de perfil, calificaciones, incidencias y reportes, pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: backend 018 (moderación de texto ampliada)
+  - Aceptación: perfil (nombre y bio), calificaciones, incidencias y reportes muestran el rechazo `validation_failed` de moderación por campo sin romper la pantalla; pruebas de cada una
+  - Refs: RF-17 · M-6
+- [ ] **T019** **(NEEDS CLARIFICATION)** Push en Android (FCM)
+  - Archivos: `app.config.ts`, `docs/play/cumplimiento.md`, `docs/calidad/pruebas.md`, `memoria.md` (solo anexar)
+  - Agente: `dev-expo` + **administrador** · Depende de: T002
+  - Aceptación: CA-08; proyecto de Firebase y credenciales subidas a EAS por quien administra la cuenta (**servicio externo: se pide autorización**); el AAB instalado obtiene un token y recibe un aviso de prueba, con evidencia sin datos personales; lo que Expo Go no permita probar se anota
+  - Refs: RF-18 · M-4
+- [ ] **T020** **(NEEDS CLARIFICATION)** Asistente de proyectos: implementar o declarar fuera de alcance
+  - Archivos: `src/features/ai-suggestions/` o `specs/014-ia-sugerencias/spec.md`, `memoria.md` (solo anexar)
+  - Agente: `spec-writer` + **persona** · Depende de: T009
+  - Aceptación: decisión de la persona: implementar el consumo de `/ai/assistant/*` con sus pruebas, o declararlo fuera de alcance de la 014 con motivo y actualizar la matriz y el informe
+  - Refs: RF-19 · M-8
+
+- [ ] **T031** Inventario del contrato y prueba de cobertura
+  - Archivos: `docs/calidad/contrato-endpoints.md`, `src/__e2e__/contract-coverage.test.ts`, `memoria.md` (solo anexar)
+  - Agente: `qa-mobile` + `spec-writer` · Depende de: —
+  - Aceptación: CA-12; las 69 operaciones de `vaiven-backend/api/openapi.yaml` clasificadas (consumida / fuera de alcance móvil con motivo / pendiente); las 6 de `/admin/*` quedan «fuera de alcance móvil» (RF-29); la prueba lee el `openapi.yaml` (solo lectura, sin red) y falla ante una operación sin clasificar, con caso negativo
+  - Refs: RF-28, RF-29 · C-1
+- [ ] **T032** **(NEEDS CLARIFICATION)** Asistente de proyectos: consumo del contrato
+  - Archivos: `src/features/ai-suggestions/` (api, hooks, pantalla), pruebas, `docs/calidad/contrato-endpoints.md`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T020 (decisión «implementar») y T031
+  - Aceptación: solo si T020 decide implementar; consume `POST /ai/assistant/messages` y `DELETE /ai/assistant/conversations/{id}` con `features.aiSuggestions` activo, errores por campo y moderación, sin datos del chat entre personas; pruebas con la API simulada validadas contra `openapi.yaml`; si T020 decide «fuera de alcance», esta tarea se cierra como no aplicable con la decisión enlazada
+  - Refs: RF-30 · C-2
+- [ ] **T033** Tolerar el 401 `stepUp` (preparación para el backend 019)
+  - Archivos: `src/features/auth/session.tsx`, `src/lib/api/`, pruebas (`*.security.test.*`)
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T011
+  - Aceptación: CA-13; el cliente revisa `error.details` (`field: "stepUp"`) antes de tratar un 401 como sesión vencida; con `stepUp` conserva la sesión, no pierde lo escrito y ofrece reintentar; con sesión vencida cierra la sesión como hoy; pruebas de ambos casos y de que el refresco de sesión no entra en bucle; **debe estar lista antes de que el backend encienda las banderas de la 019**
+  - Refs: RF-31 · C-3
+- [ ] **T034** **(NEEDS CLARIFICATION)** Identidad fuerte: MFA, recuperación y sesiones
+  - Archivos: `src/features/auth/`, `src/features/profile/` (seguridad de la cuenta), `src/i18n/`, pruebas, `docs/calidad/contrato-endpoints.md`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T033 y backend 019 aprobada y publicada en `openapi.yaml`
+  - Aceptación: CA-14; **bloqueada** hasta que las rutas existan en el contrato (los nombres actuales son tentativos y no se implementa nada fuera de él); al desbloquearse: enrolar/verificar/desactivar MFA, códigos de recuperación, segundo paso de `login`, confirmación de identidad para rutas sensibles, `GET /me/sessions` y `DELETE /me/sessions/{id}`; sin guardar el secreto TOTP ni los códigos fuera de `SecureStore`/memoria, sin registrarlos en logs; dependencia nueva solo con registro (Art. X.4)
+  - Refs: RF-32 · C-4
+- [ ] **T035** Prueba con compresión HTTP activa (backend 018, T014)
+  - Archivos: `src/__e2e__/compression.integration.test.ts`, `.maestro/` (si aplica), `docs/calidad/dispositivo/`
+  - Agente: `qa-mobile` · Depende de: T025 y backend 018 (T008, compresión en staging)
+  - Aceptación: CA-15; con `Accept-Encoding` activo la app muestra igual listas y perfil; el JSON es idéntico al de sin compresión; las rutas con secretos no llegan comprimidas; resultado archivado con fecha, comando y API usada; si el backend aún no la tiene activa, queda **bloqueada** y se anota
+  - Refs: RF-33 · C-5
+
+- [ ] **T036** Notificaciones push: reproducir, diagnosticar y corregir
+  - Archivos: `src/features/notifications/` (`push.ts`, `usePushRegistration.ts`, `api.ts`, `NotificationsBootstrap.tsx`), `app.config.ts` si falta algo del lado de la app, `docs/calidad/pruebas.md`, `memoria.md` (solo anexar), pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T002; la parte de Android depende de T019 (FCM y credenciales en EAS, **servicio externo: se pide autorización**)
+  - Aceptación: CA-16; primero se **reproduce** en un teléfono (AAB o APK instalado) y se anota el síntoma exacto (¿no hay token?, ¿no se registra en el servidor?, ¿el servidor envía y no llega?); se sigue la cadena permiso → canal → `getExpoPushTokenAsync` con el `projectId` de EAS → `POST` del token → envío → recepción y se identifica el eslabón roto; la corrección lleva una prueba que habría fallado antes; evidencia sin datos personales; lo que Expo Go no permita probar se anota
+  - Refs: RF-34 · F-1, M-4
+- [ ] **T037** Edición de objeto: reproducir, diagnosticar y corregir
+  - Archivos: `src/features/items/` (`screens/EditItemScreen.tsx`, `screens/ItemFormScreen.tsx`, `hooks.ts`, `api.ts`), pruebas
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
+  - Aceptación: CA-17; se reproduce con un objeto propio y se anota el síntoma (¿no abre?, ¿no guarda?, ¿error del servidor?, ¿no refresca el detalle?); se contrasta `PATCH /items/{id}` y su `version` con `../vaiven-backend/api/openapi.yaml` (solo lectura); la corrección lleva una prueba de pantalla y de cliente que habría fallado antes; 409 y 403 se muestran sin perder lo escrito; si la causa está en el backend, se anota y se avisa sin tocarlo
+  - Refs: RF-35 · F-2
+- [ ] **T038** **(NEEDS CLARIFICATION)** Ubicación exacta
+  - Archivos: `app.config.ts`, `src/features/items/components/LocationField.tsx`, `src/features/search/useLocation.ts`, `src/app.config.test.ts`, `src/__arch__/rules.security.test.ts` (S-08a/S-08b/S-12g), `docs/play/cumplimiento.md`, `memoria.md` (solo anexar)
+  - Agente: `spec-writer` + **persona** (decisión) y después `dev-expo` + `qa-mobile` · Depende de: T012 y la decisión de §7
+  - Aceptación: CA-18; **sin decisión no se cambia nada**; con decisión aprobada: permiso de ubicación precisa con texto en español, las reglas S-08a/S-08b/S-12g se actualizan **con la decisión escrita** (no se borran para dar verde), la ubicación exacta no aparece en listados públicos (Art. VIII.4), el aviso de privacidad y `cumplimiento.md` coinciden antes de publicar; si hace falta un campo nuevo en el contrato del backend, se pide y no se inventa; si exige enmienda a la constitución, se **propone** por escrito (no se modifica `constitution.md`)
+  - Refs: RF-36 · F-3
+
+### Fase 5 — DevSecOps CI/CD
+- [ ] **T021** [P] Auditoría de dependencias portable y al día
+  - Archivos: `.github/scripts/audit.mjs`, `.github/scripts/audit.test.mjs`, `.github/audit-exceptions.json`, `docs/seguridad.md`
+  - Agente: `dev-expo` + `qa-mobile` · Depende de: —
+  - Aceptación: `audit.mjs` funciona en Windows y en Linux (prueba de ambos casos); la excepción `GHSA-fc5q-39xc-vjpf` se mantiene solo si `npm audit` aún la necesita (si no, se retira), con vencimiento; `docs/seguridad.md` cita las cifras reales de `npm audit`
+  - Refs: RF-20 · B-1, M-9
+- [ ] **T022** [P] SBOM y análisis estático móvil en el CI
+  - Archivos: `.github/workflows/ci.yml`, `docs/devsecops.md`
+  - Agente: `gestor-repo` + `dev-expo` · Depende de: T021
+  - Aceptación: el CI genera un SBOM CycloneDX como artefacto y corre un análisis estático móvil (por ejemplo `mobsfscan`) sin dependencias nuevas en la app; acciones fijadas por SHA como las actuales; el job nuevo forma parte del *gate*
+  - Refs: RF-21 · M-7
+- [ ] **T023** **(NEEDS CLARIFICATION)** CD manual preparado
+  - Archivos: `.github/workflows/release.yml`, `docs/devsecops.md`, `docs/play/lanzamiento.md`
+  - Agente: `gestor-repo` + **administrador** · Depende de: T022
+  - Aceptación: CA-09; flujo `workflow_dispatch` con entorno de revisor obligatorio que construye con EAS usando `EXPO_TOKEN` desde secretos; **preparado y sin ejecutar**; la documentación explica cómo se activa y quién aprueba; **se pide autorización antes de crear el secreto o ejecutarlo**
+  - Refs: RF-22 · M-7
+- [ ] **T024** Método del «porcentaje de seguridad DevSecOps»
+  - Archivos: `docs/calidad/seguridad-devsecops.md`
+  - Agente: `spec-writer` + `revisor-constitucion` · Depende de: T016, T022
+  - Aceptación: lista de prácticas (de pipeline y de la app) con su peso, su estado y su evidencia, y el resultado calculado con la fórmula escrita; reproducible por cualquier evaluador; no se redondea a favor
+  - Refs: RF-23 · P-1
+
+### Fase 6 — Evidencia en dispositivo
+- [ ] **T025** Flujos Maestro estrictos y nuevos
+  - Archivos: `.maestro/*.yaml`, `scripts/device-tests.mjs`, `docs/calidad/dispositivo.md`
+  - Agente: `qa-mobile` + `dev-expo` · Depende de: T006
+  - Aceptación: `03-solicitud` falla si falta `E2E_ITEM_TITLE`; `02-explorar` exige resultados; nuevos flujos: publicar un objeto con foto, chat y borrar el historial de recomendaciones; la sugerencia de IA se comprueba cuando el servidor la tiene activa; los textos salen de `src/i18n/`
+  - Refs: RF-24 · B-2
+- [ ] **T026** Ejecución real en el teléfono con informe archivado
+  - Archivos: `docs/calidad/dispositivo/` (informe JUnit y registro), `memoria.md` (solo anexar)
+  - Agente: `probador-expo` + **persona** · Depende de: T025, T005 y backend 016-T012 (datos en la API de pruebas)
+  - Aceptación: CA-10; `adb devices` lista el teléfono, Maestro instalado **con autorización**, `npm run test:device` en verde, `informe-<fecha>.xml` y `ultima-ejecucion.json` en `docs/calidad/dispositivo/` con la API usada; la cuenta de prueba se elimina al final; 016-T009 se vuelve a cerrar con esa evidencia
+  - Refs: RF-25 · M-2
+- [ ] **T027** [P] Evidencia mínima de las specs 003–012
+  - Archivos: `docs/evidencia/003` a `docs/evidencia/012` (capturas), `docs/calidad/evidencia-cierres.md`
+  - Agente: `probador-expo` + **persona** · Depende de: T026
+  - Aceptación: capturas de una cuenta de demostración (sin datos personales) de los flujos clave de cada spec en un teléfono real, o la ausencia documentada con motivo; la tabla de cierres se actualiza
+  - Refs: RF-26 · M-2
+
+### Fase 7 — Medición y cierre
+- [ ] **T028** Informe de pruebas actualizado
+  - Archivos: `docs/calidad/pruebas.md`, `docs/calidad/conteo.json`, `memoria.md` (solo anexar)
+  - Agente: `qa-mobile` + `spec-writer` · Depende de: T007 a T027
+  - Aceptación: conteo real de `npm run test:report` (suites, casos, cobertura sobre los archivos medidos), fecha y comando; lo no ejecutado dice «no ejecutado»
+  - Refs: RF-27
+- [ ] **T029** Reauditoría con los dos prompts
+  - Archivos: `docs/calidad/reauditoria.md`, `memoria.md` (solo anexar)
+  - Agente: `revisor-constitucion` (rol evaluador) + **persona** · Depende de: T028
+  - Aceptación: CA-11; se repiten la auditoría de Claude y la de OpenCode con sus prompts; se registra la nota de cada una con su método, los hallazgos que quedan y por qué; meta **≥ 90 en ambas**; si no se alcanza, se escribe qué falta y de qué depende
+  - Refs: RF-27
+- [ ] **T030** Verificación final
+  - Archivos: `memoria.md` (solo anexar), `PUNTAJE-VERSIONES.md`, `ROADMAP.md`, `docs/evidencia/021/`
+  - Agente: `probador-expo` · Depende de: T029 y todas las anteriores `[x]`
+  - Aceptación: `npm run typecheck && npm run lint && npm test`, `npm run test:security` y `npm run test:report` en verde; AAB con la versión final instalado en un teléfono (sesión, datos y recomendaciones visibles); recorrer CA-01 a CA-11 y anotar el resultado de cada uno; **la persona decide si se sube a Play**
+  - Refs: Art. XIV.4
+
+| Total | 38 tareas |
+|---|---|

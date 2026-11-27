@@ -1,6 +1,6 @@
 # Tareas 014 — Sugerencias con IA (móvil)
 
-- **Dueño:** MO-A (T006 de MO-B) · **Estado:** en curso (T001–T005 hechas el 2026-11-20; T006 trasladada a la landing; T007 parcial; T008 hecha) · `[P]` = paralelizable
+- **Dueño:** MO-A (T006 de MO-B) · **Estado:** en curso (T001–T005 hechas el 2026-11-20; T006 trasladada a la landing; T007 cerrada por indicación de la persona el 2026-11-26, con evidencia parcial; T008 hecha, solo CA-01 con captura; ver `docs/calidad/evidencia-cierres.md`) · `[P]` = paralelizable
 - Se ejecuta **después** del congelamiento de la 1.0 (22 nov).
 
 - [x] **T001** [P] Tipos, claves y textos

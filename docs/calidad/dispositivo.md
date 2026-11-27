@@ -8,7 +8,7 @@ Spec 016 (RF-07, RF-08). Flujos de Maestro (`.maestro/`) que manejan la app en u
 2. **Maestro**, CLI externa y gratuita (<https://maestro.mobile.dev>); no entra al `package.json` ni a la app (spec 016, P-03). `maestro --version` debe responder.
 3. Teléfono Android con **depuración USB** activada, conectado por USB y con el aviso aceptado: `adb devices` debe decir `device` (no `unauthorized`).
 4. La app en el teléfono, de una de dos formas:
-   - **APK `preview`** (`--modo apk`, paquete `mx.vaiven.app`): se construye con EAS. `eas.json` apunta hoy a la API de staging (`https://vaiven-staging.westus2.cloudapp.azure.com`) con `EXPO_PUBLIC_APP_ENV=production`; el script decide por el **host**, no por esa variable.
+   - **APK `preview`** (`--modo apk`, paquete `mx.vaiven.app`): se construye con EAS. `eas.json` apunta hoy a la API de staging (`https://vaiven-staging.westus2.cloudapp.azure.com:8443`) con `EXPO_PUBLIC_APP_ENV=production`; el script decide por el **host**, no por esa variable.
    - **Expo Go** (`--modo expo-go --link exp://<IP-de-tu-PC>:8081`, Art. XIV.1): con `npx expo start` corriendo y `.env` apuntando a staging o a una red local.
 
 ## Ejecutar
