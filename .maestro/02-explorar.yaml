@@ -1,12 +1,18 @@
 # RF-07 · Explorar con búsqueda (spec 006). Sigue con la sesión abierta en 01.
+# Spec 021 · T025 (RF-24, B-2): EXIGE resultados. El estado vacío ya no cuenta como éxito; los datos
+# de demostración del servidor (backend 016-T012, `seed`) incluyen «Taladro percutor 600 W».
 appId: ${APP_ID}
+name: 02-explorar
 ---
 - tapOn: 'Explorar'
 - assertVisible: '¿Qué necesitas?'
 - tapOn: '¿Qué necesitas?'
 - inputText: 'taladro'
 - hideKeyboard
-# Con datos de staging aparecen resultados; sin ellos, el estado vacío. Ambos son válidos.
+# Una tarjeta de resultado se anuncia «<título>, <precio>, …»: la coma la distingue del texto que
+# se escribió en la barra de búsqueda.
 - extendedWaitUntil:
-    visible: 'Resultados|Nada por aquí|Aún no hay objetos publicados'
+    visible: '(?i).*taladro.*, .*'
     timeout: 30000
+- assertNotVisible: 'Nada por aquí'
+- assertNotVisible: 'Aún no hay objetos publicados'

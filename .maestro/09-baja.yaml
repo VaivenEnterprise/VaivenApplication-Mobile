@@ -1,7 +1,18 @@
 # RF-07 · Baja de la cuenta de prueba (spec 003, RF-08): contraseña incorrecta no la elimina;
-# la correcta sí, y después ya no se puede entrar.
+# la correcta sí, y después ya no se puede entrar. Spec 021 · T025: corre siempre al final (config.yaml)
+# y, si un flujo anterior dejó una sesión abierta, la cierra antes para eliminar la cuenta efímera.
 appId: ${APP_ID}
+name: 09-baja
 ---
+- stopApp
+- runFlow: _shared/abrir.yaml
+- extendedWaitUntil:
+    visible: 'Iniciar sesión|Explorar'
+    timeout: 60000
+- runFlow:
+    when:
+      visible: 'Explorar'
+    file: _shared/cerrar-sesion.yaml
 - runFlow: _shared/iniciar-sesion.yaml
 - extendedWaitUntil:
     visible: 'Explorar'

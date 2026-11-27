@@ -1,0 +1,18 @@
+# Spec 015 (RF-04): borrar el historial de recomendaciones desde Perfil. Spec 021 · T025 (RF-24).
+# Exige el aviso de éxito: el de error («No pudimos borrar tu historial…») hace fallar el flujo.
+appId: ${APP_ID}
+name: 06-recomendaciones
+---
+- runFlow: _shared/reabrir.yaml
+- tapOn: 'Perfil'
+- scrollUntilVisible:
+    element: 'Borrar historial de recomendaciones'
+- tapOn: 'Borrar historial de recomendaciones'
+- extendedWaitUntil:
+    visible: '¿Borrar tu historial?'
+    timeout: 10000
+- tapOn: 'Borrar'
+- extendedWaitUntil:
+    visible: 'Historial borrado'
+    timeout: 30000
+- assertNotVisible: 'No pudimos borrar tu historial. Intenta de nuevo.'

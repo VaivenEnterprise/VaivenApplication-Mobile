@@ -31,8 +31,11 @@ export function parseAdbDevices(salida) {
 
 const LOCAL = /^(localhost|\[::1\]|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/;
 
-/** Archivo versionado con la lista explícita de hosts permitidos (spec 021-T006, P-04). */
-export const ARCHIVO_HOSTS = join('scripts', 'e2e-allowed-hosts.json');
+/**
+ * Archivo versionado con la lista explícita de hosts permitidos (spec 021-T006, P-04). Con `/`
+ * fijo (no `join`): es también la etiqueta que se muestra y se guarda, igual en Windows.
+ */
+export const ARCHIVO_HOSTS = 'scripts/e2e-allowed-hosts.json';
 
 /** `host:puerto` de una URL o de una entrada de la lista; sin puerto vale el de https (443). */
 export function hostPuerto(entrada) {
@@ -167,6 +170,32 @@ export function parseArgs(argv) {
 
 const credencialAleatoria = () => randomBytes(9).toString('base64url');
 
+/**
+ * Variables que los flujos exigen y que el script no puede generar (spec 021-T025, RF-24): sin
+ * ellas el flujo correspondiente FALLA, ya no se omite. Se avisa antes de correr.
+ */
+export const VARIABLES_DE_DEMOSTRACION = [
+  { nombre: 'E2E_ITEM_TITLE', flujo: '03-solicitud' },
+  { nombre: 'E2E_CHAT_EMAIL', flujo: '08-chat' },
+  { nombre: 'E2E_CHAT_PASSWORD', flujo: '08-chat' },
+];
+
+/** Avisos de las variables de demostración que faltan (los flujos que las usan fallarán). */
+export function avisosDeVariables(env) {
+  return VARIABLES_DE_DEMOSTRACION.filter(({ nombre }) => !env[nombre]).map(
+    ({ nombre, flujo }) =>
+      `Falta ${nombre}: el flujo ${flujo} fallará (ver docs/calidad/dispositivo.md).`,
+  );
+}
+
+/**
+ * Los flujos buscan el objeto por su título dentro de una expresión regular («<título>, …»);
+ * un título con caracteres especiales de regex no se encontraría o coincidiría con otro.
+ */
+export function tituloSeguro(titulo) {
+  return !/[\\^$.*+?()[\]{}|]/.test(titulo);
+}
+
 /** Ejecuta la suite. `deps` permite probar sin dispositivo; devuelve el código de salida. */
 export function main(argv, deps = {}) {
   const raiz = deps.raiz ?? resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -207,6 +236,11 @@ export function main(argv, deps = {}) {
     log(`API que usará la app: ${api.url} (fuente: ${api.fuente})`);
     if (!juicio.ok) throw new EntornoError(`Me niego a correr: ${juicio.motivo}.`);
     log(`API aceptada: ${juicio.motivo}.`);
+    const tituloObjeto = env.E2E_ITEM_TITLE ?? '';
+    if (!tituloSeguro(tituloObjeto))
+      throw new EntornoError(
+        `E2E_ITEM_TITLE («${tituloObjeto}») trae caracteres especiales de expresión regular (\\ ^ $ . * + ? ( ) [ ] { } |); usa un objeto de demostración con un título sin ellos.`,
+      );
 
     // 2) adb y dispositivo físico.
     const adb = run('adb', ['devices', '-l']);
@@ -241,6 +275,8 @@ export function main(argv, deps = {}) {
     // 4) Cuenta de prueba efímera: variables de entorno o valores generados para esta corrida.
     const email = env.E2E_EMAIL || `vaiven.e2e.${ahora().getTime()}@example.com`;
     const password = env.E2E_PASSWORD || `Aa1-${credencialAleatoria()}`;
+    // Marca única de la corrida: título del objeto que se publica y texto del mensaje del chat.
+    const corrida = String(ahora().getTime());
     const fecha = ahora().toISOString().replace(/[:.]/g, '-');
     const informe = join(raiz, 'docs', 'calidad', 'dispositivo', `informe-${fecha}.xml`);
     const args = [
@@ -261,9 +297,16 @@ export function main(argv, deps = {}) {
       '-e',
       `E2E_PASSWORD=${password}`,
       '-e',
-      `E2E_ITEM_TITLE=${env.E2E_ITEM_TITLE ?? ''}`,
+      `E2E_ITEM_TITLE=${tituloObjeto}`,
+      '-e',
+      `E2E_CHAT_EMAIL=${env.E2E_CHAT_EMAIL ?? ''}`,
+      '-e',
+      `E2E_CHAT_PASSWORD=${env.E2E_CHAT_PASSWORD ?? ''}`,
+      '-e',
+      `E2E_RUN_ID=${corrida}`,
     ];
     log(`Dispositivo: ${objetivo.serial} · Maestro ${version} · modo ${opts.modo}`);
+    for (const aviso of avisosDeVariables(env)) err(`⚠ ${aviso}`);
     const r = run('maestro', args);
     if (r.stdout) log(String(r.stdout));
     if (r.stderr) err(String(r.stderr));
@@ -281,7 +324,10 @@ export function main(argv, deps = {}) {
           maestro: version,
           api: { host: juicio.clave, fuente: api.fuente, aceptadaPor: juicio.motivo },
           comando:
-            'maestro --device <serial> test .maestro --format junit -e APP_ID -e APP_LINK -e E2E_EMAIL -e E2E_PASSWORD (valores omitidos)',
+            'maestro --device <serial> test .maestro --format junit -e APP_ID -e APP_LINK -e E2E_EMAIL -e E2E_PASSWORD -e E2E_ITEM_TITLE -e E2E_CHAT_EMAIL -e E2E_CHAT_PASSWORD -e E2E_RUN_ID (valores omitidos)',
+          variablesFaltantes: VARIABLES_DE_DEMOSTRACION.filter(({ nombre }) => !env[nombre]).map(
+            ({ nombre }) => nombre,
+          ),
           informe: informe.replace(raiz, '').replace(/\\/g, '/').replace(/^\//, ''),
           codigoDeSalida: r.status,
           resultado: exito ? 'verde' : 'fallo',

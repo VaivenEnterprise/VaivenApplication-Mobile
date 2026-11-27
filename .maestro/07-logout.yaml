@@ -1,13 +1,9 @@
 # RF-07 · Cerrar sesión desde Perfil; al reabrir la app ya no hay sesión (spec 003, RF-07).
 appId: ${APP_ID}
+name: 07-logout
 ---
-- tapOn: 'Perfil'
-- scrollUntilVisible:
-    element: 'Cerrar sesión'
-- tapOn: 'Cerrar sesión'
-- extendedWaitUntil:
-    visible: 'Iniciar sesión'
-    timeout: 30000
+- runFlow: _shared/reabrir.yaml
+- runFlow: _shared/cerrar-sesion.yaml
 - stopApp
 - runFlow: _shared/abrir.yaml
 - extendedWaitUntil:

@@ -1,0 +1,45 @@
+# Spec 008 (chat). Spec 021 · T025 (RF-24). Una conversación solo existe cuando el dueño acepta una
+# solicitud, así que la cuenta efímera no tiene ninguna: este flujo entra con una cuenta de
+# DEMOSTRACIÓN del `seed` (backend 016-T012) reservada para la suite y con una reserva aceptada (E2E_CHAT_EMAIL y
+# E2E_CHAT_PASSWORD; nunca una cuenta de una persona real). FALLA si faltan. Envía un mensaje propio
+# de esta corrida, comprueba que quedó enviado y cierra la sesión de demostración.
+appId: ${APP_ID}
+name: 08-chat
+---
+- assertTrue: ${E2E_CHAT_EMAIL != '' && E2E_CHAT_PASSWORD != ''}
+- stopApp
+- runFlow: _shared/abrir.yaml
+- extendedWaitUntil:
+    visible: 'Iniciar sesión'
+    timeout: 60000
+- runFlow:
+    file: _shared/iniciar-sesion.yaml
+    env:
+      E2E_EMAIL: ${E2E_CHAT_EMAIL}
+      E2E_PASSWORD: ${E2E_CHAT_PASSWORD}
+- extendedWaitUntil:
+    visible: 'Explorar'
+    timeout: 30000
+- tapOn: 'Mensajes'
+- assertNotVisible: 'Aún no tienes mensajes'
+# Primera conversación abierta: «<persona>. <objeto>. <último mensaje>», sin «Conversación cerrada».
+- extendedWaitUntil:
+    visible: '(?!.*Conversación cerrada).+\. .+\. .+'
+    timeout: 30000
+- tapOn:
+    text: '(?!.*Conversación cerrada).+\. .+\. .+'
+    index: 0
+- extendedWaitUntil:
+    visible: 'Escribe un mensaje'
+    timeout: 30000
+- tapOn: 'Escribe un mensaje'
+- inputText: 'Prueba automatizada ${E2E_RUN_ID}'
+- hideKeyboard
+- tapOn: 'Enviar mensaje'
+# Enviado: «Tú, <texto>, <hora>» sin «Enviando» ni «No enviado» al final.
+- extendedWaitUntil:
+    visible: 'Tú, Prueba automatizada ${E2E_RUN_ID}, [^,]+'
+    timeout: 30000
+- assertNotVisible: 'No enviado'
+- assertNotVisible: 'No se envió tu mensaje'
+- runFlow: _shared/cerrar-sesion.yaml

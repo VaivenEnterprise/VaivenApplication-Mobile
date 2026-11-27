@@ -4,7 +4,9 @@
     .\scripts\device-tests.ps1 -Modo apk
     .\scripts\device-tests.ps1 -Modo expo-go -Link exp://192.168.1.20:8081
   Variables opcionales: E2E_EMAIL, E2E_PASSWORD (si faltan se generan para esta corrida),
-  E2E_ITEM_TITLE (objeto de staging que pedirá el flujo 03), E2E_API_URL,
+  E2E_ITEM_TITLE (objeto de una cuenta de demostración que pide el flujo 03; sin él, 03 falla),
+  E2E_CHAT_EMAIL y E2E_CHAT_PASSWORD (cuenta de demostración con una reserva aceptada para el
+  flujo 08-chat; sin ellas, 08 falla), E2E_API_URL,
   E2E_ALLOW_API_HOST (host:puerto extra; la lista base está en scripts/e2e-allowed-hosts.json).
   Falla con un mensaje claro si no hay teléfono, adb o Maestro, y no escribe resultados.
 #>

@@ -1,5 +1,6 @@
 # RF-07 · La sesión persiste: cerrar la app SIN cerrar sesión y volver a abrirla (spec 003, CA-02).
 appId: ${APP_ID}
+name: 04-sesion-persiste
 ---
 - stopApp
 - runFlow: _shared/abrir.yaml

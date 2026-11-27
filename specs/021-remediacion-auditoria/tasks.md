@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); Fase 4 ejecutada en parte el 2026-11-27 (T018, T020, T031, T032, T033, T037 y T038 hechas; T017, T034 y T035 bloqueadas por el backend o la fase 6; T019 y T036 esperan la configuración externa de FCM y la prueba en teléfono; D-248 a D-250); Fase 5 ejecutada el 2026-11-27 (T021 a T024 hechas, D-252; el CD queda preparado y sin ejecutar, y `SBOM` y `Mobile SAST` aún no corren en GitHub porque nada se ha subido); fases 6 y 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); Fase 4 ejecutada en parte el 2026-11-27 (T018, T020, T031, T032, T033, T037 y T038 hechas; T017, T034 y T035 bloqueadas por el backend o la fase 6; T019 y T036 esperan la configuración externa de FCM y la prueba en teléfono; D-248 a D-250); Fase 5 ejecutada el 2026-11-27 (T021 a T024 hechas, D-252; el CD queda preparado y sin ejecutar, y `SBOM` y `Mobile SAST` aún no corren en GitHub porque nada se ha subido); Fase 6 ejecutada en parte el 2026-11-27 (T025 hecha, D-253; T026 y T027 bloqueadas: teléfono, autorización para instalar Maestro y `seed` del backend 016-T012); fase 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -223,21 +223,24 @@
   - Refs: RF-23 · P-1
 
 ### Fase 6 — Evidencia en dispositivo
-- [ ] **T025** Flujos Maestro estrictos y nuevos
+- [x] **T025** Flujos Maestro estrictos y nuevos
   - Archivos: `.maestro/*.yaml`, `scripts/device-tests.mjs`, `docs/calidad/dispositivo.md`
   - Agente: `qa-mobile` + `dev-expo` · Depende de: T006
   - Aceptación: `03-solicitud` falla si falta `E2E_ITEM_TITLE`; `02-explorar` exige resultados; nuevos flujos: publicar un objeto con foto, chat y borrar el historial de recomendaciones; la sugerencia de IA se comprueba cuando el servidor la tiene activa; los textos salen de `src/i18n/`
   - Refs: RF-24 · B-2
+  - Hecho (2026-11-27, D-253): `03` empieza con `assertTrue` sobre `E2E_ITEM_TITLE` y cancela su solicitud; `02` exige una tarjeta de resultado y falla con los estados vacíos; nuevos `05-publicar` (foto de la galería con `addMedia`, IA condicionada al botón «Sugerir con IA», publica y elimina), `06-recomendaciones` y `08-chat` (cuenta de demostración reservada para la suite, `E2E_CHAT_EMAIL`/`E2E_CHAT_PASSWORD`); `05-logout`/`06-baja` pasan a `07-logout`/`09-baja`; orden fijo en `config.yaml` con `continueOnFailure: true` para que la baja corra siempre. El script entrega `E2E_CHAT_*` y `E2E_RUN_ID`, avisa de las variables que faltan y se niega con un título que rompa la expresión regular. Pruebas estáticas en `scripts/device-tests.test.mjs` (orden, rigor, variables entregadas y textos contra `src/i18n/`, con caso negativo comprobado). Fuera de la lista de archivos: `scripts/device-tests.test.mjs`, `scripts/device-tests.ps1` (cabecera), `.maestro/media/foto-prueba.jpg` y `docs/calidad/entornos.md` (regla 2). **Sin ejecutar en un teléfono** (es T026): los selectores del selector de fotos de Android y de los campos pueden necesitar ajuste en la primera corrida.
 - [ ] **T026** Ejecución real en el teléfono con informe archivado
   - Archivos: `docs/calidad/dispositivo/` (informe JUnit y registro), `memoria.md` (solo anexar)
   - Agente: `probador-expo` + **persona** · Depende de: T025, T005 y backend 016-T012 (datos en la API de pruebas)
   - Aceptación: CA-10; `adb devices` lista el teléfono, Maestro instalado **con autorización**, `npm run test:device` en verde, `informe-<fecha>.xml` y `ultima-ejecucion.json` en `docs/calidad/dispositivo/` con la API usada; la cuenta de prueba se elimina al final; 016-T009 se vuelve a cerrar con esa evidencia
   - Refs: RF-25 · M-2
+  - **Bloqueada (2026-11-27):** en la máquina de la sesión no hay `adb` ni `maestro` ni teléfono conectado (`npm run test:device -- --modo apk` se detiene en «No encuentro `adb`» sin escribir resultados), instalar Maestro requiere autorización, y el backend 016-T012 (`seed` en staging) sigue abierto: sin él `02`, `03` y `08` no tienen datos. Falta además que se reserven para la suite una cuenta dueña de `E2E_ITEM_TITLE` y una cuenta para `E2E_CHAT_*` (`docs/calidad/entornos.md`, regla 2).
 - [ ] **T027** [P] Evidencia mínima de las specs 003–012
   - Archivos: `docs/evidencia/003` a `docs/evidencia/012` (capturas), `docs/calidad/evidencia-cierres.md`
   - Agente: `probador-expo` + **persona** · Depende de: T026
   - Aceptación: capturas de una cuenta de demostración (sin datos personales) de los flujos clave de cada spec en un teléfono real, o la ausencia documentada con motivo; la tabla de cierres se actualiza
   - Refs: RF-26 · M-2
+  - **Bloqueada (2026-11-27):** depende de T026 y de un teléfono real manejado por la persona.
 
 ### Fase 7 — Medición y cierre
 - [ ] **T028** Informe de pruebas actualizado

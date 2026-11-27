@@ -1,0 +1,96 @@
+# Spec 005 (publicar) + 004 (foto) + 014 (sugerencia con IA). Spec 021 · T025 (RF-24).
+# Publica un objeto con foto con la cuenta de prueba, comprueba que aparece en «Mis objetos» y lo
+# elimina al final. La foto (`media/foto-prueba.jpg`) es una imagen sintética sin datos personales
+# (la misma del `seed` del backend). La sugerencia con IA solo existe si el servidor la tiene activa
+# (`features.aiSuggestions`): si el botón aparece, la sugerencia DEBE llegar.
+appId: ${APP_ID}
+name: 05-publicar
+---
+- addMedia:
+    - 'media/foto-prueba.jpg'
+- runFlow: _shared/reabrir.yaml
+- tapOn: 'Mis objetos'
+- extendedWaitUntil:
+    visible: 'Publicar objeto|Publicar mi primer objeto'
+    timeout: 30000
+- tapOn: 'Publicar objeto|Publicar mi primer objeto'
+- extendedWaitUntil:
+    visible: 'Agregar foto, .*'
+    timeout: 30000
+
+# Foto desde la galería: el selector de fotos es de Android (no de la app), por eso se usan sus ids.
+- tapOn: 'Agregar foto, .*'
+- tapOn: 'Elegir de la galería'
+- extendedWaitUntil:
+    visible:
+      id: '.*:id/icon_thumbnail'
+    timeout: 30000
+- tapOn:
+    id: '.*:id/icon_thumbnail'
+    index: 0
+# Con selección múltiple, Android pide confirmar con su propio botón.
+- runFlow:
+    when:
+      visible:
+        id: '.*:id/button_add'
+    commands:
+      - tapOn:
+          id: '.*:id/button_add'
+- extendedWaitUntil:
+    visible: 'Foto 1, Portada. Foto lista'
+    timeout: 60000
+
+# Sugerencia con IA: solo si el servidor la tiene activa.
+- runFlow:
+    when:
+      visible: 'Sugerir con IA'
+    commands:
+      - assertVisible: 'La foto se envía a un servicio de IA'
+      - tapOn: 'Sugerir con IA'
+      - extendedWaitUntil:
+          visible: 'Usar'
+          timeout: 60000
+      - assertNotVisible: 'No pudimos sugerir. Puedes escribirlo tú.'
+      - tapOn: 'Descartar sugerencia'
+
+# Datos mínimos: título único de esta corrida, categoría, préstamo, estado, valor y municipio.
+- tapOn: 'Ej. Taladro percutor 600 W'
+- inputText: 'Objeto de prueba ${E2E_RUN_ID}'
+- hideKeyboard
+- tapOn: 'Herramientas manuales'
+- tapOn: 'Préstamo, Gratis'
+- scrollUntilVisible:
+    element: 'Bueno'
+- tapOn: 'Bueno'
+# Un campo de texto se anuncia con su etiqueta: el índice 0 es la etiqueta visible y el 1, el campo.
+- scrollUntilVisible:
+    element: 'Valor del objeto'
+- tapOn:
+    text: 'Valor del objeto'
+    index: 1
+- inputText: '500'
+- hideKeyboard
+- scrollUntilVisible:
+    element: 'Municipio'
+- tapOn:
+    text: 'Municipio'
+    index: 1
+- inputText: 'Guadalajara'
+- hideKeyboard
+- tapOn: 'Publicar'
+- extendedWaitUntil:
+    visible: 'Objeto de prueba ${E2E_RUN_ID}, .*'
+    timeout: 30000
+
+# Limpieza: el objeto se elimina y deja de verse en «Mis objetos».
+- tapOn: 'Objeto de prueba ${E2E_RUN_ID}, .*'
+- tapOn: 'Más opciones'
+- tapOn: 'Eliminar'
+- extendedWaitUntil:
+    visible: '¿Eliminar este objeto?'
+    timeout: 10000
+- tapOn: 'Eliminar'
+- extendedWaitUntil:
+    notVisible: 'Objeto de prueba ${E2E_RUN_ID}, .*'
+    timeout: 30000
+- assertVisible: 'Mis objetos'

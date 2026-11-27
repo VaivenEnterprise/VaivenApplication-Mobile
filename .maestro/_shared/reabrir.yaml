@@ -1,0 +1,9 @@
+# Cierra la app y la vuelve a abrir con la sesión guardada: cada flujo intermedio empieza en una
+# pantalla conocida aunque el anterior haya fallado a la mitad (spec 021 · T025).
+appId: ${APP_ID}
+---
+- stopApp
+- runFlow: abrir.yaml
+- extendedWaitUntil:
+    visible: 'Explorar'
+    timeout: 60000

@@ -1,5 +1,6 @@
 # RF-07 · Registro con una cuenta de prueba nueva (spec 003). Empieza sin sesión.
 appId: ${APP_ID}
+name: 00-registro
 ---
 - launchApp:
     clearState: true

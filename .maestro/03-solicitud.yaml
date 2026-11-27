@@ -1,20 +1,39 @@
-# RF-07 · Solicitar un objeto de staging (spec 007). Necesita E2E_ITEM_TITLE (un objeto de
-# OTRA persona en staging, backend 016-T012). Sin él, el flujo se omite con un aviso.
+# RF-07 · Solicitar un objeto (spec 007) y cancelar la solicitud al final, para no dejar nada
+# pendiente en el servidor. Spec 021 · T025 (RF-24, B-2): FALLA si falta E2E_ITEM_TITLE (antes se
+# omitía en silencio). E2E_ITEM_TITLE es el título de un objeto de una cuenta de DEMOSTRACIÓN que el
+# equipo reserva para la suite (`seed` del backend 016-T012), nunca de una persona real
+# (docs/calidad/entornos.md, regla 2).
 appId: ${APP_ID}
+name: 03-solicitud
 ---
-- runFlow:
-    when:
-      true: ${E2E_ITEM_TITLE != ''}
-    commands:
-      - tapOn: 'Explorar'
-      - tapOn: '¿Qué necesitas?'
-      - inputText: ${E2E_ITEM_TITLE}
-      - hideKeyboard
-      - tapOn: ${E2E_ITEM_TITLE}
-      - tapOn: 'Solicitar'
-      - tapOn: 'Mañana'
-      - tapOn: 'Entiendo las condiciones'
-      - tapOn: 'Enviar solicitud'
-      - extendedWaitUntil:
-          visible: 'Solicitada'
-          timeout: 30000
+# Sin objeto de demostración no hay nada que probar: el flujo falla aquí.
+- assertTrue: ${E2E_ITEM_TITLE != ''}
+- tapOn: 'Explorar'
+- tapOn: '¿Qué necesitas?'
+- inputText: ${E2E_ITEM_TITLE}
+- hideKeyboard
+- extendedWaitUntil:
+    visible: '${E2E_ITEM_TITLE}, .*'
+    timeout: 30000
+- tapOn: '${E2E_ITEM_TITLE}, .*'
+- tapOn: 'Solicitar'
+- tapOn: 'Mañana'
+- tapOn: 'Entiendo las condiciones'
+- tapOn: 'Enviar solicitud'
+- extendedWaitUntil:
+    visible: 'Solicitud enviada'
+    timeout: 30000
+# Limpieza: la solicitud se cancela desde Actividad.
+- tapOn: 'Ver en Actividad'
+- extendedWaitUntil:
+    visible: '${E2E_ITEM_TITLE}, .*Pendiente'
+    timeout: 30000
+- tapOn: '${E2E_ITEM_TITLE}, .*Pendiente'
+- scrollUntilVisible:
+    element: 'Cancelar'
+- tapOn: 'Cancelar'
+- tapOn: 'Ya no lo necesito'
+- tapOn: 'Cancelar reserva'
+- extendedWaitUntil:
+    visible: 'Esta reserva se canceló.'
+    timeout: 30000

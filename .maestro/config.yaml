@@ -1,3 +1,19 @@
-# Spec 016 · T008. Flujos en orden numérico; los de _shared son subflujos y no se ejecutan solos.
+# Spec 016 · T008; orden explícito en spec 021 · T025 (RF-24). Los flujos comparten estado (la
+# cuenta de prueba que crea 00 y elimina 09), así que corren en este orden y no en el que elija
+# Maestro. `continueOnFailure: true` garantiza que 09-baja corra aunque falle un flujo intermedio:
+# la cuenta efímera nunca se queda en el servidor. Los de _shared son subflujos y no se ejecutan solos.
 flows:
   - '0*.yaml'
+executionOrder:
+  continueOnFailure: true
+  flowsOrder:
+    - 00-registro
+    - 01-login
+    - 02-explorar
+    - 03-solicitud
+    - 04-sesion-persiste
+    - 05-publicar
+    - 06-recomendaciones
+    - 07-logout
+    - 08-chat
+    - 09-baja

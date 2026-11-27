@@ -1,5 +1,6 @@
 # RF-07 · Inicio de sesión con la cuenta creada en 00. Credenciales incorrectas no entran.
 appId: ${APP_ID}
+name: 01-login
 ---
 - launchApp:
     clearState: true

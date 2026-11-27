@@ -18,14 +18,14 @@ La misma URL con otro puerto o sin puerto (`https://vaiven-staging.westus2.cloud
 | Prueba | Contra el servidor único | Contra el servidor local |
 |---|---|---|
 | Pruebas Jest (unitarias, integración, seguridad) | No tocan la red: usan la API simulada | Igual |
-| `npm run test:device` (Maestro, destructiva: registra y elimina una cuenta) | **Solo con cuentas creadas y eliminadas en la propia corrida** (correo `vaiven.e2e.<marca de tiempo>@example.com` y contraseña aleatoria generadas por el script); el flujo `06-baja.yaml` elimina la cuenta al final | Sin restricción |
+| `npm run test:device` (Maestro, destructiva: registra y elimina una cuenta) | **Solo con cuentas creadas y eliminadas en la propia corrida** (correo `vaiven.e2e.<marca de tiempo>@example.com` y contraseña aleatoria generadas por el script); el flujo `09-baja.yaml` elimina la cuenta al final; los flujos 03 y 08 usan además **cuentas de demostración reservadas para la suite** (regla 2) | Sin restricción |
 | `npm run test:contract` (T010, futura) | Solo `GET`, sin credenciales ni escrituras | Igual |
 | Cualquier prueba que modifique o borre datos de **personas reales** | **Prohibida** | Permitida con datos propios |
 
 Reglas que se derivan:
 
 1. Las pruebas destructivas **nunca** usan una cuenta real ni una cuenta de demostración que alguien más use. `E2E_EMAIL` y `E2E_PASSWORD` solo se fijan para una cuenta que la propia corrida crea.
-2. El flujo `03-solicitud` pide un objeto de otra persona (`E2E_ITEM_TITLE`). En un servidor con datos reales eso crea una solicitud a una persona real: **no se corre así**. Hasta que T025/T026 definan un objeto de demostración propio (de una cuenta de prueba que el equipo controle y que se crea y elimina), ese flujo se omite o se corre contra el servidor local.
+2. El flujo `03-solicitud` pide un objeto de otra persona (`E2E_ITEM_TITLE`). En un servidor con datos reales eso crea una solicitud a una persona real: **no se corre así**. ~~Hasta que T025/T026 definan un objeto de demostración propio (de una cuenta de prueba que el equipo controle y que se crea y elimina), ese flujo se omite o se corre contra el servidor local.~~ **Definido en T025 (2026-11-27, D-253):** `E2E_ITEM_TITLE` es un objeto de una cuenta del `seed` (`*.demo@vaiven.example`, backend 016-T012) **reservada para la suite**: no se usa en presentaciones ni la usa nadie más. El flujo cancela su solicitud al terminar. Lo mismo vale para `E2E_CHAT_EMAIL` (flujo `08-chat`, que envía un mensaje en una conversación de demostración). Sin esas variables, 03 y 08 **fallan** (ya no se omiten). Qué cuentas se reservan lo decide quien administra el `seed` y se anota, sin contraseñas, en el registro de la corrida (T026).
 3. Las cuentas de prueba se eliminan al final de la corrida; se comprueba que ya no se puede entrar con ellas (`docs/calidad/dispositivo.md`).
 4. Capturas e informes de pruebas no incluyen datos personales (RNF-04).
 
