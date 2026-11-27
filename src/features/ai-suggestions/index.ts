@@ -8,6 +8,9 @@ import {
 } from '@/features/ai-suggestions/components/ListingSuggestionExtras';
 
 export { SuggestionBanner } from '@/features/ai-suggestions/components/SuggestionBanner';
+// Asistente de proyectos (spec 021-T032): pantalla y acceso desde Inicio.
+export { AssistantEntry } from '@/features/ai-suggestions/components/AssistantEntry';
+export { AssistantScreen } from '@/features/ai-suggestions/screens/AssistantScreen';
 export type { FormExtrasContext } from '@/features/ai-suggestions/components/ListingSuggestionExtras';
 export {
   useAiSuggestionsEnabled,

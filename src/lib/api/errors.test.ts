@@ -4,6 +4,7 @@ import {
   CLIENT_ERROR_CODES,
   SERVER_ERROR_CODES,
   fromServerError,
+  isStepUpRequired,
   messageForCode,
 } from '@/lib/api/errors';
 import { newRequestId } from '@/lib/api/request-id';
@@ -32,10 +33,15 @@ describe('ApiError', () => {
 });
 
 describe('códigos de error', () => {
-  it('son los 8 del servidor más 3 del cliente', () => {
+  it('son los 8 del servidor más 4 del cliente (step_up_required, spec 021-T033)', () => {
     expect(SERVER_ERROR_CODES).toHaveLength(8);
-    expect(CLIENT_ERROR_CODES).toEqual(['network_error', 'timeout', 'invalid_response']);
-    expect(API_ERROR_CODES).toHaveLength(11);
+    expect(CLIENT_ERROR_CODES).toEqual([
+      'network_error',
+      'timeout',
+      'invalid_response',
+      'step_up_required',
+    ]);
+    expect(API_ERROR_CODES).toHaveLength(12);
   });
 
   it.each(API_ERROR_CODES)('tiene mensaje en español para %s', (code) => {
@@ -126,6 +132,39 @@ describe('fromServerError sin envoltorio válido', () => {
     expect(error.code).toBe('not_found');
     expect(error.message).toBe(es.errors.not_found);
     expect(error.details).toEqual([]);
+  });
+});
+
+describe('fromServerError con 401 stepUp (spec 021-T033)', () => {
+  const stepUp = [{ field: 'stepUp', issue: 'required' }];
+
+  it('un 401 con details stepUp es step_up_required, con el mensaje de i18n y sus detalles', () => {
+    const error = fromServerError(
+      401,
+      envelope('unauthorized', { requestId: 'srv', details: stepUp }),
+      'local',
+    );
+    expect(error).toMatchObject({ code: 'step_up_required', status: 401, requestId: 'srv' });
+    expect(error.message).toBe(es.errors.step_up_required);
+    expect(error.details).toEqual(stepUp);
+    expect(isStepUpRequired(error)).toBe(true);
+  });
+
+  it('un 401 sin stepUp sigue siendo unauthorized (sesión vencida)', () => {
+    const error = fromServerError(401, envelope('unauthorized'), 'local');
+    expect(error.code).toBe('unauthorized');
+    expect(isStepUpRequired(error)).toBe(false);
+  });
+
+  it('stepUp en otro estado (403) no se trata como confirmación de identidad', () => {
+    const error = fromServerError(403, envelope('forbidden', { details: stepUp }), 'local');
+    expect(error.code).toBe('forbidden');
+    expect(isStepUpRequired(error)).toBe(false);
+  });
+
+  it('isStepUpRequired es falso para lo que no es ApiError', () => {
+    expect(isStepUpRequired(new Error('x'))).toBe(false);
+    expect(isStepUpRequired(null)).toBe(false);
   });
 });
 

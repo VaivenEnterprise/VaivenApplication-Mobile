@@ -20,6 +20,7 @@ import {
 import type { Incident, IncidentReason } from '@/features/incidents/types';
 import { PhotoPicker, useImageUpload } from '@/features/images';
 import { es } from '@/i18n/es-MX';
+import { moderationFromError } from '@/lib/api/moderation';
 import { colors, radius, spacing } from '@/theme';
 
 const t = es.incidents.report;
@@ -43,6 +44,8 @@ export function IncidentForm({ bookingId, onBack, onCreated }: IncidentFormProps
   const [description, setDescription] = useState('');
   const [attempted, setAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Motivo del filtro de contenido sobre la descripción (spec 021-T018); se borra al editarla.
+  const [rejected, setRejected] = useState<string | null>(null);
 
   const parsed = incidentFormSchema.safeParse({ reason, description });
   const descriptionLength = description.trim().length;
@@ -70,7 +73,9 @@ export function IncidentForm({ bookingId, onBack, onCreated }: IncidentFormProps
       });
       onCreated(incident);
     } catch (failure) {
-      setError(incidentErrorMessage(failure));
+      const moderation = moderationFromError(failure, ['description']);
+      setRejected(moderation === null ? null : (moderation.reason ?? es.errors.moderationField));
+      setError(moderation === null ? incidentErrorMessage(failure) : es.errors.moderationRejected);
     }
   };
 
@@ -106,10 +111,13 @@ export function IncidentForm({ bookingId, onBack, onCreated }: IncidentFormProps
               <TextField
                 label={t.description}
                 value={description}
-                onChangeText={setDescription}
+                onChangeText={(next) => {
+                  setDescription(next);
+                  setRejected(null);
+                }}
                 multiline
                 hint={t.descriptionHint}
-                error={descriptionProblem}
+                error={descriptionProblem ?? rejected ?? undefined}
               />
               <AppText variant="caption" color="muted" style={styles.counter}>
                 {`${descriptionLength}/${DESCRIPTION_MAX} ${t.counter}`}

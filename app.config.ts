@@ -3,6 +3,12 @@ import type { ExpoConfig } from 'expo/config';
 // Identificador de paquete PROVISIONAL (spec 002, RF-S1): se confirma antes de publicar (spec 013).
 const APP_ID = 'mx.vaiven.app';
 
+// Spec 021-T036/T019 (F-1): sin la configuración de Firebase, Android no entrega un token de push
+// en el APK/AAB («No pudimos activar los avisos»). `google-services.json` no se versiona: en EAS
+// llega como variable de entorno de tipo archivo `GOOGLE_SERVICES_JSON` (una ruta); en Expo Go
+// y en local, sin ella, la app sigue igual.
+const GOOGLE_SERVICES_FILE = process.env.GOOGLE_SERVICES_JSON;
+
 // Permisos declarados desde ahora (plan P-S2) para no tocar este archivo en cada feature.
 // Cada texto explica en español para qué se usa; la ubicación es solo aproximada (Art. VIII.4).
 const config: ExpoConfig = {
@@ -92,6 +98,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: APP_ID,
+    ...(GOOGLE_SERVICES_FILE ? { googleServicesFile: GOOGLE_SERVICES_FILE } : {}),
     // Spec 021-T012 (RF-11): sin copia de seguridad automática de los datos de la app.
     allowBackup: false,
     // Solo ubicación aproximada: nunca se pide la precisa. Los otros tres los traen dependencias

@@ -130,4 +130,43 @@ describe('EditProfileScreen', () => {
     expect(mockBack).not.toHaveBeenCalled();
     expect(screen.queryByText(t.saved)).toBeNull();
   });
+
+  // Spec 021-T018 (RF-17): rechazo del filtro de contenido en el nombre.
+  it('un rechazo de moderación del nombre se muestra en el campo y no regresa', async () => {
+    installFakeApi({
+      'PATCH /me': () =>
+        failure(400, 'validation_failed', [
+          { field: 'displayName', issue: 'Contiene contenido no permitido: armas.' },
+        ]),
+    });
+    await renderEdit();
+    await fireEvent.changeText(screen.getByLabelText(t.name), 'Nombre malo');
+    await fireEvent.press(save());
+    expect(await screen.findByText(es.errors.moderationRejected)).toBeTruthy();
+    expect(screen.getByText('Contiene contenido no permitido: armas.')).toBeTruthy();
+    expect(screen.getByLabelText(t.name).props.value).toBe('Nombre malo');
+    expect(mockBack).not.toHaveBeenCalled();
+  });
+
+  // Spec 021-T033 (RF-31, CA-13): el 401 stepUp no expulsa ni borra lo escrito; se puede reintentar.
+  it('un 401 stepUp explica que confirme su identidad, conserva lo escrito y permite reintentar', async () => {
+    let calls = 0;
+    installFakeApi({
+      'PATCH /me': () => {
+        calls += 1;
+        return calls === 1
+          ? failure(401, 'unauthorized', [{ field: 'stepUp', issue: 'required' }])
+          : ok({ ...fakeUser, displayName: 'Ana M.' });
+      },
+    });
+    await renderEdit();
+    await fireEvent.changeText(screen.getByLabelText(t.name), 'Ana M.');
+    await fireEvent.press(save());
+    expect(await screen.findByText(es.errors.step_up_required)).toBeTruthy();
+    expect(screen.getByLabelText(t.name).props.value).toBe('Ana M.');
+    expect(save()).toBeEnabled();
+    await fireEvent.press(save());
+    expect(await screen.findByText(t.saved)).toBeTruthy();
+    expect(calls).toBe(2);
+  });
 });

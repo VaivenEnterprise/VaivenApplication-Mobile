@@ -45,6 +45,25 @@ describe('ReportSheet', () => {
     expect(onSent).toHaveBeenCalledWith({ id: 'r1', duplicate: false });
   });
 
+  // Spec 021-T018 (RF-17): rechazo del filtro de contenido en el detalle.
+  it('un rechazo de moderación del detalle se muestra en el campo y conserva lo escrito', async () => {
+    installFakeApi({
+      [POST]: () =>
+        failure(400, 'validation_failed', [
+          { field: 'details', issue: 'Contiene contenido no permitido: armas.' },
+        ]),
+    });
+    await wrap(<ReportSheet visible onClose={jest.fn()} targetType="item" targetId="i1" />);
+    await fireEvent.press(screen.getByRole('radio', { name: t.reasons.spam }));
+    await fireEvent.changeText(screen.getByLabelText(t.sheet.detailsLabel), 'Anuncio falso');
+    await fireEvent.press(screen.getByRole('button', { name: t.sheet.submit }));
+    expect(await screen.findByText(es.errors.moderationRejected)).toBeTruthy();
+    expect(screen.getByText('Contiene contenido no permitido: armas.')).toBeTruthy();
+    expect(screen.queryByText(t.errors.detailsTooLong)).toBeNull();
+    expect(screen.getByLabelText(t.sheet.detailsLabel).props.value).toBe('Anuncio falso');
+    expect(screen.queryByText(t.sheet.success)).toBeNull();
+  });
+
   it('sin detalles no manda el campo', async () => {
     const api = installFakeApi({ [POST]: () => ({ status: 201, body: { id: 'r1' } }) });
     await wrap(<ReportSheet visible onClose={jest.fn()} targetType="user" targetId="u1" />);

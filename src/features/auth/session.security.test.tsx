@@ -6,6 +6,8 @@ import { REFRESH_TOKEN_KEY, SessionProvider } from '@/features/auth/session';
 import { registerBeforeSignOut } from '@/features/auth/signOutHooks';
 import { useSession } from '@/features/auth/useSession';
 import { getAccessToken, resetAuthInterceptor } from '@/lib/api/authInterceptor';
+import { request } from '@/lib/api/client';
+import { z } from 'zod';
 
 // Spec 016: suite de seguridad de la sesión (S-03, S-04, S-06). Reutiliza el arnés de session.test.tsx.
 jest.mock('expo-secure-store', () => ({
@@ -235,5 +237,47 @@ describe('S-06 · M6/M9 · sin datos sensibles en la caché de consultas ni en c
       await result.current.signOut();
     });
     for (const spy of spies) expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+// Spec 021-T033 (RF-31, CA-13): el 401 `stepUp` no expulsa a la persona; el de sesión vencida, sí.
+describe('S-15 · M3 · 401 stepUp frente a sesión vencida', () => {
+  const stepUp = () => error(401, 'unauthorized', [{ field: 'stepUp', issue: 'required' }]);
+
+  it('S-15a con sesión abierta, un 401 stepUp conserva la sesión, el token y no llama a logout', async () => {
+    const refresh = jest.fn(() => reply(200, { tokens: tokens(2) }));
+    route('/auth/refresh', refresh);
+    route('/me', stepUp);
+    const { result } = await signedIn();
+    await expect(
+      request('/me', z.unknown(), { method: 'DELETE', body: '{}' }),
+    ).rejects.toMatchObject({ code: 'step_up_required' });
+    expect(result.current.status).toBe('signedIn');
+    expect(getAccessToken()).toBe('access-1');
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-1');
+    expect(refresh).not.toHaveBeenCalled();
+    expect(callsTo('/auth/logout')).toHaveLength(0);
+  });
+
+  it('S-15b con sesión abierta, un 401 vencido que no se renueva cierra la sesión como hoy', async () => {
+    route('/auth/refresh', () => error(401, 'unauthorized'));
+    route('/me', () => error(401, 'unauthorized'));
+    const { result } = await signedIn();
+    await act(async () => {
+      await expect(request('/me', z.unknown())).rejects.toMatchObject({ code: 'unauthorized' });
+    });
+    await waitFor(() => expect(result.current.status).toBe('signedOut'));
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBeNull();
+    expect(callsTo('/auth/refresh')).toHaveLength(1);
+  });
+
+  it('S-15c al restaurar, un 401 stepUp no borra el token guardado', async () => {
+    route('/auth/refresh', () => reply(200, { tokens: tokens(2) }));
+    route('/me', stepUp);
+    const { wrapper } = setup('refresh-1');
+    const { result } = await renderHook(() => useSession(), { wrapper });
+    await waitFor(() => expect(result.current.restoreOffline).toBe(true));
+    expect(result.current.status).not.toBe('signedOut');
+    expect(await store.getItemAsync(REFRESH_TOKEN_KEY)).toBe('refresh-2');
   });
 });

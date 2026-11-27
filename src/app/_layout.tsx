@@ -55,6 +55,7 @@ function ConfigErrorScreen({ error }: { error: ConfigError }) {
 const SIGNED_IN_SCREENS = [
   '(tabs)',
   'objeto/[id]',
+  'objeto/[id]/editar',
   'solicitar/[itemId]',
   'reserva/[id]',
   'chat/[id]',
@@ -67,6 +68,7 @@ const SIGNED_IN_SCREENS = [
   'incidencias',
   'notificaciones',
   'proyecto/[id]',
+  'asistente',
 ] as const;
 
 /**

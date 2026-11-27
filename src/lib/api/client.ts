@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 import { getAccessToken, isAuthPath, refreshOnce } from '@/lib/api/authInterceptor';
-import { ApiError, fromServerError, messageForCode } from '@/lib/api/errors';
+import { ApiError, fromServerError, isStepUpRequired, messageForCode } from '@/lib/api/errors';
 import { newRequestId } from '@/lib/api/request-id';
 import { getConfig } from '@/lib/config';
 
@@ -37,8 +37,10 @@ export async function request<T>(
   try {
     return await execute(path, schema, options, sentToken);
   } catch (error) {
-    // Ante 401 se renueva la sesión una sola vez y se reintenta una vez (RF-03).
+    // Ante 401 se renueva la sesión una sola vez y se reintenta una vez (RF-03). El 401 `stepUp`
+    // (spec 021-T033) no es sesión vencida: se entrega tal cual, sin renovar ni cerrar la sesión.
     if (!(error instanceof ApiError) || error.status !== 401 || isAuthPath(path)) throw error;
+    if (isStepUpRequired(error)) throw error;
     const current = getAccessToken();
     // Otra petición ya renovó mientras esta viajaba: basta reintentar con el token nuevo.
     const renewed = current !== null && current !== sentToken;

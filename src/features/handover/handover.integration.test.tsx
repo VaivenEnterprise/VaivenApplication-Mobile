@@ -9,7 +9,7 @@ import { QrScreen } from '@/features/handover/screens/QrScreen';
 import { ScanScreen } from '@/features/handover/screens/ScanScreen';
 import type { StageName } from '@/features/handover/types';
 import { es } from '@/i18n/es-MX';
-import { failure, installFakeApi, ok, type FakeHandler } from '@/test/fakeApi';
+import { installFakeApi, ok, type FakeHandler } from '@/test/fakeApi';
 import { BOOKING_ID, fakeBooking } from '@/test/fakeBookings';
 import { FAKE_TOKEN, fakeRecordedStage, fakeStage } from '@/test/fakeHandover';
 
@@ -204,12 +204,22 @@ describe('entrega y devolución de extremo a extremo', () => {
     backend.state.booking = { ...backend.state.booking, delivery: fakeRecordedStage() };
     installFakeApi({
       [`GET ${BASE}`]: () => ok({ ...backend.state.booking, viewerRole: 'requester' }),
-      [`POST ${BASE}/delivery/confirm`]: () => failure(409, 'conflict'),
+      [`POST ${BASE}/delivery/confirm`]: () => ({
+        status: 409,
+        body: {
+          error: {
+            code: 'conflict',
+            message: 'Este código QR ya se usó.',
+            requestId: 'r',
+            details: [],
+          },
+        },
+      }),
     });
     await open(<ScanScreen bookingId={BOOKING_ID} stage="delivery" />);
     await screen.findByTestId('camera');
     await scan(`vaiven://qr?b=${BOOKING_ID}&s=delivery&t=${FAKE_TOKEN}`);
-    expect(await screen.findByText(th.scan.errors.conflict)).toBeTruthy();
+    expect(await screen.findByText('Este código QR ya se usó.')).toBeTruthy();
   });
 
   it('cada rol ve solo su acción en la entrega (CA-05)', async () => {

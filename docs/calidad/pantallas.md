@@ -24,7 +24,7 @@ Endpoints = rutas literales de `request(...)` en los archivos que alimentan la p
 | `IncidentDetailScreen.tsx` | `incidencia/[id].tsx` | `GET /incidents/{}`<br>`GET /me/incidents`<br>`POST /bookings/{}/incidents` | `screens.test.tsx` | `trust.integration.test.tsx` | `screens.security.test.tsx` |
 | `MyIncidentsScreen.tsx` | `incidencias.tsx` | `GET /incidents/{}`<br>`GET /me/incidents`<br>`POST /bookings/{}/incidents` | `screens.test.tsx` | `trust.integration.test.tsx` | `screens.security.test.tsx` |
 | `ReportIncidentScreen.tsx` | `incidencia/nueva/[bookingId].tsx` | `GET /incidents/{}`<br>`GET /me/incidents`<br>`POST /bookings/{}/incidents` | `screens.test.tsx` | `trust.integration.test.tsx` | `screens.security.test.tsx` |
-| `EditItemScreen.tsx` | `(tabs)/mis-objetos/[id]/editar.tsx` | `DELETE /items/{}`<br>`GET /categories`<br>`GET /items/price-suggestion`<br>`GET /items/{}`<br>`GET /me/items`<br>`PATCH /items/{}`<br>`POST /items`<br>`POST /items/{}/pause`<br>`POST /items/{}/resume` | `ItemFormScreen.test.tsx` | `navigation.integration.test.tsx` | **sin prueba** |
+| `EditItemScreen.tsx` | `objeto/[id]/editar.tsx` | `DELETE /items/{}`<br>`GET /categories`<br>`GET /items/price-suggestion`<br>`GET /items/{}`<br>`GET /me/items`<br>`PATCH /items/{}`<br>`POST /items`<br>`POST /items/{}/pause`<br>`POST /items/{}/resume` | `ItemFormScreen.test.tsx` | `editItem.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 | `ItemDetailScreen.tsx` | `objeto/[id].tsx` | `DELETE /items/{}`<br>`GET /categories`<br>`GET /items/price-suggestion`<br>`GET /items/{}`<br>`GET /me/items`<br>`PATCH /items/{}`<br>`POST /items`<br>`POST /items/{}/pause`<br>`POST /items/{}/resume`<br>`DELETE /recommendations/history` *(slot)*<br>`GET /bookings/{}` *(slot)*<br>`GET /items/{}/quote` *(slot)*<br>`GET /me/bookings` *(slot)*<br>`GET /meta` *(slot)*<br>`GET /recommendations` *(slot)*<br>`POST /bookings` *(slot)*<br>`POST /bookings/{}/accept` *(slot)*<br>`POST /bookings/{}/cancel` *(slot)*<br>`POST /bookings/{}/meeting-point` *(slot)*<br>`POST /bookings/{}/reject` *(slot)*<br>`POST /recommendations/events` *(slot)*<br>`POST /reports` *(slot)* | `a11y.test.tsx`, `ItemDetailScreen.test.tsx` | `bookings.integration.test.tsx`, `items.integration.test.tsx`, `notifications.integration.test.tsx`, `flow.test.tsx`, `reports.wiring.test.tsx`, `search.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 | `ItemFormScreen.tsx` | `(tabs)/mis-objetos/nuevo.tsx` | `DELETE /items/{}`<br>`GET /categories`<br>`GET /items/price-suggestion`<br>`GET /items/{}`<br>`GET /me/items`<br>`PATCH /items/{}`<br>`POST /items`<br>`POST /items/{}/pause`<br>`POST /items/{}/resume`<br>`GET /meta` *(slot)*<br>`POST /ai/listing-suggestions` *(slot)* | `ItemFormScreen.test.tsx` | `flow.test.tsx`, `items.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 | `MyItemsScreen.tsx` | `(tabs)/mis-objetos/index.tsx` | `DELETE /items/{}`<br>`GET /categories`<br>`GET /items/price-suggestion`<br>`GET /items/{}`<br>`GET /me/items`<br>`PATCH /items/{}`<br>`POST /items`<br>`POST /items/{}/pause`<br>`POST /items/{}/resume` | `MyItemsScreen.test.tsx` | `items.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
@@ -32,6 +32,7 @@ Endpoints = rutas literales de `request(...)` en los archivos que alimentan la p
 | `EditProfileScreen.tsx` | `(tabs)/perfil/editar.tsx` | `DELETE /me`<br>`GET /me`<br>`GET /users/{}`<br>`PATCH /me` | `EditProfileScreen.test.tsx` | `profile.integration.test.tsx` | `EditProfileScreen.security.test.tsx` |
 | `ProfileScreen.tsx` | `(tabs)/perfil/index.tsx` | `DELETE /me`<br>`GET /me`<br>`GET /users/{}`<br>`PATCH /me`<br>`DELETE /me/push-tokens` *(slot)*<br>`DELETE /recommendations/history` *(slot)*<br>`GET /bookings/{}/rating-status` *(slot)*<br>`GET /incidents/{}` *(slot)*<br>`GET /me/incidents` *(slot)*<br>`GET /me/notifications` *(slot)*<br>`GET /me/notifications/unread-count` *(slot)*<br>`GET /meta` *(slot)*<br>`GET /recommendations` *(slot)*<br>`GET /users/{}/ratings` *(slot)*<br>`POST /bookings/{}/incidents` *(slot)*<br>`POST /bookings/{}/ratings` *(slot)*<br>`POST /me/notifications/read` *(slot)*<br>`POST /me/push-tokens` *(slot)*<br>`POST /recommendations/events` *(slot)* | `a11y.test.tsx`, `ProfileScreen.test.tsx` | `profile.integration.test.tsx`, `trust.integration.test.tsx`, `flow.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 | `PublicProfileScreen.tsx` | `usuario/[id].tsx` | `DELETE /me`<br>`GET /me`<br>`GET /users/{}`<br>`PATCH /me`<br>`GET /bookings/{}/rating-status` *(slot)*<br>`GET /users/{}/ratings` *(slot)*<br>`POST /bookings/{}/ratings` *(slot)*<br>`POST /reports` *(slot)* | `PublicProfileScreen.test.tsx` | `trust.integration.test.tsx`, `reports.wiring.test.tsx` | **sin prueba** |
+| `AssistantScreen.tsx` | `asistente.tsx` | `POST /ai/assistant/messages`<br>`DELETE /ai/assistant/conversations/{}` | `assistant.test.tsx` | **sin prueba** | **sin prueba** |
 | `ProjectScreen.tsx` | `proyecto/[id].tsx` | `GET /items` | `ProjectScreen.test.tsx` | `search.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 | `ExploreScreen.tsx` | `(tabs)/explorar/index.tsx` | `GET /items`<br>`DELETE /recommendations/history` *(slot)*<br>`GET /meta` *(slot)*<br>`GET /recommendations` *(slot)*<br>`POST /recommendations/events` *(slot)* | `a11y.test.tsx`, `ExploreScreen.test.tsx` | `flow.test.tsx`, `search.integration.test.tsx`, `navigation.integration.test.tsx` | **sin prueba** |
 
@@ -46,7 +47,7 @@ Endpoints = rutas literales de `request(...)` en los archivos que alimentan la p
 | `(tabs)/explorar/index.tsx` | `ExploreScreen.tsx` |
 | `(tabs)/inicio/index.tsx` | `HomeScreen.tsx` |
 | `(tabs)/mensajes/index.tsx` | `ConversationsScreen.tsx` |
-| `(tabs)/mis-objetos/[id]/editar.tsx` | `EditItemScreen.tsx` |
+| `objeto/[id]/editar.tsx` | `EditItemScreen.tsx` |
 | `(tabs)/mis-objetos/index.tsx` | `MyItemsScreen.tsx` |
 | `(tabs)/mis-objetos/nuevo.tsx` | `ItemFormScreen.tsx` |
 | `(tabs)/perfil/editar.tsx` | `EditProfileScreen.tsx` |
@@ -62,6 +63,7 @@ Endpoints = rutas literales de `request(...)` en los archivos que alimentan la p
 | `index.tsx` | — (sin pantalla propia) |
 | `notificaciones.tsx` | `NotificationsScreen.tsx` |
 | `objeto/[id].tsx` | `ItemDetailScreen.tsx` |
+| `asistente.tsx` | `AssistantScreen.tsx` |
 | `proyecto/[id].tsx` | `ProjectScreen.tsx` |
 | `reserva/[id].tsx` | `BookingDetailScreen.tsx` |
 | `solicitar/[itemId].tsx` | `RequestScreen.tsx` |

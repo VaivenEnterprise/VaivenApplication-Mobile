@@ -215,6 +215,28 @@ describe('ReportIncidentScreen (RF-05, RF-06, CA-06)', () => {
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
+  // Spec 021-T018 (RF-17): rechazo del filtro de contenido en la descripción.
+  it('un rechazo de moderación de la descripción se muestra en el campo y conserva lo escrito', async () => {
+    installFakeApi({
+      ...bookingApi(),
+      [POST]: () =>
+        failure(400, 'validation_failed', [
+          { field: 'description', issue: 'Contiene contenido no permitido: armas.' },
+        ]),
+    });
+    await withClient(<ReportIncidentScreen bookingId={BOOKING_ID} />);
+    await waitFor(() => expect(screen.getByText(t.report.title)).toBeTruthy());
+    await fireEvent.press(screen.getByLabelText(t.reasons.damaged.name));
+    await fireEvent.changeText(screen.getByLabelText(t.report.description), 'a'.repeat(12));
+    await fireEvent.press(screen.getByText(t.report.send));
+    await waitFor(() => expect(screen.getByText(es.errors.moderationRejected)).toBeTruthy());
+    expect(screen.getByText('Contiene contenido no permitido: armas.')).toBeTruthy();
+    expect(screen.getByLabelText(t.report.description).props.value).toBe('a'.repeat(12));
+    expect(mockReplace).not.toHaveBeenCalled();
+    await fireEvent.changeText(screen.getByLabelText(t.report.description), 'b'.repeat(12));
+    expect(screen.queryByText('Contiene contenido no permitido: armas.')).toBeNull();
+  });
+
   it('un 403 tiene su mensaje', async () => {
     installFakeApi({ ...bookingApi(), [POST]: () => failure(403, 'forbidden') });
     await withClient(<ReportIncidentScreen bookingId={BOOKING_ID} />);

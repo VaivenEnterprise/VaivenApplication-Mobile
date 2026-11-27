@@ -62,3 +62,7 @@ Desktop.ini
 
 # Tipos generados por Expo (se crean con expo start)
 expo-env.d.ts
+
+# Configuración de Firebase (FCM); en EAS llega como variable de archivo GOOGLE_SERVICES_JSON
+google-services.json
+GoogleService-Info.plist

@@ -117,6 +117,40 @@ export function incoherencias(input: {
   return out;
 }
 
+// Spec 021-T036 (F-1): sin FCM el APK/AAB no obtiene token de push. La ruta llega de EAS.
+describe('configuración de Firebase para push en Android (021-T036)', () => {
+  const load = (value: string | undefined): ExpoConfig => {
+    const previous = process.env.GOOGLE_SERVICES_JSON;
+    if (value === undefined) delete process.env.GOOGLE_SERVICES_JSON;
+    else process.env.GOOGLE_SERVICES_JSON = value;
+    let loaded: ExpoConfig | undefined;
+    jest.isolateModules(() => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      loaded = (require('../app.config') as { default: ExpoConfig }).default;
+    });
+    if (previous === undefined) delete process.env.GOOGLE_SERVICES_JSON;
+    else process.env.GOOGLE_SERVICES_JSON = previous;
+    if (loaded === undefined) throw new Error('sin configuración');
+    return loaded;
+  };
+
+  it('con GOOGLE_SERVICES_JSON (variable de archivo de EAS) declara googleServicesFile', () => {
+    expect(load('/tmp/eas/google-services.json').android?.googleServicesFile).toBe(
+      '/tmp/eas/google-services.json',
+    );
+  });
+
+  it('sin la variable no inventa una ruta (Expo Go y desarrollo local siguen igual)', () => {
+    expect(load(undefined).android?.googleServicesFile).toBeUndefined();
+  });
+
+  it('google-services.json no se versiona', () => {
+    const ignore = fs.readFileSync(path.resolve(__dirname, '..', '.gitignore'), 'utf8');
+    const lines = ignore.split(String.fromCharCode(10)).map((line) => line.trim());
+    expect(lines).toContain('google-services.json');
+  });
+});
+
 describe('coherencia de versión y URL de API (RF-02, CA-02)', () => {
   const pkg = JSON.parse(read('package.json')) as { version: string };
   const lock = JSON.parse(read('package-lock.json')) as {

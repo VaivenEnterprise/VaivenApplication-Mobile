@@ -30,7 +30,7 @@ import {
 import { getMe } from '@/features/profile/api';
 import { es } from '@/i18n/es-MX';
 import { setAccessToken, setSessionHandlers } from '@/lib/api/authInterceptor';
-import { ApiError } from '@/lib/api/errors';
+import { ApiError, isStepUpRequired } from '@/lib/api/errors';
 import { secureStorage } from '@/lib/storage/secureStorage';
 
 // Sesión de la app (spec 003 RF-02, RF-07, P-02): el token de acceso vive solo en
@@ -165,8 +165,11 @@ export function SessionProvider({ children, inactivityTimeoutMs = INACTIVITY_TIM
       } catch (error) {
         const suspended = suspensionFrom(error);
         if (suspended !== null) setSuspension(suspended);
+        // El 401 `stepUp` (spec 021-T033) no rechaza la sesión: solo pide confirmar la identidad.
         const definitive =
-          error instanceof ApiError && (error.status === 401 || error.status === 403);
+          error instanceof ApiError &&
+          !isStepUpRequired(error) &&
+          (error.status === 401 || error.status === 403);
         if (definitive) {
           // El servidor rechazó la sesión: se cierra y se borra el token (S-04c).
           setRestoreOffline(false);

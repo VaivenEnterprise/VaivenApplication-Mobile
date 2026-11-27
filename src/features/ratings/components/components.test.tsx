@@ -250,6 +250,28 @@ describe('RateBookingCard', () => {
     await waitFor(() => expect(screen.getByText(t.errors.conflict)).toBeTruthy());
   });
 
+  // Spec 021-T018 (RF-17): rechazo del filtro de contenido en el comentario.
+  it('un rechazo de moderación del comentario se muestra en el campo y no cierra la hoja', async () => {
+    installFakeApi({
+      [STATUS]: () => ok(fakeRatingStatus()),
+      [POST]: () =>
+        failure(400, 'validation_failed', [
+          { field: 'comment', issue: 'Contiene contenido no permitido: armas.' },
+        ]),
+    });
+    await withClient(<RateBookingCard booking={completed()} />);
+    await waitFor(() => expect(screen.getByText(`${t.card.prompt} Ana López`)).toBeTruthy());
+    await fireEvent.press(screen.getByLabelText(`5 ${es.ui.outOfFive}`));
+    await fireEvent.changeText(screen.getByLabelText(t.sheet.comment), 'texto');
+    await fireEvent.press(screen.getByText(t.sheet.send));
+    await waitFor(() => expect(screen.getByText(es.errors.moderationRejected)).toBeTruthy());
+    expect(screen.getByText('Contiene contenido no permitido: armas.')).toBeTruthy();
+    expect(screen.getByLabelText(t.sheet.comment).props.value).toBe('texto');
+    expect(screen.queryByText(t.sheet.thanks)).toBeNull();
+    await fireEvent.changeText(screen.getByLabelText(t.sheet.comment), 'otro texto');
+    expect(screen.queryByText('Contiene contenido no permitido: armas.')).toBeNull();
+  });
+
   it('el comentario escrito se envía junto con los chips', async () => {
     const api = installFakeApi({
       [STATUS]: () => ok(fakeRatingStatus()),

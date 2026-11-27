@@ -87,8 +87,12 @@ export const es = {
     network_error: 'Sin conexión. Revisa tu internet.',
     timeout: 'La conexión tardó demasiado. Inténtalo de nuevo.',
     invalid_response: 'Recibimos una respuesta inesperada. Inténtalo de nuevo.',
+    step_up_required: 'Por seguridad, confirma tu identidad. Tu sesión sigue abierta; reintenta.',
     // Genéricos
     unexpected: 'Ocurrió algo inesperado. Inténtalo de nuevo.',
+    // Rechazo del filtro de contenido en un campo de texto (spec 021-T018, RF-17)
+    moderationRejected: 'No pudimos guardar este texto. Cámbialo e inténtalo de nuevo.',
+    moderationField: 'Este texto no está permitido',
     config: 'La app no está bien configurada. Revisa las variables del archivo .env.',
   },
   notFound: {

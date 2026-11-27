@@ -85,6 +85,66 @@ describe('S-02 · M3 · cabecera Authorization y renovación', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  // Spec 021-T033 (RF-31, CA-13): el 401 con `details` `stepUp` pide confirmar la identidad.
+  const stepUp = () =>
+    reply(401, {
+      error: {
+        code: 'unauthorized',
+        message: 'x',
+        requestId: 'r2',
+        details: [{ field: 'stepUp', issue: 'required' }],
+      },
+    });
+
+  it('S-02h un 401 stepUp no renueva ni cierra la sesión y llega como step_up_required', async () => {
+    setAccessToken('vigente');
+    const refresh = jest.fn(async () => true);
+    const onSessionExpired = jest.fn();
+    setSessionHandlers({ refresh, onSessionExpired });
+    fetchMock.mockImplementation(async () => stepUp());
+    await expect(
+      request('/me', z.unknown(), { method: 'DELETE', body: '{}' }),
+    ).rejects.toMatchObject({ status: 401, code: 'step_up_required', requestId: 'r2' });
+    expect(refresh).not.toHaveBeenCalled();
+    expect(onSessionExpired).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('S-02i si el reintento tras renovar pide stepUp, no vuelve a renovar (sin bucle)', async () => {
+    setAccessToken('viejo');
+    const refresh = jest.fn(async () => {
+      setAccessToken('nuevo');
+      return true;
+    });
+    const onSessionExpired = jest.fn();
+    setSessionHandlers({ refresh, onSessionExpired });
+    fetchMock.mockResolvedValueOnce(unauthorized()).mockImplementation(async () => stepUp());
+    await expect(request('/items', z.unknown())).rejects.toMatchObject({
+      code: 'step_up_required',
+    });
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(onSessionExpired).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('S-02j un 401 sin stepUp (sesión vencida) sigue cerrando la sesión como antes', async () => {
+    setAccessToken('viejo');
+    const onSessionExpired = jest.fn();
+    setSessionHandlers({ refresh: async () => false, onSessionExpired });
+    fetchMock.mockImplementation(async () =>
+      reply(401, {
+        error: {
+          code: 'unauthorized',
+          message: 'x',
+          requestId: 'r3',
+          details: [{ field: 'token', issue: 'expired' }],
+        },
+      }),
+    );
+    await expect(request('/items', z.unknown())).rejects.toMatchObject({ code: 'unauthorized' });
+    expect(onSessionExpired).toHaveBeenCalledTimes(1);
+  });
+
   it('S-02g un 401 de /auth/login no dispara renovación', async () => {
     const refresh = jest.fn(async () => true);
     setSessionHandlers({ refresh, onSessionExpired: jest.fn() });

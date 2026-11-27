@@ -72,6 +72,12 @@ beforeEach(() => {
 });
 afterEach(() => jest.useRealTimers());
 
+// 409 con el mensaje real del servidor (vaiven-backend/internal/handover/domain/errors.go).
+const conflict = (message: string) => ({
+  status: 409,
+  body: { error: { code: 'conflict', message, requestId: 'req-1', details: [] } },
+});
+
 describe('QrScreen', () => {
   it('genera el código al abrir, lo dibuja y pide que lo escanee la otra persona', async () => {
     const api = installFakeApi(routes());
@@ -192,12 +198,23 @@ describe('QrScreen', () => {
 
   it('si el servidor responde conflicto ofrece editar el estado', async () => {
     installFakeApi(
-      routes(owner(), { [`POST ${BASE}/delivery/qr`]: () => failure(409, 'conflict') as never }),
+      routes(owner(), {
+        [`POST ${BASE}/delivery/qr`]: () =>
+          conflict('Primero registra el estado del objeto y sus fotos.') as never,
+      }),
     );
     await show();
-    expect(await screen.findByText(t.failedConflict)).toBeTruthy();
+    expect(
+      await screen.findByText('Primero registra el estado del objeto y sus fotos.'),
+    ).toBeTruthy();
     await fireEvent.press(screen.getByText(t.editEvidence));
     expect(mockReplace).toHaveBeenCalled();
+  });
+
+  it('un 409 sin mensaje propio del servidor usa el texto de la app', async () => {
+    installFakeApi(routes(owner(), { [`POST ${BASE}/delivery/qr`]: () => conflict('') as never }));
+    await show();
+    expect(await screen.findByText(t.failedConflict)).toBeTruthy();
   });
 
   it('si falla otra cosa ofrece reintentar', async () => {

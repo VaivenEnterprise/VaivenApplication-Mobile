@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); fases 4 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); Fase 4 ejecutada en parte el 2026-11-27 (T018, T020, T031, T032, T033, T037 y T038 hechas; T017, T034 y T035 bloqueadas por el backend o la fase 6; T019 y T036 esperan la configuración externa de FCM y la prueba en teléfono; D-248 a D-250); fases 5 a 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -110,67 +110,91 @@
 ### Fase 4 — Backend y push (la app muestra lo que decide el servidor)
 > T031–T038 (contrato del backend y defectos reportados F-1 a F-3) siguen la numeración después de T030 pero **pertenecen a esta fase**; no cambian el orden de T001–T030.
 - [ ] **T017** Moderación de imágenes: lado móvil
+  - Parte de backend (clasificar imágenes y definir el rechazo en el contrato): **no corresponde al frontend**, ver B-1. Queda abierta solo la parte de app, que empieza cuando B-1 esté en `openapi.yaml`.
+  - Estado 2026-11-27 (D-248): **bloqueada**. El backend no clasifica imágenes: `vaiven-backend/specs/018-hardening-seguridad` no incluye moderación de imágenes y `openapi.yaml` no define cómo se rechaza una foto (ni código, ni campo, ni etapa: firma, subida o `POST /items`). Preparar la pantalla sin ese contrato sería inventar nombres (P-05, P-12); se retoma cuando el backend publique el rechazo en el contrato.
   - Archivos: `src/lib/api/moderation.ts`, `src/features/images/`, `src/features/items/`, `src/features/profile/`, pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: backend 018 (moderación de imágenes) y T013
   - Aceptación: CA-07; el rechazo de imagen del servidor se muestra con motivo y salida, no deja la foto en el formulario y no sube nada más; vale para objetos, perfil y evidencia; pruebas con la API simulada; **la clasificación la hace el servidor** (si el backend aún no la tiene, la tarea queda «preparada» y se anota)
   - Refs: RF-16 · A-4
-- [ ] **T018** [P] Moderación de texto ampliada: lado móvil
+- [x] **T018** [P] Moderación de texto ampliada: lado móvil
+  - Cierre 2026-11-27 (D-248), **lado móvil**: perfil (`displayName`; el contrato no tiene `bio`), calificaciones (`comment`), incidencias (`description`) y reportes (`details`) leen el rechazo con `moderationFromError` (formato del backend 011) y lo muestran en el campo con el motivo del servidor y un aviso general; lo escrito se conserva y el error se borra al editar. Pruebas con la API simulada en las cuatro pantallas. **Pendiente del backend**: hoy solo modera objetos, chat y asistente; cuando la 018 amplíe el filtro a estos campos no hace falta cambiar la app si mantiene el formato.
   - Archivos: pantallas y `api.ts` de perfil, calificaciones, incidencias y reportes, pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: backend 018 (moderación de texto ampliada)
   - Aceptación: perfil (nombre y bio), calificaciones, incidencias y reportes muestran el rechazo `validation_failed` de moderación por campo sin romper la pantalla; pruebas de cada una
   - Refs: RF-17 · M-6
 - [ ] **T019** **(NEEDS CLARIFICATION)** Push en Android (FCM)
+  - Estado 2026-11-27 (D-250): **parte de la app preparada; falta la parte externa**. `app.config.ts` declara `android.googleServicesFile` desde la variable de archivo de EAS `GOOGLE_SERVICES_JSON` (sin ella, Expo Go y local siguen igual) y `google-services.json` queda en `.gitignore`; pruebas en `src/app.config.test.ts`. **No es trabajo del backend**: el servidor ya envía por el servicio de push de Expo, y es Expo quien necesita la credencial de FCM para entregar en Android. Pendiente de quien administra Expo/Firebase (con autorización): crear el proyecto de Firebase con el paquete `mx.vaiven.app`, subir `google-services.json` como variable de archivo `GOOGLE_SERVICES_JSON` en EAS, subir la clave FCM V1 en las credenciales de EAS y recompilar.
   - Archivos: `app.config.ts`, `docs/play/cumplimiento.md`, `docs/calidad/pruebas.md`, `memoria.md` (solo anexar)
   - Agente: `dev-expo` + **administrador** · Depende de: T002
   - Aceptación: CA-08; proyecto de Firebase y credenciales subidas a EAS por quien administra la cuenta (**servicio externo: se pide autorización**); el AAB instalado obtiene un token y recibe un aviso de prueba, con evidencia sin datos personales; lo que Expo Go no permita probar se anota
   - Refs: RF-18 · M-4
-- [ ] **T020** **(NEEDS CLARIFICATION)** Asistente de proyectos: implementar o declarar fuera de alcance
+- [x] **T020** **(NEEDS CLARIFICATION)** Asistente de proyectos: implementar o declarar fuera de alcance
+  - Cierre 2026-11-27 (D-250): **decisión de la persona: implementar.** Se hace en T032.
   - Archivos: `src/features/ai-suggestions/` o `specs/014-ia-sugerencias/spec.md`, `memoria.md` (solo anexar)
   - Agente: `spec-writer` + **persona** · Depende de: T009
   - Aceptación: decisión de la persona: implementar el consumo de `/ai/assistant/*` con sus pruebas, o declararlo fuera de alcance de la 014 con motivo y actualizar la matriz y el informe
   - Refs: RF-19 · M-8
 
-- [ ] **T031** Inventario del contrato y prueba de cobertura
+- [x] **T031** Inventario del contrato y prueba de cobertura
+  - Cierre 2026-11-27 (D-248): `docs/calidad/contrato-endpoints.md` clasifica las 69 operaciones (61 consumidas, 6 `/admin/*` fuera de alcance móvil, 2 del asistente pendientes de T020); `src/__e2e__/contract-coverage.test.ts` lee el contrato sin red y falla ante una operación sin clasificar, una fila que no existe, un estado desconocido, `/admin/*` no excluida o un archivo citado inexistente (casos negativos incluidos).
   - Archivos: `docs/calidad/contrato-endpoints.md`, `src/__e2e__/contract-coverage.test.ts`, `memoria.md` (solo anexar)
   - Agente: `qa-mobile` + `spec-writer` · Depende de: —
   - Aceptación: CA-12; las 69 operaciones de `vaiven-backend/api/openapi.yaml` clasificadas (consumida / fuera de alcance móvil con motivo / pendiente); las 6 de `/admin/*` quedan «fuera de alcance móvil» (RF-29); la prueba lee el `openapi.yaml` (solo lectura, sin red) y falla ante una operación sin clasificar, con caso negativo
   - Refs: RF-28, RF-29 · C-1
-- [ ] **T032** **(NEEDS CLARIFICATION)** Asistente de proyectos: consumo del contrato
+- [x] **T032** **(NEEDS CLARIFICATION)** Asistente de proyectos: consumo del contrato
+  - Cierre 2026-11-27 (D-250): ruta `/asistente` (pila raíz, con sesión) y acceso desde Inicio por el *slot* `renderHeaderExtra`, solo con `features.aiSuggestions`. Consume `POST /ai/assistant/messages` (continúa con `conversationId`; ubicación aproximada solo si ya hay permiso) y `DELETE /ai/assistant/conversations/{id}` («Nueva conversación»). Muestra resumen, lo que se necesita con quién lo tiene (reutiliza `ToolRow`; «Conseguir» abre el objeto y la solicitud sigue la 007), pasos y cuidados. Errores: moderación y 400 en el campo; 404 (caducó), 429 y 503 con aviso. Solo envía lo escrito, nunca datos del chat. `src/features/ai-suggestions/assistant.test.tsx` (19 casos, la respuesta simulada validada contra `openapi.yaml`); `contrato-endpoints.md`: 63 consumidas, 0 pendientes. Sin probar en teléfono.
   - Archivos: `src/features/ai-suggestions/` (api, hooks, pantalla), pruebas, `docs/calidad/contrato-endpoints.md`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T020 (decisión «implementar») y T031
   - Aceptación: solo si T020 decide implementar; consume `POST /ai/assistant/messages` y `DELETE /ai/assistant/conversations/{id}` con `features.aiSuggestions` activo, errores por campo y moderación, sin datos del chat entre personas; pruebas con la API simulada validadas contra `openapi.yaml`; si T020 decide «fuera de alcance», esta tarea se cierra como no aplicable con la decisión enlazada
   - Refs: RF-30 · C-2
-- [ ] **T033** Tolerar el 401 `stepUp` (preparación para el backend 019)
+- [x] **T033** Tolerar el 401 `stepUp` (preparación para el backend 019)
+  - Cierre 2026-11-27 (D-248): `fromServerError` convierte un 401 con `details[].field == "stepUp"` en el código de cliente `step_up_required` (mensaje en `es.errors`); `request` no renueva ni cierra la sesión ante él, y la restauración no borra el token guardado. Pruebas S-02h/i/j (cliente: sin renovación, sin bucle, el 401 vencido cierra como antes), S-15a/b/c (sesión) y la pantalla «Editar perfil» (conserva lo escrito y reintenta). La pantalla de confirmación de identidad llega con T034.
   - Archivos: `src/features/auth/session.tsx`, `src/lib/api/`, pruebas (`*.security.test.*`)
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T011
   - Aceptación: CA-13; el cliente revisa `error.details` (`field: "stepUp"`) antes de tratar un 401 como sesión vencida; con `stepUp` conserva la sesión, no pierde lo escrito y ofrece reintentar; con sesión vencida cierra la sesión como hoy; pruebas de ambos casos y de que el refresco de sesión no entra en bucle; **debe estar lista antes de que el backend encienda las banderas de la 019**
   - Refs: RF-31 · C-3
 - [ ] **T034** **(NEEDS CLARIFICATION)** Identidad fuerte: MFA, recuperación y sesiones
+  - Parte de backend (aprobar la 019 y publicar sus rutas): **no corresponde al frontend**, ver B-3.
+  - Estado 2026-11-27: **bloqueada**. La spec 019 del backend sigue en borrador y sus rutas no están en `openapi.yaml`.
   - Archivos: `src/features/auth/`, `src/features/profile/` (seguridad de la cuenta), `src/i18n/`, pruebas, `docs/calidad/contrato-endpoints.md`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T033 y backend 019 aprobada y publicada en `openapi.yaml`
   - Aceptación: CA-14; **bloqueada** hasta que las rutas existan en el contrato (los nombres actuales son tentativos y no se implementa nada fuera de él); al desbloquearse: enrolar/verificar/desactivar MFA, códigos de recuperación, segundo paso de `login`, confirmación de identidad para rutas sensibles, `GET /me/sessions` y `DELETE /me/sessions/{id}`; sin guardar el secreto TOTP ni los códigos fuera de `SecureStore`/memoria, sin registrarlos en logs; dependencia nueva solo con registro (Art. X.4)
   - Refs: RF-32 · C-4
 - [ ] **T035** Prueba con compresión HTTP activa (backend 018, T014)
+  - Parte de backend (compresión desplegada en staging): **no corresponde al frontend**, ver B-4. La prueba en sí es móvil (el backend la asigna al móvil en su 018-T014).
+  - Estado 2026-11-27: **bloqueada**. Depende de T025 (fase 6) y de la compresión en staging (backend 018-T008, sin hacer).
   - Archivos: `src/__e2e__/compression.integration.test.ts`, `.maestro/` (si aplica), `docs/calidad/dispositivo/`
   - Agente: `qa-mobile` · Depende de: T025 y backend 018 (T008, compresión en staging)
   - Aceptación: CA-15; con `Accept-Encoding` activo la app muestra igual listas y perfil; el JSON es idéntico al de sin compresión; las rutas con secretos no llegan comprimidas; resultado archivado con fecha, comando y API usada; si el backend aún no la tiene activa, queda **bloqueada** y se anota
   - Refs: RF-33 · C-5
 
 - [ ] **T036** Notificaciones push: reproducir, diagnosticar y corregir
+  - Estado 2026-11-27 (D-250): **reproducido por la persona**: con el permiso concedido, «Activar» muestra «No pudimos activar los avisos». Ese texto sale cuando `registerDevice()` no obtiene token (o falla `POST /me/push-tokens`); como el proyecto no tenía FCM configurado y `getExpoToken()` devuelve `null` ante la excepción de Android, el eslabón roto es **el token**. Corrección de la app: T019 (config preparada y probada). **Falta**: la parte externa de T019, recompilar y verificar en el teléfono token, registro y aviso con la app abierta, en segundo plano y cerrada.
   - Archivos: `src/features/notifications/` (`push.ts`, `usePushRegistration.ts`, `api.ts`, `NotificationsBootstrap.tsx`), `app.config.ts` si falta algo del lado de la app, `docs/calidad/pruebas.md`, `memoria.md` (solo anexar), pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T002; la parte de Android depende de T019 (FCM y credenciales en EAS, **servicio externo: se pide autorización**)
   - Aceptación: CA-16; primero se **reproduce** en un teléfono (AAB o APK instalado) y se anota el síntoma exacto (¿no hay token?, ¿no se registra en el servidor?, ¿el servidor envía y no llega?); se sigue la cadena permiso → canal → `getExpoPushTokenAsync` con el `projectId` de EAS → `POST` del token → envío → recepción y se identifica el eslabón roto; la corrección lleva una prueba que habría fallado antes; evidencia sin datos personales; lo que Expo Go no permita probar se anota
   - Refs: RF-34 · F-1, M-4
-- [ ] **T037** Edición de objeto: reproducir, diagnosticar y corregir
+- [x] **T037** Edición de objeto: reproducir, diagnosticar y corregir
+  - Cierre 2026-11-27 (D-250): **síntoma** (persona): al guardar «no guarda», «Volver» lleva a otra vista y al regresar a Mis objetos sigue abierta la edición. **Causa**: la edición vivía en la pila de la pestaña Mis objetos (`(tabs)/mis-objetos/[id]/editar`) y se abría desde el detalle, que está en la pila raíz; al terminar, `router.back()` salía a Inicio y la pestaña conservaba la edición. El `PATCH` sí se enviaba y cumple `ItemUpdate`. **Corrección**: la ruta pasa a `objeto/[id]/editar` (pila raíz, registrada en `SIGNED_IN_SCREENS`). `src/features/items/editItem.integration.test.tsx` (árbol real de rutas) fallaba antes (volvía a `/inicio`) y ahora pasa. 409 y 403 ya se explicaban conservando lo escrito (`ItemFormScreen.test.tsx`). **Fuera de esta corrección**: editar fotos (la 005 lo dejó fuera de alcance) y un botón «recargar» ante el 409; el aviso pide volver a abrir el objeto.
   - Archivos: `src/features/items/` (`screens/EditItemScreen.tsx`, `screens/ItemFormScreen.tsx`, `hooks.ts`, `api.ts`), pruebas
   - Agente: `dev-expo` + `qa-mobile` · Depende de: T002
   - Aceptación: CA-17; se reproduce con un objeto propio y se anota el síntoma (¿no abre?, ¿no guarda?, ¿error del servidor?, ¿no refresca el detalle?); se contrasta `PATCH /items/{id}` y su `version` con `../vaiven-backend/api/openapi.yaml` (solo lectura); la corrección lleva una prueba de pantalla y de cliente que habría fallado antes; 409 y 403 se muestran sin perder lo escrito; si la causa está en el backend, se anota y se avisa sin tocarlo
   - Refs: RF-35 · F-2
-- [ ] **T038** **(NEEDS CLARIFICATION)** Ubicación exacta
+- [x] **T038** **(NEEDS CLARIFICATION)** Ubicación exacta
+  - Cierre 2026-11-27 (D-250): **decisión de la persona: solo la ubicación aproximada.** No cambia nada: `ACCESS_FINE_LOCATION` sigue bloqueado y las reglas S-08a/S-08b/S-12g siguen igual; `cumplimiento.md` ya declara solo la aproximada. Motivo: Art. VIII.4 (mínimo alcance) y sin necesidad funcional definida para la exacta.
   - Archivos: `app.config.ts`, `src/features/items/components/LocationField.tsx`, `src/features/search/useLocation.ts`, `src/app.config.test.ts`, `src/__arch__/rules.security.test.ts` (S-08a/S-08b/S-12g), `docs/play/cumplimiento.md`, `memoria.md` (solo anexar)
   - Agente: `spec-writer` + **persona** (decisión) y después `dev-expo` + `qa-mobile` · Depende de: T012 y la decisión de §7
   - Aceptación: CA-18; **sin decisión no se cambia nada**; con decisión aprobada: permiso de ubicación precisa con texto en español, las reglas S-08a/S-08b/S-12g se actualizan **con la decisión escrita** (no se borran para dar verde), la ubicación exacta no aparece en listados públicos (Art. VIII.4), el aviso de privacidad y `cumplimiento.md` coinciden antes de publicar; si hace falta un campo nuevo en el contrato del backend, se pide y no se inventa; si exige enmienda a la constitución, se **propone** por escrito (no se modifica `constitution.md`)
   - Refs: RF-36 · F-3
+
+#### Trabajo de backend de esta fase — **NO CORRESPONDE al frontend**
+> Decisión de la persona responsable del frontend (2026-11-27, D-249): lo que es 100 % del backend no se ejecuta ni se cuenta en esta spec móvil. Se entregó al backend en `../vaiven-backend/docs/pendientes-backend-desde-movil-021.md`. Las tareas móviles que esperan cada punto siguen abiertas con su parte de app.
+- **B-1 · NO CORRESPONDE (backend)** Moderación de imágenes en el servidor y su rechazo en `openapi.yaml` (no existe spec en el backend) → desbloquea T017
+- **B-2 · NO CORRESPONDE (backend)** Filtro de texto en `PATCH /me` (`displayName`), calificaciones (`comment`), incidencias (`description`) y reportes (`details`), con el formato actual → T018 ya está lista en la app
+- **B-3 · NO CORRESPONDE (backend)** Aprobar la spec 019 y publicar sus rutas en el contrato; coordinar antes de encender sus banderas → desbloquea T034
+- **B-4 · NO CORRESPONDE (backend)** Compresión HTTP (018-T008) desplegada en staging → desbloquea T035 (= backend 018-T014)
+- **B-5 · NO CORRESPONDE (backend)** Datos de demostración en staging (016-T012) → desbloquea T026 (fase 6)
+- **B-6 · NO CORRESPONDE (backend)** Verificar el envío de push del servidor, solo si con FCM configurado el token se registra y el aviso no llega → T036
 
 ### Fase 5 — DevSecOps CI/CD
 - [ ] **T021** [P] Auditoría de dependencias portable y al día

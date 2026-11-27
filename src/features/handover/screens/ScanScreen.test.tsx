@@ -83,6 +83,12 @@ beforeEach(() => {
   jest.mocked(Vibration.vibrate).mockClear();
 });
 
+// 409 con el mensaje real del servidor (vaiven-backend/internal/handover/domain/errors.go).
+const conflict = (message: string) => ({
+  status: 409,
+  body: { error: { code: 'conflict', message, requestId: 'req-1', details: [] } },
+});
+
 describe('ScanScreen', () => {
   it('lee el QR de la reserva, confirma con el token y muestra el éxito (CA-01)', async () => {
     const api = installFakeApi(routes());
@@ -138,9 +144,41 @@ describe('ScanScreen', () => {
     expect(await screen.findByText(message)).toBeTruthy();
   });
 
+  // Spec 021 (defecto del QR): fuera de las fechas de entrega el servidor responde 409 con su
+  // motivo; antes la app decía «Venció o ya se usó» y generar otro código nunca servía.
+  it('fuera de las fechas de entrega muestra el motivo del servidor, no «venció»', async () => {
+    installFakeApi(
+      routes({
+        [`POST ${BASE}/delivery/confirm`]: () =>
+          conflict(
+            'La entrega solo se puede confirmar desde un día antes del inicio y hasta el último día de la reserva.',
+          ),
+      }),
+    );
+    await show();
+    await screen.findByTestId('camera');
+    await scan(payload());
+    expect(
+      await screen.findByText(
+        'La entrega solo se puede confirmar desde un día antes del inicio y hasta el último día de la reserva.',
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText(t.errors.conflict)).toBeNull();
+  });
+
+  it('un 409 sin mensaje propio del servidor usa el texto de la app', async () => {
+    installFakeApi(routes({ [`POST ${BASE}/delivery/confirm`]: () => conflict('') }));
+    await show();
+    await screen.findByTestId('camera');
+    await scan(payload());
+    expect(await screen.findByText(t.errors.conflict)).toBeTruthy();
+  });
+
   it('procesa un solo código aunque la cámara lo repita, y se reactiva con «Intentar de nuevo»', async () => {
     const api = installFakeApi(
-      routes({ [`POST ${BASE}/delivery/confirm`]: () => failure(409, 'conflict') }),
+      routes({
+        [`POST ${BASE}/delivery/confirm`]: () => conflict('El código QR venció. Pide uno nuevo.'),
+      }),
     );
     await show();
     await screen.findByTestId('camera');
@@ -149,7 +187,7 @@ describe('ScanScreen', () => {
       mockScan?.({ data: payload() });
       mockScan?.({ data: payload() });
     });
-    expect(await screen.findByText(t.errors.conflict)).toBeTruthy();
+    expect(await screen.findByText('El código QR venció. Pide uno nuevo.')).toBeTruthy();
     expect(api.calls.filter((c) => c.method === 'POST')).toHaveLength(1);
     expect(Vibration.vibrate).toHaveBeenCalledTimes(1);
 

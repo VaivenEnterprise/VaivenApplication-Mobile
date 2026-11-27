@@ -20,6 +20,7 @@ import {
 } from '@/features/profile/schemas';
 import { es } from '@/i18n/es-MX';
 import { ApiError, messageForCode } from '@/lib/api/errors';
+import { moderationFromError } from '@/lib/api/moderation';
 import { colors, motion, radius, sizes, spacing } from '@/theme';
 import { useSensitiveScreen } from '@/features/auth/screenCapture';
 
@@ -39,7 +40,7 @@ export function EditProfileScreen() {
     displayName: user?.displayName ?? '',
     phone: user?.phone ?? '',
   };
-  const { control, handleSubmit, formState, reset } = useForm<EditProfileInput>({
+  const { control, handleSubmit, formState, reset, setError } = useForm<EditProfileInput>({
     mode: 'onTouched',
     resolver: zodResolver(editProfileSchema),
     defaultValues: initial,
@@ -66,6 +67,13 @@ export function EditProfileScreen() {
       reset({ displayName: next.displayName, phone: next.phone ?? '' });
       setSaved(true);
     } catch (error) {
+      // Spec 021-T018 (RF-17): el filtro de contenido rechaza el nombre; el motivo va en el campo.
+      const moderation = moderationFromError(error, ['displayName']);
+      if (moderation !== null) {
+        setError('displayName', { message: moderation.reason ?? es.errors.moderationField });
+        setFormError(es.errors.moderationRejected);
+        return;
+      }
       setFormError(error instanceof ApiError ? messageForCode(error.code) : es.errors.unexpected);
     }
   });

@@ -15,7 +15,14 @@ export const SERVER_ERROR_CODES = [
   'service_unavailable',
 ] as const;
 
-export const CLIENT_ERROR_CODES = ['network_error', 'timeout', 'invalid_response'] as const;
+// `step_up_required` lo deriva el cliente de un 401 con `details` `[{field:"stepUp"}]` (backend 019,
+// spec 021-T033): la sesión sigue viva y solo falta confirmar la identidad; no es «sesión vencida».
+export const CLIENT_ERROR_CODES = [
+  'network_error',
+  'timeout',
+  'invalid_response',
+  'step_up_required',
+] as const;
 
 export const API_ERROR_CODES = [...SERVER_ERROR_CODES, ...CLIENT_ERROR_CODES] as const;
 
@@ -61,6 +68,14 @@ const serverEnvelopeSchema = z.object({
   }),
 });
 
+/** Campo de `details` con el que el servidor pide confirmar la identidad (backend 019, RF-31). */
+export const STEP_UP_FIELD = 'stepUp';
+
+/** `true` si el error es el 401 de «confirma tu identidad»: no cierra la sesión ni la renueva. */
+export function isStepUpRequired(error: unknown): boolean {
+  return error instanceof ApiError && error.code === 'step_up_required';
+}
+
 function isServerCode(code: string): code is ServerErrorCode {
   return (SERVER_ERROR_CODES as readonly string[]).includes(code);
 }
@@ -96,6 +111,20 @@ function codeFromStatus(status: number): ServerErrorCode {
  */
 export function fromServerError(status: number, body: unknown, requestId: string | null): ApiError {
   const parsed = serverEnvelopeSchema.safeParse(body);
+  if (
+    status === 401 &&
+    parsed.success &&
+    parsed.data.error.details.some((d) => d.field === STEP_UP_FIELD)
+  ) {
+    const { details, requestId: serverRequestId } = parsed.data.error;
+    return new ApiError(
+      'step_up_required',
+      messageForCode('step_up_required'),
+      status,
+      serverRequestId ?? requestId,
+      details,
+    );
+  }
   if (parsed.success && isServerCode(parsed.data.error.code)) {
     const { code, message, details, requestId: serverRequestId } = parsed.data.error;
     return new ApiError(

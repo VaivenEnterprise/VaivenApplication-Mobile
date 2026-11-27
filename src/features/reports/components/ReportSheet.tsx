@@ -19,6 +19,7 @@ import {
   type ReportTargetType,
 } from '@/features/reports/types';
 import { es } from '@/i18n/es-MX';
+import { moderationFromError } from '@/lib/api/moderation';
 import { colors, radius, sizes, spacing } from '@/theme';
 
 const t = es.reports.sheet;
@@ -58,6 +59,8 @@ export function ReportSheet({
   const [details, setDetails] = useState('');
   const [result, setResult] = useState<ReportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Motivo del filtro de contenido sobre el detalle (spec 021-T018); se borra al editarlo.
+  const [rejected, setRejected] = useState<string | null>(null);
 
   const effectiveReason = fixedReason ?? reason;
   const parsed = reportFormSchema.safeParse({ reason: effectiveReason, details });
@@ -71,6 +74,7 @@ export function ReportSheet({
     setDetails('');
     setResult(null);
     setError(null);
+    setRejected(null);
   };
 
   const submit = async () => {
@@ -87,7 +91,9 @@ export function ReportSheet({
       setResult(sent);
       onSent?.(sent);
     } catch (failure) {
-      setError(reportErrorMessage(failure));
+      const moderation = moderationFromError(failure, ['details']);
+      setRejected(moderation === null ? null : (moderation.reason ?? es.errors.moderationField));
+      setError(moderation === null ? reportErrorMessage(failure) : es.errors.moderationRejected);
     }
   };
 
@@ -136,10 +142,13 @@ export function ReportSheet({
             <TextField
               label={t.detailsLabel}
               value={details}
-              onChangeText={setDetails}
+              onChangeText={(next) => {
+                setDetails(next);
+                setRejected(null);
+              }}
               multiline
               hint={detailsHint}
-              error={detailsProblem}
+              error={detailsProblem ?? rejected ?? undefined}
             />
             <AppText variant="caption" color="muted" style={styles.counter}>
               {`${details.trim().length}/${REPORT_DETAILS_MAX} ${t.counter}`}

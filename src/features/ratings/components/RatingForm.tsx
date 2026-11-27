@@ -12,6 +12,7 @@ import { ratingErrorMessage } from '@/features/ratings/errors';
 import { useCreateRating } from '@/features/ratings/hooks';
 import { COMMENT_MAX, buildComment, ratingFormSchema } from '@/features/ratings/schemas';
 import { es } from '@/i18n/es-MX';
+import { moderationFromError } from '@/lib/api/moderation';
 import { colors, radius, sizes, spacing } from '@/theme';
 
 const t = es.ratings.sheet;
@@ -59,6 +60,8 @@ export function RatingForm({ bookingId, counterpartName, initialScore, onClose }
   const [typed, setTyped] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Motivo del filtro de contenido sobre el comentario (spec 021-T018); se borra al editarlo.
+  const [rejected, setRejected] = useState<string | null>(null);
 
   const word = es.ratings.words[score as Word];
   const options = score >= 4 ? es.ratings.chips.positive : es.ratings.chips.negative;
@@ -71,10 +74,12 @@ export function RatingForm({ bookingId, counterpartName, initialScore, onClose }
     setScore(next);
   };
 
-  const toggle = (label: string) =>
+  const toggle = (label: string) => {
+    setRejected(null);
     setChips((current) =>
       current.includes(label) ? current.filter((chip) => chip !== label) : [...current, label],
     );
+  };
 
   const submit = async () => {
     const parsed = ratingFormSchema.safeParse({ score, comment });
@@ -91,7 +96,9 @@ export function RatingForm({ bookingId, counterpartName, initialScore, onClose }
       );
       setSent(true);
     } catch (failure) {
-      setError(ratingErrorMessage(failure));
+      const moderation = moderationFromError(failure, ['comment']);
+      setRejected(moderation === null ? null : (moderation.reason ?? es.errors.moderationField));
+      setError(moderation === null ? ratingErrorMessage(failure) : es.errors.moderationRejected);
     }
   };
 
@@ -154,10 +161,13 @@ export function RatingForm({ bookingId, counterpartName, initialScore, onClose }
           <TextField
             label={t.comment}
             value={typed}
-            onChangeText={setTyped}
+            onChangeText={(next) => {
+              setTyped(next);
+              setRejected(null);
+            }}
             multiline
             hint={t.commentHint}
-            error={tooLong ? es.ratings.validation.commentTooLong : undefined}
+            error={tooLong ? es.ratings.validation.commentTooLong : (rejected ?? undefined)}
           />
           <AppText variant="caption" color={tooLong ? 'danger' : 'muted'} style={styles.counter}>
             {`${comment.length}/${COMMENT_MAX} ${t.counter}`}

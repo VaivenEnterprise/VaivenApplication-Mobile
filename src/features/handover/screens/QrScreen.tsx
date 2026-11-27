@@ -14,7 +14,7 @@ import { LoadingState } from '@/components/ui/LoadingState';
 import { Screen } from '@/components/ui/Screen';
 import { bookingsKeys, useBooking } from '@/features/bookings';
 import { QrDisplay } from '@/features/handover/components/QrDisplay';
-import { isStageConflict } from '@/features/handover/errors';
+import { conflictReason, isStageConflict } from '@/features/handover/errors';
 import { useIssueQr, useStage } from '@/features/handover/hooks';
 import { stageRoles } from '@/features/handover/roles';
 import { isConfirmed } from '@/features/handover/stageState';
@@ -87,7 +87,13 @@ function Show({ bookingId, stage, counterpart }: ShowProps) {
       </AppText>
       {issue.isError ? (
         <View style={styles.stack}>
-          <FormNotice message={isStageConflict(issue.error) ? t.failedConflict : t.failed} />
+          <FormNotice
+            message={
+              isStageConflict(issue.error)
+                ? (conflictReason(issue.error) ?? t.failedConflict)
+                : t.failed
+            }
+          />
           {isStageConflict(issue.error) ? (
             <Button
               label={t.editEvidence}

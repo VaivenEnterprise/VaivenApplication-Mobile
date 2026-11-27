@@ -15,7 +15,7 @@ import { Screen } from '@/components/ui/Screen';
 import { useBooking } from '@/features/bookings';
 import { ManualCodeEntry } from '@/features/handover/components/ManualCodeEntry';
 import { QrScanner } from '@/features/handover/components/QrScanner';
-import { scanFailureOf, type ScanFailure } from '@/features/handover/errors';
+import { conflictReason, scanFailureOf, type ScanFailure } from '@/features/handover/errors';
 import { useConfirmQr } from '@/features/handover/hooks';
 import { parseManualCode, parseQr, type QrFailure } from '@/features/handover/qr';
 import { stageRoles } from '@/features/handover/roles';
@@ -27,7 +27,9 @@ import { colors, radius, sizes, spacing } from '@/theme';
 
 const t = es.handover.scan;
 
-type Result = { kind: 'success' } | { kind: 'error'; reason: QrFailure | ScanFailure };
+/** `message`: el motivo del servidor en un 409, que manda sobre el texto fijo de `reason`. */
+type Result =
+  { kind: 'success' } | { kind: 'error'; reason: QrFailure | ScanFailure; message?: string };
 
 type ScanScreenProps = { bookingId: string; stage: StageName | null };
 
@@ -70,7 +72,12 @@ function Scanner({ bookingId, stage }: ScannerProps) {
       setResult({ kind: 'success' });
     } catch (failure) {
       setManual(false);
-      setResult({ kind: 'error', reason: scanFailureOf(failure) });
+      const message = conflictReason(failure);
+      setResult({
+        kind: 'error',
+        reason: scanFailureOf(failure),
+        ...(message === null ? {} : { message }),
+      });
     }
     return true;
   };
@@ -178,7 +185,7 @@ function ResultSheet({ result, stage, onRetry, onDone }: ResultSheetProps) {
         <View style={styles.result} accessibilityLiveRegion="assertive">
           <IconBadge icon="danger" tone="danger" size="lg" />
           <AppText variant="bodyStrong" style={styles.centered}>
-            {t.errors[result.reason]}
+            {result.message ?? t.errors[result.reason]}
           </AppText>
           <Button label={t.retry} onPress={onRetry} />
         </View>

@@ -171,11 +171,11 @@ describe('pestañas (RF-05, RF-13)', () => {
     expect(await screen.findByText(es.items.list.emptyTitle)).toBeTruthy();
   });
 
-  it('las rutas de publicar y editar objeto existen dentro de Mis objetos', async () => {
+  it('publicar vive en Mis objetos y editar junto al detalle del objeto (021-T037)', async () => {
     await openSignedIn();
     await testRouter.navigate('/mis-objetos/nuevo');
     expect(await screen.findByRole('header', { name: es.items.form.createTitle })).toBeTruthy();
-    await testRouter.navigate('/mis-objetos/abc/editar');
+    await testRouter.navigate('/objeto/abc/editar');
     expect(await screen.findByText(es.items.detail.notFoundTitle)).toBeTruthy();
   });
 

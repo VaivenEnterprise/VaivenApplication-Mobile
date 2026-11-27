@@ -12,7 +12,9 @@ export const routes = {
   explore: href('/explorar'),
   myItems: href('/mis-objetos'),
   newItem: href('/mis-objetos/nuevo'),
-  editItem: (id: string): Href => href(`/mis-objetos/${encodeURIComponent(id)}/editar`),
+  // Fuera de las pestañas, junto al detalle desde el que se abre (spec 021-T037): dentro de
+  // «Mis objetos», «Volver» y «Guardar» llevaban a otra pestaña y la edición se quedaba abierta.
+  editItem: (id: string): Href => href(`/objeto/${encodeURIComponent(id)}/editar`),
   activity: href('/actividad'),
   messages: href('/mensajes'),
   notifications: href('/notificaciones'),
@@ -23,6 +25,7 @@ export const routes = {
   booking: (id: string): Href => href(`/reserva/${encodeURIComponent(id)}`),
   user: (id: string): Href => href(`/usuario/${encodeURIComponent(id)}`),
   project: (id: string): Href => href(`/proyecto/${encodeURIComponent(id)}`),
+  assistant: href('/asistente'),
   chat: (id: string): Href => href(`/chat/${encodeURIComponent(id)}`),
   incident: (id: string): Href => href(`/incidencia/${encodeURIComponent(id)}`),
   incidents: href('/incidencias'),
