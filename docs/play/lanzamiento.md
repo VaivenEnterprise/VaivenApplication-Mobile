@@ -10,6 +10,7 @@
 - [ ] `npm run typecheck && npm run lint && npm test` en verde en la máquina de quien compila.
 - [ ] `node .github/scripts/audit.mjs` sin avisos sin excepción (o con la excepción vigente y justificada).
 - [ ] Compilar: `eas build -p android --profile production` y descargar el AAB; peso < 150 MB.
+  - Alternativa (spec 021-T023, **preparada y sin usar**): el flujo manual `Release (EAS Build)` de GitHub Actions (`.github/workflows/release.yml`) con perfil `production` desde `main`; repite las pruebas del CI y espera la aprobación de un revisor del entorno `eas-build` antes de compilar. No sube a Play. Se activa como explica `docs/devsecops.md` («CD manual») y solo con autorización de quien administra el repositorio y la cuenta de Expo.
 - [ ] Instalar el AAB desde la pista cerrada en un teléfono real y recorrer: inicio de sesión contra producción, buscar, solicitar, chat, enlaces de privacidad y eliminación de cuenta, permisos al usarse.
 - [ ] Ficha pública completa: textos de `ficha.md`, ícono, gráfico y **≥ 4 capturas** (`assets/store/screenshots/`).
 - [ ] Cuenta de revisión creada en producción (credenciales solo en Play Console).

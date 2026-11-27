@@ -1,0 +1,16 @@
+[
+  {
+    "rule": "js_biometric_without_crypto",
+    "file": "src/features/auth/biometrics.ts",
+    "reason": "La biometria es opcional y solo confirma presencia para volver a entrar tras el cierre por inactividad; no libera ninguna clave ni token. El refresh token sigue en SecureStore y el servidor decide la sesion. Diseno de la spec 021-T015 (plan.md, Dependencias aprobadas: 'no guarda nada: solo confirma presencia').",
+    "approvedBy": "persona responsable de la spec 021 al aprobar expo-local-authentication (T011, D-244); excepcion de mobsfscan registrada en D-252",
+    "expires": "2027-02-27"
+  },
+  {
+    "rule": "js_deeplink_open_url",
+    "file": "src/features/auth/screens/RegisterScreen.tsx",
+    "reason": "La URL abierta no viene de la persona ni de la red: es EXPO_PUBLIC_LEGAL_URL (configuracion de compilacion) validada como URL en src/lib/config.ts y unida a una pagina fija (terminos o privacidad) en src/features/auth/legal.ts. Diseno D-139 (spec 003) y D-206b (spec 013).",
+    "approvedBy": "decisiones D-139 (spec 003) y D-206b (spec 013); excepcion de mobsfscan registrada en D-252",
+    "expires": "2027-02-27"
+  }
+]

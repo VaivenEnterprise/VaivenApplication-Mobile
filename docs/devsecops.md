@@ -12,7 +12,7 @@ Solicitud del responsable: integrar CI, seguridad y validacion de ramas y PRs en
 
 ## Controles
 
-CI corre en PRs, push a main/develop/spec/**, manualmente y semanalmente. Required checks agrega Policy, Quality, Secrets y CodeQL; falla si un control requerido falla o se cancela. CodeQL solo se omite cuando no hay aplicacion inicializada.
+CI corre en PRs, push a main/develop/spec/**, manualmente y semanalmente. Required checks agrega Policy, Quality, Secrets, CodeQL, SBOM y Mobile SAST (estos dos desde la spec 021, ver abajo); falla si un control requerido falla o se cancela. CodeQL, SBOM y Mobile SAST solo se omiten cuando no hay aplicacion inicializada.
 
 Policy verifica nombres, destino, secciones del PR y archivos sensibles. Gitleaks examina el historial alcanzable completo y los archivos actuales, con salida redactada, binario versionado y SHA-256 verificado. Las acciones se fijan por commit y Dependabot propone actualizaciones hacia develop. El token es de lectura salvo la carga de resultados de CodeQL. No se usan secretos de despliegue en PRs.
 
@@ -34,7 +34,7 @@ Los archivos de este PR no activan por si solos proteccion de ramas ni ajustes d
 
 Backend y landing conservan el despliegue por MCP a Render; movil conserva Expo Go y la publicacion de la spec 013. Este cambio no crea servicios ni publica produccion. Antes de desplegar se exige CI en verde, aprobacion humana y las verificaciones de cada spec. Render no debe publicar automaticamente cada push sin estos controles. La cuenta administradora debe revisar esa configuracion cuando conecte Render al origen.
 
-Para volver a una version anterior: PR de revert, mismos controles y despliegue por MCP del commit aprobado. No usar force push. No hay credenciales nuevas ni un workflow con acceso a produccion.
+Para volver a una version anterior: PR de revert, mismos controles y despliegue por MCP del commit aprobado. No usar force push. No hay credenciales nuevas en el repositorio; el unico flujo que compila la app es el CD manual de la spec 021 (ver «CD manual»), que no tiene acceso a Play y no esta activado.
 
 CodeQL exporta SARIF y el workflow bloquea hallazgos con security-severity >= 7 o nivel error. No basta con que la carga de resultados termine correctamente.
 
@@ -68,3 +68,29 @@ Tambien se permite `tipo/SPEC-NN-Fase-N`, por ejemplo `feat/SPEC-02-Fase-3`, con
 Crear la rama de fase desde la rama de spec y abrir su PR hacia esa misma SPEC; tambien se permite fase -> develop. No se permite fase -> main, ni fase -> otra SPEC. Las ramas de fase no son destinos de PR de tareas: implementar las tareas de la fase en ella y conservar el formato por tarea para los flujos existentes. Los titulos de PR siguen siendo libres y se mantienen las secciones de evidencia y los controles de seguridad.
 
 Las ramas de spec existentes deben incorporar esta actualizacion desde develop para validar PRs de fase con la nueva politica.
+
+## SBOM, analisis estatico movil y auditoria portable (spec 021, T021 y T022)
+
+- **Auditoria de dependencias** (`.github/scripts/audit.mjs`): funciona en Linux (CI) y en Windows. En Windows npm es `npm.cmd` y Node solo lo lanza con shell (CVE-2024-27980); la orden es fija (`npm audit --json`), sin argumentos que vengan de fuera. Si npm no se puede lanzar, falla con «No se pudo ejecutar npm audit» en lugar de un error de JSON. Pruebas de ambos sistemas en `audit.test.mjs`. `.github/audit-exceptions.json` queda vacio: `GHSA-fc5q-39xc-vjpf` (`picomatch`) ya no aparece en `npm audit` y se retiro. Cifras reales en `docs/seguridad.md` (punto 8).
+- **SBOM** (job `SBOM`): `npm sbom --sbom-format cyclonedx --package-lock-only` (viene con npm; sin dependencias nuevas) genera `sbom.cdx.json` desde el lockfile; `.github/scripts/sbom.mjs` comprueba que sea CycloneDX, que describa esta app y su version, que cada componente tenga `purl` y que esten todas las dependencias directas; se publica como artefacto `sbom-cyclonedx` (90 dias).
+- **Analisis estatico movil** (job `Mobile SAST`): `mobsfscan` 1.2.0 (reglas de MobSF para React Native, Expo, Android e iOS) sobre `src`, `app.config.ts` y `eas.json`. Es herramienta del CI, no de la app: version fija y wheel verificado por SHA-256 antes de instalarlo, como Gitleaks; sus dependencias de Python las resuelve pip por version (semgrep queda fijado por el propio mobsfscan) y el job no tiene secretos ni permisos de escritura. `.github/scripts/mobsf.mjs` decide: bloquea todo hallazgo `error` o `warning` del codigo que se empaqueta; no cuenta las pruebas ni sus dobles (`*.test.*`, `src/test/`, `src/__e2e__/`, `src/__a11y__/`, `src/__arch__/`: sus URLs `http://` y secretos falsos no llegan a la app); acepta solo lo listado en `.github/mobsf-exceptions.json` (regla + archivo, con motivo, aprobacion y vencimiento; una vencida falla). El SARIF se publica como artefacto `mobsfscan-sarif`.
+- **Excepciones vigentes de mobsfscan** (vencen el 2027-02-27): `js_biometric_without_crypto` en `src/features/auth/biometrics.ts` (la biometria solo confirma presencia; no libera claves; T015) y `js_deeplink_open_url` en `RegisterScreen.tsx` (la URL es `EXPO_PUBLIC_LEGAL_URL` validada mas una pagina fija; D-139). Primera corrida local (2026-11-27): 2 hallazgos de la app, ambos aceptados; 117 en pruebas.
+- **Gate**: `Required checks` exige ahora `SBOM` y `Mobile SAST` en verde cuando hay aplicacion (y `skipped` cuando no), igual que CodeQL. Las pruebas de los verificadores (`sbom.test.mjs`, `mobsf.test.mjs`) corren en `Policy`.
+
+## CD manual (spec 021, T023) — preparado y sin ejecutar
+
+`.github/workflows/release.yml` («Release (EAS Build)») compila la app con EAS Build. **No se ha ejecutado** y no puede ejecutarse hasta que se activen los pasos administrativos de abajo; ninguno se hizo desde la sesion que lo preparo.
+
+- **Como arranca**: solo a mano (`workflow_dispatch`, Actions > Release (EAS Build) > Run workflow), eligiendo el perfil de `eas.json`: `preview` (APK de prueba; desde `main`, `develop` o `spec/*`) o `production` (AAB para Play; solo desde `main`). No tiene `push`, `schedule` ni `pull_request`.
+- **Que hace**: el job `verify` repite los controles del CI (`npm ci`, typecheck, lint, Jest con cobertura, cobertura minima y `audit.mjs`). Despues el job `build` queda **en espera de aprobacion** del entorno `eas-build`; al aprobarse, recibe `EXPO_TOKEN` y lanza `eas-cli@27.11.0 build --platform android --profile <perfil> --non-interactive --no-wait` (EAS compila en sus servidores; el enlace sale en el registro del job). **No ejecuta `eas submit`**: el AAB lo sube el administrador desde Play Console (Art. XIV.7, `docs/play/lanzamiento.md`).
+- **Quien aprueba**: los revisores obligatorios del entorno `eas-build`. Se propone a los code owners (@JesusTrz y @JosephYanez27, los mismos de `.github/CODEOWNERS`); lo confirma y configura quien administra el repositorio.
+- **Controles**: permisos del flujo `contents: read`; acciones fijadas por SHA; `eas-cli` con version exacta; el perfil pasa por variable de entorno (nunca dentro de `run`); `EXPO_TOKEN` solo desde `secrets.EXPO_TOKEN` y solo en el job con entorno. `.github/scripts/release.mjs` lo comprueba sobre el texto del flujo (`release.test.mjs`, con casos negativos; corre en `Policy`), asi que un cambio que lo relaje rompe el CI.
+
+**Activacion (requiere autorizacion; servicios externos):**
+
+1. Quien administra la cuenta de Expo crea un *access token* de un usuario robot o de la cuenta con permisos minimos (expo.dev > Account settings > Access tokens).
+2. Quien administra el repositorio crea el entorno `eas-build` (Settings > Environments) con **Required reviewers** (los aprobadores acordados), marca «Prevent self-review» y limita las ramas de despliegue a `main`, `develop` y `spec/*`.
+3. Guarda el token como **secreto del entorno** `eas-build` con el nombre `EXPO_TOKEN` (nunca en el repositorio, nunca como secreto de repositorio ni en `EXPO_PUBLIC_*`).
+4. La primera ejecucion se hace con `preview`, con aprobacion explicita, y el resultado (enlace de EAS, fecha y quien aprobo) se anota en `memoria.md`.
+
+Hasta entonces, compilar sigue siendo `eas build` desde la maquina de la persona, con su aprobacion (spec 013).

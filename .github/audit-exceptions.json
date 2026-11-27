@@ -1,9 +1,1 @@
-[
-  {
-    "id": "GHSA-fc5q-39xc-vjpf",
-    "package": "picomatch",
-    "reason": "ReDoS en patrones extglob repetidos; picomatch <= 4.0.7 y 4.0.7 es la ultima version publicada (sin parche). Llega solo por herramientas de compilacion y pruebas (jest, metro, expo cli) que reciben patrones del propio repositorio; no se empaqueta en la app ni procesa entrada de usuarios.",
-    "expires": "2026-12-18",
-    "approvedBy": "responsable de la spec 012 (2026-11-18)"
-  }
-]
+[]

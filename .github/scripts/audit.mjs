@@ -36,10 +36,30 @@ export function evaluate(report, exceptions, today) {
   return {blocking, errors, notes};
 }
 
+// Como se lanza npm en cada sistema. En Windows npm es `npm.cmd` y, desde Node 18.20/20.12
+// (CVE-2024-27980), un .cmd solo se lanza con shell. La orden es fija (nada viene de fuera), asi que el
+// shell no abre inyeccion; va entera y sin argumentos sueltos para no concatenarlos (aviso DEP0190).
+export function npmAuditCommand(platform = process.platform) {
+  return platform === 'win32'
+    ? {file: 'npm audit --json', args: [], options: {shell: true}}
+    : {file: 'npm', args: ['audit', '--json'], options: {}};
+}
+
+// Salida JSON de `npm audit`. npm termina con codigo distinto de 0 cuando hay avisos, pero la salida
+// sigue en stdout; si no hay salida (npm no se pudo lanzar), se falla con un mensaje claro.
+export function auditOutput(exec = execFileSync, platform = process.platform) {
+  const {file, args, options} = npmAuditCommand(platform);
+  try { return exec(file, args, {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, ...options}); }
+  catch (error) {
+    if (error.stdout) return error.stdout;
+    throw new Error('No se pudo ejecutar npm audit (' + (error.code || error.message) + ').');
+  }
+}
+
 function run() {
   let output;
-  try { output = execFileSync('npm', ['audit', '--json'], {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024}); }
-  catch (error) { output = error.stdout; }
+  try { output = auditOutput(); }
+  catch (error) { console.error('ERROR: ' + error.message); process.exit(1); }
   const exceptions = JSON.parse(fs.readFileSync('.github/audit-exceptions.json', 'utf8'));
   const today = new Date().toISOString().slice(0, 10);
   const {blocking, errors, notes} = evaluate(JSON.parse(output), exceptions, today);

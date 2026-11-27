@@ -1,0 +1,87 @@
+name: Release (EAS Build)
+
+# Spec 021-T023 (RF-22, CA-09): CD manual PREPARADO Y SIN EJECUTAR. Solo arranca a mano
+# (workflow_dispatch) y la compilacion espera la aprobacion de un revisor del entorno `eas-build`.
+# Antes de usarlo, quien administra el repositorio y la cuenta de Expo debe crear el entorno con
+# revisores obligatorios y el secreto EXPO_TOKEN dentro de ese entorno (docs/devsecops.md, «CD manual»).
+# No sube nada a Google Play: el AAB lo sube el administrador desde Play Console (Art. XIV.7).
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Perfil de eas.json (preview = APK de prueba, production = AAB para Play)
+        type: choice
+        options: [preview, production]
+        default: preview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.profile }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify before build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Allowed branch for the profile
+        env:
+          PROFILE: ${{ inputs.profile }}
+          REF: ${{ github.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$PROFILE" in
+            production) test "$REF" = refs/heads/main || { echo "production solo se compila desde main (ref: $REF)"; exit 1; } ;;
+            preview) case "$REF" in refs/heads/main|refs/heads/develop|refs/heads/spec/*) ;; *) echo "preview solo desde main, develop o spec/* (ref: $REF)"; exit 1 ;; esac ;;
+            *) echo "Perfil no permitido: $PROFILE"; exit 1 ;;
+          esac
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Same checks as CI
+        env:
+          CI: 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run typecheck
+          npm run lint
+          npm test -- --ci --runInBand --coverage --coverageReporters=json --coverageReporters=text
+          node .github/scripts/coverage.mjs mobile
+          node .github/scripts/audit.mjs
+
+  build:
+    name: EAS Build (needs reviewer approval)
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # El entorno exige la aprobacion de un revisor antes de entregar EXPO_TOKEN a este job.
+    environment: eas-build
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Install locked dependencies
+        run: npm ci
+      # EAS compila en sus servidores; --no-wait devuelve el enlace de la compilacion sin esperarla.
+      - name: Start EAS build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          PROFILE: ${{ inputs.profile }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXPO_TOKEN" || { echo "Falta el secreto EXPO_TOKEN en el entorno eas-build"; exit 1; }
+          npx --yes eas-cli@27.11.0 build --platform android --profile "$PROFILE" --non-interactive --no-wait

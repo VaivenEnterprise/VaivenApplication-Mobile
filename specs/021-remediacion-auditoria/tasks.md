@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); Fase 4 ejecutada en parte el 2026-11-27 (T018, T020, T031, T032, T033, T037 y T038 hechas; T017, T034 y T035 bloqueadas por el backend o la fase 6; T019 y T036 esperan la configuración externa de FCM y la prueba en teléfono; D-248 a D-250); fases 5 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); Fase 4 ejecutada en parte el 2026-11-27 (T018, T020, T031, T032, T033, T037 y T038 hechas; T017, T034 y T035 bloqueadas por el backend o la fase 6; T019 y T036 esperan la configuración externa de FCM y la prueba en teléfono; D-248 a D-250); Fase 5 ejecutada el 2026-11-27 (T021 a T024 hechas, D-252; el CD queda preparado y sin ejecutar, y `SBOM` y `Mobile SAST` aún no corren en GitHub porque nada se ha subido); fases 6 y 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -197,22 +197,26 @@
 - **B-6 · NO CORRESPONDE (backend)** Verificar el envío de push del servidor, solo si con FCM configurado el token se registra y el aviso no llega → T036
 
 ### Fase 5 — DevSecOps CI/CD
-- [ ] **T021** [P] Auditoría de dependencias portable y al día
+- [x] **T021** [P] Auditoría de dependencias portable y al día
+  - Cierre 2026-11-27 (D-252): **reproducido** en Windows: `node .github/scripts/audit.mjs` fallaba con `SyntaxError: "undefined" is not valid JSON` (`execFileSync('npm')` da `ENOENT`: en Windows es `npm.cmd`, que Node solo lanza con shell). `npmAuditCommand()` usa `npm audit --json` con shell en Windows (orden fija, sin argumentos sueltos) y `npm` directo en Linux; si npm no se lanza, falla con «No se pudo ejecutar npm audit». Pruebas de ambos sistemas en `audit.test.mjs` (11). Corrida real en Windows: exit 0. `npm audit` (2026-11-27): 27 moderadas, 0 bajas, 0 altas, 0 críticas; `GHSA-fc5q-39xc-vjpf` ya no aparece → **retirada** (`audit-exceptions.json` = `[]`). `docs/seguridad.md` cita esas cifras. La corrida real en Linux la hace el CI (`Quality`).
   - Archivos: `.github/scripts/audit.mjs`, `.github/scripts/audit.test.mjs`, `.github/audit-exceptions.json`, `docs/seguridad.md`
   - Agente: `dev-expo` + `qa-mobile` · Depende de: —
   - Aceptación: `audit.mjs` funciona en Windows y en Linux (prueba de ambos casos); la excepción `GHSA-fc5q-39xc-vjpf` se mantiene solo si `npm audit` aún la necesita (si no, se retira), con vencimiento; `docs/seguridad.md` cita las cifras reales de `npm audit`
   - Refs: RF-20 · B-1, M-9
-- [ ] **T022** [P] SBOM y análisis estático móvil en el CI
+- [x] **T022** [P] SBOM y análisis estático móvil en el CI
+  - Cierre 2026-11-27 (D-252): jobs `SBOM` (`npm sbom --sbom-format cyclonedx --package-lock-only`, viene con npm; validado por `.github/scripts/sbom.mjs`; artefacto `sbom-cyclonedx`) y `Mobile SAST` (`mobsfscan` 1.2.0, wheel verificado por SHA-256, sobre `src`, `app.config.ts` y `eas.json`; decide `.github/scripts/mobsf.mjs`: bloquea `error`/`warning` del código de la app, no cuenta pruebas ni dobles, acepta solo `.github/mobsf-exceptions.json` con motivo y vencimiento; artefacto `mobsfscan-sarif`). Ambos en `Required checks`. Acciones nuevas por SHA (`setup-python` v7.1.0, `upload-artifact` v7.0.2). Sin dependencias nuevas en la app. Corrida local con los mismos comandos: SBOM CycloneDX 1.5 con 1 057 componentes; mobsfscan con 2 hallazgos de la app (ambos aceptados con justificación: biometría y URL legal) y 117 en pruebas. Pruebas: `sbom.test.mjs` (4) y `mobsf.test.mjs` (9), en `Policy`. **Sin verificar**: la primera corrida en GitHub Actions (nada se ha subido) y `actionlint` (no se pudo ejecutar en la sesión; el YAML se validó con `js-yaml`). Archivos añadidos fuera de la lista (justificados en D-252): `.github/scripts/{sbom,mobsf}.mjs` (+ pruebas) y `.github/mobsf-exceptions.json`.
   - Archivos: `.github/workflows/ci.yml`, `docs/devsecops.md`
   - Agente: `gestor-repo` + `dev-expo` · Depende de: T021
   - Aceptación: el CI genera un SBOM CycloneDX como artefacto y corre un análisis estático móvil (por ejemplo `mobsfscan`) sin dependencias nuevas en la app; acciones fijadas por SHA como las actuales; el job nuevo forma parte del *gate*
   - Refs: RF-21 · M-7
-- [ ] **T023** **(NEEDS CLARIFICATION)** CD manual preparado
+- [x] **T023** **(NEEDS CLARIFICATION)** CD manual preparado
+  - Cierre 2026-11-27 (D-252): `.github/workflows/release.yml` **preparado y sin ejecutar**: solo `workflow_dispatch` (perfil `preview` desde `main`/`develop`/`spec/*`, `production` solo desde `main`), job `verify` con los controles del CI y job `build` con `environment: eas-build` (revisor obligatorio), `EXPO_TOKEN` solo de `secrets`, `eas-cli@27.11.0 build … --no-wait`, sin `eas submit`. `.github/scripts/release.mjs` + `release.test.mjs` (6, con casos negativos) lo vigilan desde `Policy`. `docs/devsecops.md` («CD manual») explica la activación y propone como aprobadores a los code owners; `docs/play/lanzamiento.md` lo cita como alternativa. **Pide autorización** (no se hizo nada): crear el entorno `eas-build` con revisores, el token de Expo y el secreto `EXPO_TOKEN`, y la primera ejecución; quién aprueba lo confirma el administrador al activarlo.
   - Archivos: `.github/workflows/release.yml`, `docs/devsecops.md`, `docs/play/lanzamiento.md`
   - Agente: `gestor-repo` + **administrador** · Depende de: T022
   - Aceptación: CA-09; flujo `workflow_dispatch` con entorno de revisor obligatorio que construye con EAS usando `EXPO_TOKEN` desde secretos; **preparado y sin ejecutar**; la documentación explica cómo se activa y quién aprueba; **se pide autorización antes de crear el secreto o ejecutarlo**
   - Refs: RF-22 · M-7
-- [ ] **T024** Método del «porcentaje de seguridad DevSecOps»
+- [x] **T024** Método del «porcentaje de seguridad DevSecOps»
+  - Cierre 2026-11-27 (D-252): `docs/calidad/seguridad-devsecops.md` conserva el método de la auditoría de Claude (22 prácticas, peso 1, escala 1/0,5/0 con criterios escritos; una excepción formal no suma; resultado truncado). Resultado: **16,5 / 22 = 75,0 %** (pipeline 70,8 %, app 80,0 %), frente a 63,6 % de la línea base; cada punto con su evidencia y lo que lo subiría. No es la reauditoría (T029).
   - Archivos: `docs/calidad/seguridad-devsecops.md`
   - Agente: `spec-writer` + `revisor-constitucion` · Depende de: T016, T022
   - Aceptación: lista de prácticas (de pipeline y de la app) con su peso, su estado y su evidencia, y el resultado calculado con la fórmula escrita; reproducible por cualquier evaluador; no se redondea a favor

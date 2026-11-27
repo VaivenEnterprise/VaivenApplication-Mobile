@@ -31,6 +31,7 @@ jobs:
           node-version: '22'
       - run: node --test .github/scripts/policy.test.mjs
       - run: node --test .github/scripts/audit.test.mjs
+      - run: node --test .github/scripts/sbom.test.mjs .github/scripts/mobsf.test.mjs .github/scripts/release.test.mjs
       - run: node .github/scripts/policy.mjs
 
   quality:
@@ -111,10 +112,78 @@ jobs:
       - name: Block high and critical findings
         run: node .github/scripts/check-sarif.mjs
 
+  sbom:
+    name: SBOM
+    needs: quality
+    if: needs.quality.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      # npm sbom viene con npm: sin dependencias nuevas. Se genera desde el lockfile (lo que npm ci instala).
+      - name: Generate and check CycloneDX SBOM
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm sbom --sbom-format cyclonedx --package-lock-only > sbom.cdx.json
+          node .github/scripts/sbom.mjs sbom.cdx.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          if-no-files-found: error
+          retention-days: 90
+
+  mobile-sast:
+    name: Mobile SAST
+    needs: quality
+    if: needs.quality.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      # Herramienta del CI, no de la app. Version fija y wheel verificado por SHA-256 (como Gitleaks).
+      - name: Install verified mobsfscan
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool_dir=$(mktemp -d)
+          python -m pip download --no-deps --only-binary=:all: --dest "$tool_dir" mobsfscan==1.2.0
+          echo '64dfc32a3774e5ceb9953f2f2c1258e75b60767e8368f9f1cc8afdf91d43af68  '"$tool_dir/mobsfscan-1.2.0-py3-none-any.whl" | sha256sum --check
+          python -m pip install "$tool_dir/mobsfscan-1.2.0-py3-none-any.whl"
+      # Codigo que se empaqueta y configuracion de Expo. Decide .github/scripts/mobsf.mjs: bloquea
+      # error y warning fuera de pruebas, salvo .github/mobsf-exceptions.json (con vencimiento).
+      - name: Scan app source and Expo configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mobsfscan --sarif --output mobsfscan.sarif --no-fail src app.config.ts eas.json
+          node .github/scripts/mobsf.mjs mobsfscan.sarif
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: mobsfscan-sarif
+          path: mobsfscan.sarif
+          if-no-files-found: warn
+          retention-days: 30
+
   gate:
     name: Required checks
     if: always()
-    needs: [policy, quality, secrets, sast]
+    needs: [policy, quality, secrets, sast, sbom, mobile-sast]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -124,6 +193,8 @@ jobs:
           QUALITY: ${{ needs.quality.result }}
           SECRETS: ${{ needs.secrets.result }}
           SAST: ${{ needs.sast.result }}
+          SBOM: ${{ needs.sbom.result }}
+          MOBILE_SAST: ${{ needs.mobile-sast.result }}
           READY: ${{ needs.quality.outputs.ready }}
         shell: bash
         run: |
@@ -133,6 +204,10 @@ jobs:
           test "$SECRETS" = success
           if [ "$READY" = true ]; then
             test "$SAST" = success
+            test "$SBOM" = success
+            test "$MOBILE_SAST" = success
           else
             test "$SAST" = skipped
+            test "$SBOM" = skipped
+            test "$MOBILE_SAST" = skipped
           fi
