@@ -1,6 +1,6 @@
 # Tareas 021 — Remediación de la auditoría de entrega-recepción (móvil)
 
-- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; la compilación con R8 en EAS queda por verificar con autorización); fases 4 a 7 sin ejecutar · `[P]` = paralelizable
+- **Dueño:** MO-B (coordina) con MO-A · **Estado:** Fase 0 ejecutada el 2026-11-26 (T002 a T004 hechas; T001 con dos pasos pendientes de la persona); Fase 1 ejecutada el 2026-11-26 (T005 y T006); Fase 2 ejecutada y cerrada el 2026-11-27 (T007 a T010 hechas; T008 cerrada con dos corridas limpias de `npm test`, D-243); Fase 3 ejecutada y cerrada el 2026-11-27 (T011 a T016 hechas, D-244 a D-246; APK `preview` con R8 compilado en EAS y probado en teléfono por la persona, D-247); fases 4 a 7 sin ejecutar · `[P]` = paralelizable
 - Empieza cuando esta spec esté aprobada (Art. I). Cada tarea con código termina con `npm run typecheck && npm run lint && npm test` en verde. **Ninguna tarea hace commits, push ni PR; lo que toque un servicio externo se deja preparado y se pide autorización.**
 
 ### Fase 0 — Integridad de la entrega (sin funcionalidad nueva)
@@ -101,7 +101,7 @@
   - Aceptación: bloqueo de capturas en pantallas sensibles, cierre de sesión por inactividad (tiempo configurable y probado) y, si se aprobó, biometría opcional para volver a entrar; sin guardar nada nuevo fuera de SecureStore; pruebas de seguridad nuevas (S-14…)
   - Refs: RF-14 · A-5
 - [x] **T016** **(NEEDS CLARIFICATION)** Ofuscación y excepción formal de los controles nativos
-  - Cierre 2026-11-27 (D-246): R8 y recorte de recursos en las compilaciones release (`production` y `preview`), confirmado con `introspect`; excepción formal en `docs/calidad/seguridad-nivel.md`, aprobada por la persona; `constitution.md` sin cambios. **Pendiente**: compilar con EAS (servicio externo, con autorización) y probar el APK; subir `mapping.txt` a Play.
+  - Cierre 2026-11-27 (D-246): R8 y recorte de recursos en las compilaciones release (`production` y `preview`), confirmado con `introspect`; excepción formal en `docs/calidad/seguridad-nivel.md`, aprobada por la persona; `constitution.md` sin cambios. La persona compiló el APK `preview` con R8 en EAS y lo probó en su teléfono el 2026-11-27: todo funcionó (D-247). **Pendiente**: subir `mapping.txt` de cada AAB a Play.
   - Archivos: `app.config.ts` (`expo-build-properties`), `docs/calidad/seguridad-nivel.md`, `memoria.md` (solo anexar)
   - Agente: `dev-expo` + `spec-writer` + `revisor-constitucion` · Depende de: T011
   - Aceptación: R8 activado en el perfil `production`; `seguridad-nivel.md` explica por qué pinning, detección de root y Play Integrity no se implementan (Art. XIV.2, sin pagos en la app), con el riesgo, el alcance y qué se haría con una enmienda; la persona responsable la aprueba o decide la enmienda; **no se cambia `constitution.md`**

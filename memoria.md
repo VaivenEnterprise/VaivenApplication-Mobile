@@ -590,3 +590,9 @@ _(Los agentes agregan aquí hallazgos útiles y breves, uno por línea, con fech
 - **Decisión de la persona responsable**: se aprueba la excepción formal (no se pide enmienda); `constitution.md` no cambia. Documento: `docs/calidad/seguridad-nivel.md` (motivo: Art. XIV.2 y Art. V.4; riesgo residual por control; alcance y cuándo se revisa; qué haría una enmienda MAJOR al Art. XIV).
 - **R8**: `expo-build-properties` con `enableMinifyInReleaseBuilds` y `enableShrinkResourcesInReleaseBuilds` en las compilaciones release, el AAB `production` y también el APK `preview` (el de prueba valida lo mismo que va a Play). `introspect` muestra ambas propiedades en `gradle.properties`; regla S-12o.
 - **Pendiente (requiere autorización, servicio externo)**: compilar con EAS y probar el APK `preview` con R8; si falta algo, agregar `extraProguardRules` en lugar de apagar R8. Subir `mapping.txt` de cada AAB a Play Console. No se pasó por `revisor-constitucion` (agente de OpenCode, no disponible en esta sesión). Siguiente ID libre: D-247.
+
+## D-247 · 2026-11-27 · T016: APK `preview` con R8 probado en teléfono
+
+- **Hecho por la persona** (no por el agente): compiló el APK `preview` con R8 en EAS Build y lo probó en su teléfono con la lista de la fase 3 (arranque y restauración, login y cierre, explorar, publicar con foto, chat, QR, avisos, bloqueo de capturas, biometría en Perfil, cierre por inactividad, «Sin conexión»). Informó que todo funcionó; no hizo falta `extraProguardRules`.
+- **Actualizado**: nota de T016 y encabezado de `tasks.md`; §3 de `docs/calidad/seguridad-nivel.md`.
+- **Pendiente**: el AAB `production` con R8 y subir su `mapping.txt` a Play Console (spec 013); capturas a 360×640 (fase 6). Siguiente ID libre: D-248.

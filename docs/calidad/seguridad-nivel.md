@@ -40,7 +40,7 @@ Ya existían, y siguen vigentes: `refreshToken` solo en `expo-secure-store` y to
 4. Play Integrity: el servidor pide y **verifica** el veredicto en las rutas críticas (login, crear reserva); requiere un proyecto de Google Cloud, credenciales en el backend y su autorización (servicio externo).
 5. Pruebas en dispositivo físico de cada control, porque ninguno se puede ver en Expo Go.
 
-## 3. Pendientes de verificación (no ejecutados en esta tarea)
-- **Compilación con R8.** La configuración está comprobada con `npx expo config --type introspect`, pero **no se ha compilado** un AAB ni un APK con R8: EAS Build es un servicio externo y se ejecuta con autorización humana (Art. XIV.7). En la siguiente compilación hay que confirmar que el APK `preview` arranca y recorre los flujos principales. Si R8 elimina algo que se necesita, se agregan reglas con `extraProguardRules` en lugar de apagar R8.
+## 3. Verificación y pendientes
+- **Compilación con R8 (verificada).** El 2026-11-27 la persona compiló el APK `preview` con R8 en EAS Build (Art. XIV.7) y lo probó en su teléfono: arranque y restauración de sesión, login y cierre, explorar, publicar con foto, chat, QR, avisos y los controles de la §1; todo funcionó (D-247). Si una versión futura falla por R8, se agregan reglas con `extraProguardRules` en lugar de apagar R8. El AAB `production` aún no se ha compilado con R8.
 - **Archivo de mapeo.** Con R8, los fallos que informe Play Console vienen ofuscados. Hay que subir `mapping.txt` de cada AAB a Play Console (lo hace quien publica; spec 013).
 - **Expo Go.** En Expo Go el bloqueo de capturas y la biometría usan los módulos de Expo Go. En iOS, Expo Go no puede usar Face ID con el texto propio de la app (requiere compilación); la huella de Android y el código del dispositivo sí funcionan. La verificación en teléfono es de la fase 6.
